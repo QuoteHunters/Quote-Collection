@@ -34,5 +34,5 @@
     - sql 폴더의 CREATE_USER_DATABASE.sql 파일의 쿼리 한줄 씩 실행
   - root 계정에서 만든 계정 접속
     - CREATE_USER_DATABASE.sql 파일의 맨 아래 USE 쿼리 실행
-    - CREATE_SCRIPT_SCRIPT.sql 파일의 쿼리 전체 실행하여 테이블 생성
+    - CREATE_TABLE_SCRIPT.sql 파일의 쿼리 전체 실행하여 테이블 생성
     - INSERT_DATA_SCRIPT.sql 파일의 쿼리 전체 실행하여 초기 데이터 생성
