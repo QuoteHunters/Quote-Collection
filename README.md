@@ -19,3 +19,19 @@
 - 새로운 기능이나 버그 수정은 `develop` 브랜치를 기준으로 별도의 작업 브랜치를 생성합니다.
 - 작업이 완료되면 Pull Request를 통해 `develop` 브랜치에 병합합니다.
 - 충분한 테스트와 검증이 끝나면 `main` 브랜치에 병합합니다.
+
+### 개발 시작 전 초기 세팅
+
+- IntelliJ Project 설정에 들어가 encode 검색
+  - File Encodings 탭에 들어가
+    - Global Encoding : UTF-8
+    - Project Encoding : <system default: UTF-8>
+    - Transparent native-to-ascii Conversion 체크
+- MySQL 접속
+  - IntelliJ 왼쪽 데이터페이스 탭 클릭
+  - new 클릭 후 MySQL 선택
+  - root 계정으로 접속 후 
+    - sql 폴더의 CREATE_USER_DATABASE.sql 파일의 쿼리 한줄 씩 실행
+  - root 계정에서 만든 계정 접속
+    - CREATE_USER_DATABASE.sql 파일의 맨 아래 USE 쿼리 실행
+    - DB_SCRIPT.sql 파일의 쿼리 전체 실행
