@@ -26,7 +26,7 @@ public class PersonDAO {
 
     }
 
-    // 전체 인물 조회용 메소드
+    // 전체 인물 조회
     public List<PersonDTO> selectAllPerson(Connection con) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
