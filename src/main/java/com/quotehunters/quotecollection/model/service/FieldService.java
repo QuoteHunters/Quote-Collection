@@ -27,14 +27,15 @@ public class FieldService {
 
         try {
             if (fieldDAO.existsFieldName(con, fieldName)) {
+                con.close();
                 return true;
             }
 
             con.close();
-
             return false;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
     }
 
@@ -43,6 +44,7 @@ public class FieldService {
 
         try {
             if (fieldDAO.existsFieldName(con, id, fieldName)) {
+                con.close();
                 return true;
             }
 
@@ -50,7 +52,8 @@ public class FieldService {
 
             return false;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
     }
 
