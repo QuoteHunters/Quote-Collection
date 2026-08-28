@@ -143,7 +143,6 @@ public class FieldDAO {
             System.out.println("Update Fields SQL Exception");
         } finally {
             JDBC.close(pstmt);
-            JDBC.close(connection);
         }
 
         return result;
