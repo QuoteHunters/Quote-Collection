@@ -11,4 +11,8 @@ public class FieldController {
     public List<FieldDTO> allFields() {
         return fieldService.allFields();
     }
+
+    public int selectFieldId(int index) {
+        return fieldService.allFields().get(index).getFieldId();
+    }
 }
