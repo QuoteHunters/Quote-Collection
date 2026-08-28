@@ -62,4 +62,15 @@ public class PersonController {
             personView.selectPersonByField(personList);
         }
     }
+
+    // 인물 이름 조회
+    public void selectPersonByName(String personName) {
+        List<PersonDTO> personList = personService.selectPersonByName(personName);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("'" + personName + "'에 해당하는 인물이 존재하지 않습니다.");
+        } else {
+            personView.selectPersonByName(personList);
+        }
+    }
 }

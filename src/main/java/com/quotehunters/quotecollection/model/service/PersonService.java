@@ -61,4 +61,17 @@ public class PersonService {
         return personList;
 
     }
+
+    // 인물 이름 조회
+    public List<PersonDTO> selectPersonByName(String personName) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByName(con, personName);
+
+        JDBC.close(con);
+
+        return personList;
+
+    }
 }

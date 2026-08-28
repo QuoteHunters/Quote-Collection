@@ -100,4 +100,28 @@
         ORDER BY
             p.person_id
     </entry>
+    
+    <entry key="selectPersonByName">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.person_name LIKE ?
+        ORDER BY
+            p.person_name
+    </entry>
 </properties>

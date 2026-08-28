@@ -181,4 +181,43 @@ public class PersonDAO {
         return personList;
     }
 
+    // 인물 이름 조회
+    public List<PersonDTO> selectPersonByName(Connection con, String personName) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<PersonDTO> personList = new ArrayList<>();
+
+        String query = prop.getProperty("selectPersonByName");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 입력된 문자열이 이름의 일부에 포함된 인물을 모두 검색
+            pstmt.setString(1, "%"+ personName + "%");
+
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                PersonDTO person = new PersonDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryId(rset.getInt("country_id"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodId(rset.getInt("period_id"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldId(rset.getInt("field_id"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+        return personList;
+    }
 }

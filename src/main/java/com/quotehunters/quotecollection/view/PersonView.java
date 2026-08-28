@@ -80,6 +80,23 @@ public class PersonView {
         System.out.println("----------------------------------");
     }
 
+    // 인물 이름 검색 결과 출력
+    public void selectPersonByName(List<PersonDTO> personList) {
+
+        System.out.println("\n========== 인물 이름 검색 결과 ==========");
+
+        for (PersonDTO person : personList) {
+            System.out.print("인물 번호 : " + person.getPersonId());
+            System.out.print(" | 인물 이름 : " + person.getPersonName());
+            System.out.print(" | 국가 : " + person.getCountryName());
+            System.out.print(" | 시대 : " + person.getPeriodName());
+            System.out.print(" | 분야 : " + person.getFieldName());
+            System.out.println();
+        }
+
+        System.out.println("----------------------------------");
+    }
+
     // 성공·실패·안내 메세지 출력
     // View : 받은 문장을 보여주기만 하는 역할
     // Controller : 실행 결과에 따라 어떤 문장을 보여줄지 결정
