@@ -121,6 +121,7 @@ public class CountryDAO {
         return result;
     }
 
+
     public int deleteCountry(Connection connection, int countryId) {
         PreparedStatement pstmt = null;
         int result = 0;
@@ -134,6 +135,69 @@ public class CountryDAO {
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Delete Country SQL Exception");
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
+    // 연쇄 삭제 1단계: 해당 국가 소속 인물들의 명언에 달린 즐겨찾기 삭제 (처리 행 수 반환, 0도 정상)
+    public int deleteBookmarkByCountry(Connection connection, int countryId) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = prop.getProperty("deleteBookmarkByCountry");   // XML에서 SQL 꺼내기
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, countryId);          // ? 에 국가 번호 채우기
+
+            result = pstmt.executeUpdate();      // 실행, 지워진 행 수 받기
+        } catch (SQLException e) {
+            System.out.println("Delete Bookmark By Country SQL Exception");
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
+    // 연쇄 삭제 2단계: 해당 국가 소속 인물들의 명언 삭제
+    public int deleteQuoteByCountry(Connection connection, int countryId) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = prop.getProperty("deleteQuoteByCountry");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, countryId);
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Delete Quote By Country SQL Exception");
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
+    // 연쇄 삭제 3단계: 해당 국가 소속 인물 삭제
+    public int deletePersonByCountry(Connection connection, int countryId) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = prop.getProperty("deletePersonByCountry");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, countryId);
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Delete Person By Country SQL Exception");
         } finally {
             JDBC.close(pstmt);
         }
