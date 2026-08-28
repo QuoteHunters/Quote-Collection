@@ -4,4 +4,8 @@
     <entry key="allField">
         SELECT * FROM field
     </entry>
+
+    <entry key="searchById">
+        SELECT * FROM field WHERE field_id = ?;
+    </entry>
 </properties>
