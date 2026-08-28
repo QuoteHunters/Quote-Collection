@@ -22,6 +22,12 @@
         VALUES (?)
     </entry>
 
+    <entry key="updateCountry">
+        UPDATE country
+        SET country_name = ?
+        WHERE country_id = ?
+    </entry>
+
     <!-- 연쇄 삭제 1단계: 해당 국가 소속 인물들의 명언에 달린 즐겨찾기 삭제 -->
     <entry key="deleteBookmarkByCountry">
         DELETE FROM bookmark
@@ -30,8 +36,9 @@
         WHERE person_id IN (
         SELECT person_id FROM person WHERE country_id = ?
         )
-
+        )
     </entry>
+
 
     <!-- 연쇄 삭제 2단계: 해당 국가 소속 인물들의 명언 삭제 -->
     <entry key="deleteQuoteByCountry">
