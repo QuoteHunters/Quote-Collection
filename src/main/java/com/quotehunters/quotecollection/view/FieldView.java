@@ -12,6 +12,38 @@ public class FieldView {
     private final Scanner sc = new Scanner(System.in);
     private final ResultView rv = new ResultView();
 
+//    public void fieldMainView() {
+//        System.out.println("1. 등록");
+//        System.out.println("2. 수정");
+//        System.out.println("3. 삭제");
+//        System.out.println("0. 메인 화면으로");
+//
+//        while (true) {
+//            int num = scv.scannInt(sc, "선택");
+//
+//            switch (num) {
+//                case 0: {
+//                    return;
+//                }
+//                case 1: {
+//                    insertField();
+//                    return;
+//                }
+//                case 2: {
+//                    updateField();
+//                    return;
+//                }
+//                case 3: {
+//                    System.out.println("삭제");
+//                    return;
+//                }
+//                default: {
+//                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
+//                }
+//            }
+//        }
+//    }
+
     public void allFields() {
         List<FieldDTO> fields = fieldController.allFields();
 
@@ -51,7 +83,7 @@ public class FieldView {
         return fields.get(choice - 1).getFieldId();
     }
 
-    public void modifyField() {
+    public void updateField() {
         selectLoop:
         while (true) {
             int id = selectFields();
@@ -97,6 +129,48 @@ public class FieldView {
                 }
             }
 
+        }
+    }
+
+    public void insertField() {
+        System.out.println("---------- 분야 등록 ----------");
+
+        insertLoop:
+        while (true) {
+            String name = scv.scannString(sc, "입력 (0: 뒤로가기)");
+
+            if (name.equals("0")) return;
+
+            if (name.length() > 10) {
+                rv.errorMessage("분야명은 10글자 이하로 입력해주세요.");
+                continue;
+            }
+
+            if (fieldController.existsField(name)) {
+                rv.errorMessage("중복되는 분야가 존재합니다.");
+                continue;
+            }
+
+            while (true) {
+                String check = scv.scannString(sc, "등록 / 수정 / 취소");
+
+                if (check.equals("수정")) continue insertLoop;
+                if (check.equals("취소")) return;
+                if (check.equals("등록")) {
+                    int result = fieldController.insertField(name);
+
+                    if (result > 0) {
+                        rv.successMessage("등록이 완료되었습니다.");
+                        return;
+                    }
+
+                    rv.errorMessage("등록에 실패하였습니다.");
+                    return;
+                }
+
+                rv.errorMessage("등록, 수정, 취소 중 하나를 입력해주세요");
+                continue;
+            }
         }
     }
 }

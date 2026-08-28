@@ -22,6 +22,22 @@ public class FieldService {
         return fields;
     }
 
+    public boolean existsFieldName(String fieldName) {
+        Connection con = getConnection();
+
+        try {
+            if (fieldDAO.existsFieldName(con, fieldName)) {
+                return true;
+            }
+
+            con.close();
+
+            return false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     public boolean existsFieldName(int id, String fieldName) {
         Connection con = getConnection();
 
@@ -41,6 +57,26 @@ public class FieldService {
     public int updateField(int id, String fieldName) {
         Connection con = getConnection();
         int result = fieldDAO.updateField(con, id, fieldName);
+
+        try {
+            if (result > 0) {
+                con.commit();
+            } else {
+                con.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con);
+        }
+
+        return result;
+    }
+
+    public int insertField(String fieldName) {
+        Connection con = getConnection();
+
+        int result = fieldDAO.insertField(con, fieldName);
 
         try {
             if (result > 0) {
