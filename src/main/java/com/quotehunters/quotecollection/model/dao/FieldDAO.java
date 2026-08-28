@@ -1,7 +1,7 @@
-package com.quotehunters.quotecollection.model.dto;
+package com.quotehunters.quotecollection.model.dao;
 
 import com.quotehunters.quotecollection.common.JDBC;
-import com.quotehunters.quotecollection.model.dao.FieldDTO;
+import com.quotehunters.quotecollection.model.dto.FieldDTO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -77,5 +77,49 @@ public class FieldDAO {
         return fieldDTO;
     }
 
+    public boolean existsFieldName(Connection connection, int id, String fieldName) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        String query = prop.getProperty("existsFieldName");
 
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, fieldName);
+            pstmt.setInt(2, id);
+            rset = pstmt.executeQuery();
+
+            if (rset.next()) {
+                if (rset.getInt(1) > 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Exists Field Name SQL Exception");
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return false;
+    }
+
+    public int updateField(Connection connection, int id, String fieldName) {
+        PreparedStatement pstmt = null;
+        String query = prop.getProperty("updateField");
+        int result = 0;
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, fieldName);
+            pstmt.setInt(2, id);
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Update Fields SQL Exception");
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
 }

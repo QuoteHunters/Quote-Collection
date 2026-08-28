@@ -1,4 +1,4 @@
-package com.quotehunters.quotecollection.model.dao;
+package com.quotehunters.quotecollection.model.dto;
 
 public class FieldDTO {
     private int fieldId;
