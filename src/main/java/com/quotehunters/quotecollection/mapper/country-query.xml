@@ -2,7 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <!-- 국가 전체 조회: country 테이블의 모든 줄을 번호 순으로 가져온다 -->
+
     <entry key="selectAllCountry">
         SELECT country_id, country_name
         FROM country
