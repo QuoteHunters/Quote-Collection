@@ -127,5 +127,49 @@ public class CountryView {
             }
         }
     }
+    // [국가 삭제] 명세 Country-004: 목록 → 선택 → 1차 경고 → 2차 경고(연쇄 삭제) → [완료/재선택/취소]
+    public void removeCountry() {
+        selectLoop:
+        while (true) {
+
+            int id = selectCountry();
+            if (id == 0) return;                           // 뒤로가기면 이전 메뉴로
+
+            // --- 1차 경고 (명세 S4~S5-1) ---
+            while (true) {
+                String first = scv.scannString(sc, "선택한 국가를 삭제하시겠습니까? 예 / 아니오");
+
+                if (first.equals("아니오")) return;        // DELETE 없이 이전 메뉴로
+                if (first.equals("예")) break;             // 다음 경고로 진행
+
+                rv.errorMessage("예, 아니오 중 하나를 입력해주세요.");   // 그 외 입력 시
+            }
+
+            // --- 2차 경고: 연쇄 삭제 안내 (명세 S6) ---
+            System.out.println("해당 국가를 삭제할 경우 해당 국가에 속한 모든 인물의 정보(명언 포함)가 삭제됩니다.");
+
+            while (true) {
+                String second = scv.scannString(sc, "그래도 삭제하시겠습니까? 예 / 재선택 / 아니오");
+
+                if (second.equals("예")) {                 // [완료] 삭제 실행
+                    String message = countryController.removeCountry(id);
+
+                    if (message.equals("삭제 되었습니다.")) {
+                        rv.successMessage(message);        // 명세 S8-1: 완료 메시지 출력
+                        return;                            // 메뉴로 복귀
+                    }
+
+                    rv.errorMessage(message);              // 실패 시 사유 출력
+                    continue selectLoop;
+                }
+
+                if (second.equals("재선택")) continue selectLoop;   // [재선택] 대상 선택부터 다시
+
+                if (second.equals("아니오")) return;       // [취소] DELETE 없이 이전 메뉴로
+
+                rv.errorMessage("예, 재선택, 아니오 중 하나를 입력해주세요.");
+            }
+        }
+    }
 }
 
