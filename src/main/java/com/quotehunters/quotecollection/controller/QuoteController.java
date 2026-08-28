@@ -21,4 +21,15 @@ public class QuoteController {
             resultView.printQuoteList(quoteList);
         }
     }
+
+    public void selectTodayQuote() {
+
+        QuoteDTO quote = quoteService.selectTodayQuote();
+
+        if (quote == null) {
+            resultView.printMessage("등록된 명언이 없습니다.");
+        } else {
+            resultView.printTodayQuote(quote);
+        }
+    }
 }

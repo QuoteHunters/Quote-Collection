@@ -57,22 +57,15 @@ public class QuoteDAO {
             // 조회 결과가 존재하는 동안 한 행씩 반복
             while (rset.next()) {
 
-                // 현재 행의 데이터를 담을 QuoteDTO 객체 생성
-                QuoteDTO quote = new QuoteDTO();
-
-                // ResultSet의 각 컬럼 값을 DTO에 저장
-                quote.setQuoteId(rset.getInt("quote_id"));
-                quote.setQuoteContent(rset.getString("quote_content"));
-                quote.setPersonName(rset.getString("person_name"));
-                quote.setThemeName(rset.getString("theme_name"));
-
+                // converToQuote - 현재 행의 데이터를 담을 QuoteDTO 객체 생성
+                //  + ResultSet의 각 컬럼 값을 DTO에 저장
                 // 완성된 QuoteDTO를 조회 결과 리스트에 추가
-                quoteList.add(quote);
+                quoteList.add(convertToQuote(rset));
             }
 
         } catch (SQLException e) {
             // SQL 실행 중 문제가 발생한 경우 오류 출력
-            e.printStackTrace();
+            throw new RuntimeException("전체 명언 조회 중 오류가 발생했습니다.", e);
 
         } finally {
             // 사용이 끝난 DB 자원을 반환
@@ -83,4 +76,64 @@ public class QuoteDAO {
         // 조회된 전체 명언 목록을 Service에 반환
         return quoteList;
     }
+
+    public int selectQuoteCount(Connection con) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        int count = 0;
+
+        String query = prop.getProperty("selectQuoteCount");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            rset = pstmt.executeQuery();
+
+            if (rset.next()) {
+                count = rset.getInt(1);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 개수 조회 중 오류가 발생했습니다.", e);
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return count;
+    }
+    public QuoteDTO selectTodayQuote(Connection con, int offset) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        QuoteDTO quote = null;
+        String query = prop.getProperty("selectTodayQuote");
+
+        try{
+            pstmt =con.prepareStatement(query);
+            pstmt.setInt(1, offset);
+            rset = pstmt.executeQuery();
+            if(rset.next()){
+                quote = convertToQuote(rset);
+        }
+            }catch (SQLException e){
+            throw new RuntimeException("오늘의 명언 조회 중 오류가 발생했습니다.", e);
+        }finally{
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return quote;
+    }
+
+    private QuoteDTO convertToQuote(ResultSet rset) throws SQLException {
+
+        QuoteDTO quote = new QuoteDTO();
+        quote.setQuoteId(rset.getInt("quote_id"));
+        quote.setQuoteContent(rset.getString("quote_content"));
+        quote.setPersonName(rset.getString("person_name"));
+        quote.setThemeName(rset.getString("theme_name"));
+
+        return quote;
+    }
+
 }

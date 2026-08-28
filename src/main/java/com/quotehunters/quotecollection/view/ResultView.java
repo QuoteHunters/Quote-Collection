@@ -22,4 +22,14 @@ public class ResultView {
     public void printMessage(String message) {
         System.out.println(">> " + message);
     }
+
+    public void printTodayQuote(QuoteDTO quote) {
+
+        System.out.println();
+        System.out.println("========== 오늘의 명언 ==========");
+        System.out.println("명언 : " + quote.getQuoteContent());
+        System.out.println("인물 : " + quote.getPersonName());
+        System.out.println("주제 : " + quote.getThemeName());
+        System.out.println("================================");
+    }
 }

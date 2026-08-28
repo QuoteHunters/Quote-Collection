@@ -5,6 +5,7 @@ import com.quotehunters.quotecollection.model.dao.QuoteDAO;
 import com.quotehunters.quotecollection.model.dto.QuoteDTO;
 
 import java.sql.Connection;
+import java.time.LocalDate;
 import java.util.List;
 
 public class QuoteService {
@@ -28,4 +29,21 @@ public class QuoteService {
         // 조회된 명언 목록을 Controller에 반환
         return quoteList;
     }
+    public QuoteDTO selectTodayQuote(){
+        Connection con = JDBC.getConnection();
+        int quoteCount = quoteDAO.selectQuoteCount(con);
+        if(quoteCount == 0){
+            JDBC.close(con);
+            return null;
+        }
+        int dayOfYear = LocalDate.now().getDayOfYear();
+        int offset = (dayOfYear - 1) % quoteCount;
+
+        QuoteDTO quote = quoteDAO.selectTodayQuote(con, offset);
+
+        JDBC.close(con);
+
+        return quote;
+    }
+
 }
