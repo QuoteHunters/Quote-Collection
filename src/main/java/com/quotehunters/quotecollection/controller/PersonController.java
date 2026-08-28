@@ -1,5 +1,6 @@
 package com.quotehunters.quotecollection.controller;
 
+import com.quotehunters.quotecollection.common.JDBC;
 import com.quotehunters.quotecollection.model.dto.PersonDTO;
 import com.quotehunters.quotecollection.model.service.PersonService;
 import com.quotehunters.quotecollection.view.PersonView;
@@ -27,4 +28,15 @@ public class PersonController {
 
     }
 
+    // 국가별 인물 조회
+    public void selectPersonByCountry(int countryId) {
+        
+        List<PersonDTO> personList = personService.selectPersonByCountry(countryId);
+        
+        if (personList.isEmpty()) {
+            personView.printMessage("해당 국가에 등록된 인물이 없습니다.");
+        } else {
+           personView.selectPersonByCountry(personList);
+        }
+    }
 }

@@ -22,4 +22,17 @@ public class PersonService {
 
         return personList;
     }
+
+    // 국가별 인물 조회
+    public List<PersonDTO> selectPersonByCountry(int countryId) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByCountry(con, countryId);
+
+        JDBC.close(con);
+
+        return personList;
+
+    }
 }
