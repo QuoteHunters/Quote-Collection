@@ -35,7 +35,6 @@ public class PersonView {
         for (PersonDTO person : personList) {
             System.out.print("인물 번호 : " + person.getPersonId());
             System.out.print(" | 인물 이름 : " + person.getPersonName());
-            System.out.print(" | 국가 : " + person.getCountryName());
             System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
@@ -55,7 +54,6 @@ public class PersonView {
             System.out.print("인물 번호 : " + person.getPersonId());
             System.out.print(" | 인물 이름 : " + person.getPersonName());
             System.out.print(" | 국가 : " + person.getCountryName());
-            System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
         }
@@ -65,6 +63,7 @@ public class PersonView {
 
     // 분야별 인물 조회
     public void selectPersonByField(List<PersonDTO> personList) {
+
         // 분야별 조회 또한 모두 같은 시대에 속한 인물들이므로 제목에 한 번만 출력
         String fieldName = personList.get(0).getFieldName();
 
