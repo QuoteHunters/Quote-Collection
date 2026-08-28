@@ -24,11 +24,18 @@ public class FieldService {
 
     public boolean existsFieldName(int id, String fieldName) {
         Connection con = getConnection();
-        if (fieldDAO.existsFieldName(con, id, fieldName)) {
-            return true;
-        }
 
-        return false;
+        try {
+            if (fieldDAO.existsFieldName(con, id, fieldName)) {
+                return true;
+            }
+
+            con.close();
+
+            return false;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public int updateField(int id, String fieldName) {
