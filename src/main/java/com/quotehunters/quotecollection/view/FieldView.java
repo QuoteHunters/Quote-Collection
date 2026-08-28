@@ -13,12 +13,13 @@ public class FieldView {
     private final ResultView rv = new ResultView();
 
     public void fieldMainView() {
-        System.out.println("1. 등록");
-        System.out.println("2. 수정");
-        System.out.println("3. 삭제");
-        System.out.println("0. 메인 화면으로");
-
         while (true) {
+            System.out.println("1. 조회");
+            System.out.println("2. 등록");
+            System.out.println("3. 수정");
+            System.out.println("4. 삭제");
+            System.out.println("0. 메인 화면으로");
+
             int num = scv.scannInt(sc, "선택");
 
             switch (num) {
@@ -26,19 +27,24 @@ public class FieldView {
                     return;
                 }
                 case 1: {
-                    insertField();
-                    return;
+                    allFields();
+                    break;
                 }
                 case 2: {
-                    updateField();
-                    return;
+                    insertField();
+                    break;
                 }
                 case 3: {
+                    updateField();
+                    break;
+                }
+                case 4: {
                     System.out.println("삭제");
-                    return;
+                    break;
                 }
                 default: {
                     rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
+                    break;
                 }
             }
         }
