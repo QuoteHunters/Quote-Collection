@@ -38,7 +38,7 @@ public class FieldView {
             choice = scv.scannInt(sc, "선택 (0: 뒤로가기)");
             if (choice == 0) break;
 
-            if (fields.size() < choice) {
+            if (choice < 0 || fields.size() < choice) {
                 rv.errorMessage("메뉴에 있는 번호를 선택해주세요");
                 continue;
             }
@@ -52,43 +52,46 @@ public class FieldView {
     }
 
     public void modifyField() {
-        int id = selectFields();
-
-        if (id == 0) return;
-
-        modifyLoop:
+        selectLoop:
         while (true) {
-            String changeName = scv.scannString(sc, "변경할 분야명 입력 (0: 뒤로가기)");
-            if (changeName.equals("0")) {
-                modifyField();
-                return;
-            }
+            int id = selectFields();
 
-            if (fieldController.existsField(id, changeName)) {
-                rv.errorMessage("중복되는 분야가 존재합니다.");
-                continue;
-            }
+            if (id == 0) return;
 
+            modifyLoop:
             while (true) {
-                String check = scv.scannString(sc, "정말 수정하시겠습니까? 예 / 재수정 / 아니오");
+                String changeName = scv.scannString(sc, "변경할 분야명 입력 (0: 뒤로가기)");
+                if (changeName.equals("0")) {
+                    continue selectLoop;
+                }
 
-                if (check.equals("예")) {
-                    int result = fieldController.updateField(id, changeName);
-                    if (result > 0) {
-                        rv.successMessage("수정이 완료되었습니다.");
+                if (fieldController.existsField(id, changeName)) {
+                    rv.errorMessage("중복되는 분야가 존재합니다.");
+                    continue;
+                }
+
+                while (true) {
+                    String check = scv.scannString(sc, "정말 수정하시겠습니까? 예 / 재수정 / 아니오");
+
+                    if (check.equals("예")) {
+                        int result = fieldController.updateField(id, changeName);
+                        if (result > 0) {
+                            rv.successMessage("수정이 완료되었습니다.");
+                            return;
+                        }
+
+                        rv.errorMessage("수정에 실패하였습니다. 다시 시도해주세요");
                         return;
                     }
 
-                    rv.errorMessage("수정에 실패하였습니다. 다시 시도해주세요");
-                    return;
+                    if (check.equals("재수정")) continue modifyLoop;
+
+                    if (check.equals("아니오")) return;
+
+                    rv.errorMessage("예, 재수정, 아니오 중 하나를 입력해주세요.");
                 }
-
-                if (check.equals("재수정")) continue modifyLoop;
-
-                if (check.equals("아니오")) return;
-
-                rv.errorMessage("예, 재수정, 아니오 중 하나를 입력해주세요.");
             }
+
         }
     }
 }
