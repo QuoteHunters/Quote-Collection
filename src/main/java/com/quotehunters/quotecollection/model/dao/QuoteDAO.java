@@ -135,5 +135,31 @@ public class QuoteDAO {
 
         return quote;
     }
+    public List<QuoteDTO> searchQuotesByKeyword(Connection con, String keyword) {
 
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        List<QuoteDTO> quoteList = new ArrayList<>();
+
+        String query = prop.getProperty("searchQuotesByKeyword");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, keyword);
+
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                quoteList.add(convertToQuote(rset));
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("키워드별 명언 조회 중 오류가 발생했습니다.", e);
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return quoteList;
+    }
 }

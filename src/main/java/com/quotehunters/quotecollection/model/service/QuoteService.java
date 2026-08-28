@@ -45,5 +45,15 @@ public class QuoteService {
 
         return quote;
     }
+    // 키워드 검색에 필요한 Connection을 관리하고 검색 결과를 반환한다.
+    public List<QuoteDTO> searchQuotesByKeyword(String keyword) {
 
+        Connection con = JDBC.getConnection();
+
+        try {
+            return quoteDAO.searchQuotesByKeyword(con, keyword);
+        } finally {
+            JDBC.close(con);
+        }
+    }
 }
