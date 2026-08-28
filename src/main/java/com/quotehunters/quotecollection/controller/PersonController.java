@@ -51,4 +51,15 @@ public class PersonController {
         }
 
     }
+
+    // 분야별 인물 조회
+    public void selectPersonByField(int fieldId) {
+        List<PersonDTO> personList = personService.selectPersonByField(fieldId);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("해당 분야에 등록된 인물이 없습니다.");
+        } else {
+            personView.selectPersonByField(personList);
+        }
+    }
 }

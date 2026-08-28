@@ -138,7 +138,47 @@ public class PersonDAO {
             JDBC.close(rset);
             JDBC.close(pstmt);
         }
+        return personList;
+    }
+
+    // 분야별 인물 조회
+    public List<PersonDTO> selectPersonByField(Connection con, int fieldId) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<PersonDTO> personList = new ArrayList<>();
+
+        String query = prop.getProperty("selectPersonByField");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, fieldId);
+
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                PersonDTO person = new PersonDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryId(rset.getInt("country_id"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodId(rset.getInt("period_id"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldId(rset.getInt("field_id"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
 
         return personList;
     }
+
 }
