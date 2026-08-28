@@ -1,0 +1,31 @@
+package com.quotehunters.quotecollection.model.service;
+
+import com.quotehunters.quotecollection.common.JDBC;
+import com.quotehunters.quotecollection.model.dao.QuoteDAO;
+import com.quotehunters.quotecollection.model.dto.QuoteDTO;
+
+import java.sql.Connection;
+import java.util.List;
+
+public class QuoteService {
+
+    // 실제 DB 조회 작업을 수행할 DAO 객체
+    private QuoteDAO quoteDAO = new QuoteDAO();
+
+    // 전체 명언 목록을 조회하여 Controller에 반환
+    public List<QuoteDTO> selectAllQuotes() {
+
+        // DB와 연결
+        Connection con = JDBC.getConnection();
+
+        // 생성한 Connection을 DAO에 전달하여 전체 명언 조회
+        // DAO에서 조회 결과를 List<QuoteDTO> 형태로 반환한다.
+        List<QuoteDTO> quoteList = quoteDAO.selectAllQuotes(con);
+
+        // DB 연결 사용이 끝났으므로 Connection 종료
+        JDBC.close(con);
+
+        // 조회된 명언 목록을 Controller에 반환
+        return quoteList;
+    }
+}
