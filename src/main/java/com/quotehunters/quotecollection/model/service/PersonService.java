@@ -35,4 +35,17 @@ public class PersonService {
         return personList;
 
     }
+
+    // 시대별 인물 조회
+    public List<PersonDTO> selectPersonByPeriod(int periodId) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByPeriod(con, periodId);
+
+        JDBC.close(con);
+
+        return personList;
+
+    }
 }

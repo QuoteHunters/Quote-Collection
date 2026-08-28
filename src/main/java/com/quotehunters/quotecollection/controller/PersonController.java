@@ -39,4 +39,16 @@ public class PersonController {
            personView.selectPersonByCountry(personList);
         }
     }
+
+    // 시대별 인물 조회
+    public void selectPersonByPeriod(int periodId) {
+        List<PersonDTO> personList = personService.selectPersonByPeriod(periodId);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("해당 시대에 등록된 인물이 없습니다.");
+        } else {
+            personView.selectPersonByPeriod(personList);
+        }
+
+    }
 }
