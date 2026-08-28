@@ -60,5 +60,30 @@ public class CountryService {
 
         return result;
     }
+    // [삭제] 연쇄 삭제 4단계를 하나의 트랜잭션으로 처리(bookmark→quote→person→country 순서로 삭제).
+    // 성공하면 1, 실패하면 0 반환
+
+    public int deleteCountry(int countryId) {
+        Connection con = getConnection();
+        int result = 0;
+
+        try {
+            countryDAO.deleteBookmarkByCountry(con, countryId);   // ① 즐겨찾기 삭제
+            countryDAO.deleteQuoteByCountry(con, countryId);      // ② 명언 삭제
+            countryDAO.deletePersonByCountry(con, countryId);     // ③ 인물 삭제
+            result = countryDAO.deleteCountry(con, countryId);    // ④ 국가 삭제
+
+            if (result > 0) {                 // 국가가 실제로 지워졌으면
+                commit(con);                  // 4개 삭제를 한꺼번에 확정
+            } else {                          // 국가가 안 지워졌으면
+                rollback(con);                // ①②③까지 포함해 전부 취소
+            }
+        } finally {
+            close(con);
+        }
+
+        return result;
+    }
+
 
 }
