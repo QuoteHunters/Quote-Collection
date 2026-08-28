@@ -35,6 +35,7 @@ public class PersonView {
         for (PersonDTO person : personList) {
             System.out.print("인물 번호 : " + person.getPersonId());
             System.out.print(" | 인물 이름 : " + person.getPersonName());
+            System.out.print(" | 국가 : " + person.getCountryName());
             System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
