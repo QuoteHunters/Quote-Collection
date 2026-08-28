@@ -65,6 +65,11 @@ public class FieldView {
                     continue selectLoop;
                 }
 
+                if (changeName.length() > 10) {
+                    rv.errorMessage("분야명은 10글자 이하로 입력해주세요.");
+                    continue;
+                }
+
                 if (fieldController.existsField(id, changeName)) {
                     rv.errorMessage("중복되는 분야가 존재합니다.");
                     continue;
