@@ -23,4 +23,6 @@ public class FieldController {
     public int updateField(int id, String fieldName) { return fieldService.updateField(id, fieldName); }
 
     public int insertField(String fieldName) { return fieldService.insertField(fieldName); }
+
+    public int deleteField(int id) { return fieldService.deleteField(id); }
 }

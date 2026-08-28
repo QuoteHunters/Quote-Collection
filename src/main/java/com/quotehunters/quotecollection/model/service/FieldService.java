@@ -95,4 +95,24 @@ public class FieldService {
 
         return result;
     }
+
+    public int deleteField(int id) {
+        Connection con = getConnection();
+
+        int result = fieldDAO.deleteField(con, id);
+
+        try {
+            if (result > 0) {
+                con.commit();
+            } else {
+                con.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con);
+        }
+
+        return result;
+    }
 }

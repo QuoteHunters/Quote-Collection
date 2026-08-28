@@ -168,4 +168,23 @@ public class FieldDAO {
 
         return result;
     }
+
+    public int deleteField(Connection connection, int id) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+        String query = prop.getProperty("deleteField");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Delete Fields SQL Exception");
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
 }
