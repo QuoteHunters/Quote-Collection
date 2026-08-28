@@ -44,7 +44,7 @@ public class FieldDAO {
                 fields.add(fieldDTO);
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("All Fields SQL Exception");
         } finally {
             JDBC.close(rset);
             JDBC.close(stmt);
