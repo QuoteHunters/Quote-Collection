@@ -13,6 +13,11 @@ public class FieldView {
         List<FieldDTO> fields = fieldController.allFields();
 
         System.out.println("----------------------------");
+        if (fields.isEmpty()) {
+            System.out.println("조회 결과 없음");
+            return;
+        }
+
         for (int i = 1; i < fields.size(); i++) {
             System.out.println(i + ". " + fields.get(i).getFieldName());
         }
