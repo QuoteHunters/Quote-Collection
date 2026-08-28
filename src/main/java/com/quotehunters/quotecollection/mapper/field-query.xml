@@ -24,4 +24,8 @@
     <entry key="insertField">
         INSERT INTO field (field_name) VALUES (?)
     </entry>
+
+    <entry key="deleteField">
+        DELETE FROM field WHERE field_id = ?
+    </entry>
 </properties>
