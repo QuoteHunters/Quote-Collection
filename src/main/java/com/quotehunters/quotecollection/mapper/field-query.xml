@@ -6,14 +6,22 @@
     </entry>
 
     <entry key="searchById">
-        SELECT * FROM field WHERE field_id = ?;
+        SELECT * FROM field WHERE field_id = ?
     </entry>
 
     <entry key="existsFieldName">
-        select COUNT(*) FROM field WHERE field_name = ? AND field_id != ?;
+        select COUNT(*) FROM field WHERE field_name = ?
+    </entry>
+
+    <entry key="existsFieldNameExceptId">
+        select COUNT(*) FROM field WHERE field_name = ? AND field_id != ?
     </entry>
 
     <entry key="updateField">
-        UPDATE field SET field_name = ? WHERE field_id = ?;
+        UPDATE field SET field_name = ? WHERE field_id = ?
+    </entry>
+    
+    <entry key="insertField">
+        INSERT INTO field (field_name) VALUES (?)
     </entry>
 </properties>
