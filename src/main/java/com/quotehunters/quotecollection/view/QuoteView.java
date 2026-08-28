@@ -4,7 +4,7 @@ import com.quotehunters.quotecollection.model.dto.QuoteDTO;
 
 import java.util.List;
 
-public class ResultView {
+public class QuoteView {
 
     public void printQuoteList(List<QuoteDTO> quoteList) {
 

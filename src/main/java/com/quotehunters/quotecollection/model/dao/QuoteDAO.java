@@ -16,71 +16,33 @@ import java.util.Properties;
 public class QuoteDAO {
 
     // XML에 작성된 SQL을 key-value 형태로 저장할 객체
-    private Properties prop = new Properties();
+    private final Properties prop = new Properties();
 
     public QuoteDAO() {
         try {
             // quote-query.xml 파일을 읽어서 prop에 SQL문을 저장
-            // 이후 key값을 이용해 필요한 SQL을 꺼내서 사용한다.
             prop.loadFromXML(new FileInputStream(
                     "src/main/java/com/quotehunters/quotecollection/mapper/quote-query.xml"
             ));
         } catch (IOException e) {
-            // XML 파일을 읽지 못했을 경우 오류 출력
-            e.printStackTrace();
+            throw new RuntimeException("SQL 설정 파일을 불러오는 중 오류가 발생했습니다.", e);
         }
     }
 
-    // DB에서 전체 명언을 조회하여 QuoteDTO 목록으로 반환
-    // Connection은 Service에서 생성한 뒤 전달받는다.
+    // 전체 명언 조회
     public List<QuoteDTO> selectAllQuotes(Connection con) {
 
-        // SQL을 실행하기 위한 객체
-        PreparedStatement pstmt = null;
-
-        // SELECT 실행 결과를 저장할 객체
-        ResultSet rset = null;
-
-        // 조회된 명언들을 저장할 빈 리스트
-        List<QuoteDTO> quoteList = new ArrayList<>();
-
-        // XML에서 selectAllQuotes라는 key를 가진 SQL문을 가져온다.
         String query = prop.getProperty("selectAllQuotes");
 
-        try {
-            // 전달받은 DB 연결을 이용해 SQL 실행 준비
-            pstmt = con.prepareStatement(query);
-
-            // SELECT문 실행 후 결과를 ResultSet으로 받는다.
-            rset = pstmt.executeQuery();
-
-            // 조회 결과가 존재하는 동안 한 행씩 반복
-            while (rset.next()) {
-
-                // converToQuote - 현재 행의 데이터를 담을 QuoteDTO 객체 생성
-                //  + ResultSet의 각 컬럼 값을 DTO에 저장
-                // 완성된 QuoteDTO를 조회 결과 리스트에 추가
-                quoteList.add(convertToQuote(rset));
-            }
-
-        } catch (SQLException e) {
-            // SQL 실행 중 문제가 발생한 경우 오류 출력
-            throw new RuntimeException("전체 명언 조회 중 오류가 발생했습니다.", e);
-
-        } finally {
-            // 사용이 끝난 DB 자원을 반환
-            JDBC.close(rset);
-            JDBC.close(pstmt);
-        }
-
-        // 조회된 전체 명언 목록을 Service에 반환
-        return quoteList;
+        return selectQuoteList(con, query);
     }
 
+    // 전체 명언 개수 조회
     public int selectQuoteCount(Connection con) {
 
         PreparedStatement pstmt = null;
         ResultSet rset = null;
+
         int count = 0;
 
         String query = prop.getProperty("selectQuoteCount");
@@ -95,6 +57,7 @@ public class QuoteDAO {
 
         } catch (SQLException e) {
             throw new RuntimeException("명언 개수 조회 중 오류가 발생했습니다.", e);
+
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -102,64 +65,134 @@ public class QuoteDAO {
 
         return count;
     }
+
+    // 오늘의 명언 조회
     public QuoteDTO selectTodayQuote(Connection con, int offset) {
-        PreparedStatement pstmt = null;
-        ResultSet rset = null;
-        QuoteDTO quote = null;
+
         String query = prop.getProperty("selectTodayQuote");
 
-        try{
-            pstmt =con.prepareStatement(query);
-            pstmt.setInt(1, offset);
-            rset = pstmt.executeQuery();
-            if(rset.next()){
-                quote = convertToQuote(rset);
-        }
-            }catch (SQLException e){
-            throw new RuntimeException("오늘의 명언 조회 중 오류가 발생했습니다.", e);
-        }finally{
-            JDBC.close(rset);
-            JDBC.close(pstmt);
-        }
-
-        return quote;
+        return selectQuote(con, query, offset);
     }
 
-    private QuoteDTO convertToQuote(ResultSet rset) throws SQLException {
-
-        QuoteDTO quote = new QuoteDTO();
-        quote.setQuoteId(rset.getInt("quote_id"));
-        quote.setQuoteContent(rset.getString("quote_content"));
-        quote.setPersonName(rset.getString("person_name"));
-        quote.setThemeName(rset.getString("theme_name"));
-
-        return quote;
-    }
-    public List<QuoteDTO> searchQuotesByKeyword(Connection con, String keyword) {
-
-        PreparedStatement pstmt = null;
-        ResultSet rset = null;
-        List<QuoteDTO> quoteList = new ArrayList<>();
+    // 명언 내용 키워드 검색
+    public List<QuoteDTO> searchQuotesByKeyword(
+            Connection con,
+            String keyword
+    ) {
 
         String query = prop.getProperty("searchQuotesByKeyword");
 
-        try {
-            pstmt = con.prepareStatement(query);
-            pstmt.setString(1, keyword);
+        return selectQuoteList(con, query, keyword);
+    }
 
+    // 인물 이름 검색
+    public List<QuoteDTO> searchQuotesByPerson(
+            Connection con,
+            String personName
+    ) {
+
+        String query = prop.getProperty("searchQuotesByPerson");
+
+        return selectQuoteList(con, query, personName);
+    }
+
+    // 여러 개의 명언을 조회하는 공통 메서드
+    private List<QuoteDTO> selectQuoteList(
+            Connection con,
+            String query,
+            Object... params
+    ) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<QuoteDTO> quoteList = new ArrayList<>();
+
+        try {
+            // SQL 실행 준비
+            pstmt = con.prepareStatement(query);
+
+            // SQL에 필요한 파라미터 설정
+            setParameters(pstmt, params);
+
+            // SELECT 실행
             rset = pstmt.executeQuery();
 
+            // 조회 결과를 QuoteDTO로 변환하여 리스트에 저장
             while (rset.next()) {
                 quoteList.add(convertToQuote(rset));
             }
 
         } catch (SQLException e) {
-            throw new RuntimeException("키워드별 명언 조회 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("명언 목록 조회 중 오류가 발생했습니다.", e);
+
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
         }
 
         return quoteList;
+    }
+
+    // 하나의 명언을 조회하는 공통 메서드
+    private QuoteDTO selectQuote(
+            Connection con,
+            String query,
+            Object... params
+    ) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        QuoteDTO quote = null;
+
+        try {
+            // SQL 실행 준비
+            pstmt = con.prepareStatement(query);
+
+            // SQL에 필요한 파라미터 설정
+            setParameters(pstmt, params);
+
+            // SELECT 실행
+            rset = pstmt.executeQuery();
+
+            // 조회 결과가 존재하면 QuoteDTO로 변환
+            if (rset.next()) {
+                quote = convertToQuote(rset);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 조회 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return quote;
+    }
+
+    // PreparedStatement의 ? 자리에 전달받은 값을 순서대로 설정
+    private void setParameters(
+            PreparedStatement pstmt,
+            Object... params
+    ) throws SQLException {
+
+        for (int i = 0; i < params.length; i++) {
+            pstmt.setObject(i + 1, params[i]);
+        }
+    }
+
+    // 현재 ResultSet 행을 QuoteDTO 객체로 변환
+    private QuoteDTO convertToQuote(ResultSet rset) throws SQLException {
+
+        QuoteDTO quote = new QuoteDTO();
+
+        quote.setQuoteId(rset.getInt("quote_id"));
+        quote.setQuoteContent(rset.getString("quote_content"));
+        quote.setPersonName(rset.getString("person_name"));
+        quote.setThemeName(rset.getString("theme_name"));
+
+        return quote;
     }
 }

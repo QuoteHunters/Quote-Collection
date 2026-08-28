@@ -56,4 +56,15 @@ public class QuoteService {
             JDBC.close(con);
         }
     }
+    // 인물 이름으로 명언을 검색하고 Connection을 반환한다.
+    public List<QuoteDTO> searchQuotesByPerson(String personName) {
+
+        Connection con = JDBC.getConnection();
+
+        try {
+            return quoteDAO.searchQuotesByPerson(con, personName);
+        } finally {
+            JDBC.close(con);
+        }
+    }
 }

@@ -51,5 +51,20 @@
         ORDER BY q.quote_id
     </entry>
 
+    <entry key="searchQuotesByPerson">
+        SELECT
+            q.quote_id,
+            q.quote_content,
+            p.person_name,
+            t.theme_name
+        FROM quote q
+        JOIN person p
+            ON q.person_id = p.person_id
+        JOIN theme t
+            ON q.theme_id = t.theme_id
+        WHERE p.person_name LIKE CONCAT('%', ?, '%')
+        ORDER BY q.quote_id
+    </entry>
+
 
 </properties>
