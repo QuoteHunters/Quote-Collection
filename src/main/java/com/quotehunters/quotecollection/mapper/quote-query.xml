@@ -1,4 +1,70 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+    <entry key="selectAllQuotes">
+        SELECT
+            q.quote_id,
+            q.quote_content,
+            p.person_name,
+            t.theme_name
+        FROM quote q
+        JOIN person p
+            ON q.person_id = p.person_id
+        JOIN theme t
+            ON q.theme_id = t.theme_id
+        ORDER BY q.quote_id;
+
+    </entry>
+
+    <entry key="selectQuoteCount">
+        SELECT COUNT(*)
+        FROM quote
+    </entry>
+
+    <entry key="selectTodayQuote">
+    SELECT
+        q.quote_id,
+        q.quote_content,
+        p.person_name,
+        t.theme_name
+    FROM quote q
+    JOIN person p
+        ON q.person_id = p.person_id
+    JOIN theme t
+        ON q.theme_id = t.theme_id
+    ORDER BY q.quote_id
+    LIMIT 1 OFFSET ?
+    </entry>
+
+    <entry key="searchQuotesByKeyword">
+        SELECT
+            q.quote_id,
+            q.quote_content,
+            p.person_name,
+            t.theme_name
+        FROM quote q
+        JOIN person p
+            ON q.person_id = p.person_id
+        JOIN theme t
+            ON q.theme_id = t.theme_id
+        WHERE q.quote_content LIKE CONCAT('%', ?, '%')
+        ORDER BY q.quote_id
+    </entry>
+
+    <entry key="searchQuotesByPerson">
+        SELECT
+            q.quote_id,
+            q.quote_content,
+            p.person_name,
+            t.theme_name
+        FROM quote q
+        JOIN person p
+            ON q.person_id = p.person_id
+        JOIN theme t
+            ON q.theme_id = t.theme_id
+        WHERE p.person_name LIKE CONCAT('%', ?, '%')
+        ORDER BY q.quote_id
+    </entry>
+
+
 </properties>
