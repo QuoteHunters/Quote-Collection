@@ -71,4 +71,14 @@ public class CountryController {
             return "수정에 실패했습니다.";
         }
     }
+    // [삭제] 연쇄 삭제 실행
+    public String removeCountry(int countryId) {
+        int result = countryService.deleteCountry(countryId);   // 트랜잭션 삭제 실행
+
+        if (result > 0) {
+            return "삭제 되었습니다.";      // 명세 S8-1의 완료 메시지
+        } else {
+            return "삭제에 실패했습니다.";
+        }
+    }
 }
