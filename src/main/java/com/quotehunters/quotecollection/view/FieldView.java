@@ -12,37 +12,37 @@ public class FieldView {
     private final Scanner sc = new Scanner(System.in);
     private final ResultView rv = new ResultView();
 
-//    public void fieldMainView() {
-//        System.out.println("1. 등록");
-//        System.out.println("2. 수정");
-//        System.out.println("3. 삭제");
-//        System.out.println("0. 메인 화면으로");
-//
-//        while (true) {
-//            int num = scv.scannInt(sc, "선택");
-//
-//            switch (num) {
-//                case 0: {
-//                    return;
-//                }
-//                case 1: {
-//                    insertField();
-//                    return;
-//                }
-//                case 2: {
-//                    updateField();
-//                    return;
-//                }
-//                case 3: {
-//                    System.out.println("삭제");
-//                    return;
-//                }
-//                default: {
-//                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
-//                }
-//            }
-//        }
-//    }
+    public void fieldMainView() {
+        System.out.println("1. 등록");
+        System.out.println("2. 수정");
+        System.out.println("3. 삭제");
+        System.out.println("0. 메인 화면으로");
+
+        while (true) {
+            int num = scv.scannInt(sc, "선택");
+
+            switch (num) {
+                case 0: {
+                    return;
+                }
+                case 1: {
+                    insertField();
+                    return;
+                }
+                case 2: {
+                    updateField();
+                    return;
+                }
+                case 3: {
+                    System.out.println("삭제");
+                    return;
+                }
+                default: {
+                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
+                }
+            }
+        }
+    }
 
     public void allFields() {
         List<FieldDTO> fields = fieldController.allFields();
