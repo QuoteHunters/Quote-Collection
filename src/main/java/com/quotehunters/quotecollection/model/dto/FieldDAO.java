@@ -5,10 +5,7 @@ import com.quotehunters.quotecollection.model.dao.FieldDTO;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -52,4 +49,33 @@ public class FieldDAO {
 
         return fields;
     }
+
+    public FieldDTO searchFieldById(Connection connection, int id) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        FieldDTO fieldDTO = new FieldDTO();
+
+        String query = prop.getProperty("searchById");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+
+            rset = pstmt.executeQuery();
+
+            if (rset.next()) {
+                fieldDTO.setFieldId(rset.getInt("field_id"));
+                fieldDTO.setFieldName(rset.getString("field_name"));
+            }
+        } catch (SQLException e) {
+            System.out.println("Search Fields ID SQL Exception");
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return fieldDTO;
+    }
+
+
 }
