@@ -5,6 +5,8 @@ import com.quotehunters.quotecollection.model.dto.PersonDTO;
 import com.quotehunters.quotecollection.model.service.PersonService;
 import com.quotehunters.quotecollection.view.PersonView;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 public class PersonController {
@@ -90,4 +92,19 @@ public class PersonController {
     public int updatePersonCountry(int personId, int newCountryId) {
         return personService.updatePersonCountry(personId, newCountryId);
     }
+
+    /* 인물 등록
+    * 여기서는 View에게 중복 여부와 등록 결과를 그대로 돌려줌
+    */
+    // 1. 인물의 이름 중복 확인
+    public boolean existsPersonName(String personName) {
+        return  personService.existsPersonName(personName);
+    }
+
+    // 2. 인물 등록
+    public int insertPerson(PersonDTO personDTO) {
+        return personService.insertPerson(personDTO);
+    }
+
+
 }

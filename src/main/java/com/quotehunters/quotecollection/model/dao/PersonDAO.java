@@ -294,4 +294,70 @@ public class PersonDAO {
     }
 
 
+    /* 인물 등록 */
+    // 1. 입력된 이름의 이름 존재 유무 확인
+    public boolean existsPersonName(Connection con, String personName) {
+
+        PreparedStatement pstmt = null;
+
+        ResultSet rset = null;
+
+        boolean exists = false;
+
+        String query = prop.getProperty("existsPersonName");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 중복 여부를 확인할 인물 이름 전달
+            pstmt.setString(1, personName);
+
+            rset = pstmt.executeQuery();
+
+            // COUNT(*)는 항상 행 1개를 반환함
+            // 조회된 개수가 0보다 크면 동일한 이름이 존재하는거임 (등록 불가)
+            if (rset.next()) {
+                exists = rset.getInt(1) > 0;
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return exists;
+    }
+
+    // 2. 인물 등록
+    public int insertPerson(Connection con, PersonDTO person) {
+        PreparedStatement pstmt = null;
+
+        int result = 0;
+
+        String query = prop.getProperty("insertPerson");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 등록할 인물의 정보를 전달
+            pstmt.setInt(1, person.getCountryId());
+            pstmt.setInt(2, person.getPeriodId());
+            pstmt.setInt(3, person.getFieldId());
+            pstmt.setString(4, person.getPersonName());
+
+            // result 값
+            // 1: 인물 등록 성공(1명)
+            // 0 : 등록 실패
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
 }

@@ -214,6 +214,84 @@ public class PersonView {
         }
     }
 
+    /* 인물 등록 */
+    // 1. 등록할 인물 이름 입력 및 길이 검증
+    // 중복 확인은 Application에서
+    // PersonView가 PersonController를 직접 만들면 순환 생성 문제가 생길 수 있음
+    public String inputPersonName(Scanner sc) {
+
+        while (true) {
+            String personName = scannerView.scannString(sc, "등록할 인물 이름 입력 (0: 뒤로가기)");
+
+            // 이름 입력 단계에서 뒤로가기
+            if ("0".equals(personName)) { return null;}
+
+            // person_name VARCHAR(50) 길이 검증
+            if (personName.length() > 50) {
+                resultView.errorMessage("인물 이름은 50자 이하로 입력해주세요.");
+                continue;
+            }
+
+            return personName;
+        }
+    }
+
+    // 2. 등록할 인물의 정보 미리보기
+    public void displayPersonForInsert(PersonDTO person) {
+
+        System.out.println("\n========== 인물 등록 정보 ==========");
+        System.out.println("인물 이름 : " + person.getPersonName());
+        System.out.println("국가 : " + person.getCountryName());
+        System.out.println("시대 : " + person.getPeriodName());
+        System.out.println("분야 : " + person.getFieldName());
+        System.out.println("==================================");
+    }
+
+    // 3. 인물 등록 여부 확인 (1차)
+    public String confirmPersonInsert(Scanner sc) {
+
+        while (true) {
+            String choice = scannerView.scannString(sc, "작업 선택 (등록 / 취소)");
+
+            if ("등록".equals(choice) || "취소".equals(choice)) {
+                return choice;
+            }
+
+            resultView.errorMessage("등록 또는 취소를 입력해주세요.");
+        }
+    }
+
+    // 4. 등록 취소 선택 시 완전 취소 또는 수정 구간 선택
+    public String selectPersonInsertCancelAction(Scanner sc) {
+        while (true) {
+            String choice = scannerView.scannString(sc, "작업 선택 (완전 취소 / 수정 구간 선택)");
+
+            if ("완전 취소".equals(choice) || "수정 구간 선택".equals(choice)) {
+                return choice;
+            }
+
+            resultView.errorMessage("완전 취소 또는 수정 구간 선택을 입력해주세요.");
+        }
+    }
+
+    // 5. 다시 입력할 등록 정보 구간 선택
+    public int selectPersonInsertSection(Scanner sc) {
+
+        System.out.println("\n========== 수정 구간 선택 ==========");
+        System.out.println("1. 국가");
+        System.out.println("2. 시대");
+        System.out.println("3. 분야");
+        System.out.println("4. 인물 이름");
+        System.out.println("0. 뒤로가기"); // 취소 or 완전취소 선택 구간으로 돌아감
+
+        while (true) {
+            int choice = scannerView.scannInt(sc, "수정할 구간 선택");
+
+            if (choice >= 0 && choice <= 4) { return choice; }
+
+            resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+        }
+    }
 
     // 성공·실패·안내 메세지 출력
     // View : 받은 문장을 보여주기만 하는 역할

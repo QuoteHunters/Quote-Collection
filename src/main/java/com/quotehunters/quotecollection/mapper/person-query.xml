@@ -162,4 +162,30 @@
         WHERE
           person_id = ?
     </entry>
+
+    <!-- Person-001: 인물 이름 중복 확인 -->
+    <entry key="existsPersonName">
+        SELECT
+            COUNT(*)
+        FROM
+            person
+        WHERE
+            person_name = ?
+    </entry>
+
+    <!-- Person-001: 인물 등록 -->
+    <entry key="insertPerson">
+        INSERT INTO person (
+            country_id,
+            period_id,
+            field_id,
+            person_name
+        )
+        VALUES (
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    </entry>
 </properties>

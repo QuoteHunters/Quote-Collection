@@ -107,4 +107,41 @@ public class PersonService {
         }
         return result;
     }
+
+    // 인물의 이름 중복 확인
+    public boolean existsPersonName(String personName) {
+        Connection con = JDBC.getConnection();
+
+        boolean exists;
+
+        try {
+            exists = personDAO.existsPersonName(con, personName);
+        } finally {
+            JDBC.close(con);
+        }
+
+        return exists;
+    }
+
+    // 인물 등록
+    public int insertPerson(PersonDTO person) {
+        Connection con = JDBC.getConnection();
+
+        int result = 0;
+
+        try {
+            result = personDAO.insertPerson(con, person);
+
+            if (result > 0) { // 인물 등록에 성공하면
+                JDBC.commit(con);
+            } else {
+                JDBC.rollback(con);
+            }
+
+        } finally {
+            JDBC.close(con);
+        }
+
+        return result;
+    }
 }
