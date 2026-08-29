@@ -27,4 +27,8 @@ public class ThemeController {
     public int updateTheme(int id, String themeName) {
         return themeService.updateTheme(id, themeName);
     }
+
+    public int deleteTheme(int id) {
+        return themeService.deleteTheme(id);
+    }
 }

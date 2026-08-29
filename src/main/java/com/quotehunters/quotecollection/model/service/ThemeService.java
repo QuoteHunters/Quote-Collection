@@ -84,4 +84,22 @@ public class ThemeService {
 
         return result;
     }
+
+    public int deleteTheme(int id) {
+        Connection con = JDBC.getConnection();
+        int result = themeDAO.deleteTheme(con, id);
+        try {
+            if (result > 0) {
+                con.commit();
+            } else {
+                con.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con);
+        }
+
+        return result;
+    }
 }

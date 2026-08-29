@@ -23,6 +23,10 @@ public class ThemeView {
 
             int choice = scv.scannInt(sc, "선택");
             switch (choice) {
+                case 0: {
+                    sc.close();
+                    return;
+                }
                 case 1: {
                     selectThemes();
                     break;
@@ -36,7 +40,7 @@ public class ThemeView {
                     break;
                 }
                 case 4: {
-                    System.out.println("삭제");
+                    deleteTheme();
                     break;
                 }
                 default: {
@@ -164,6 +168,29 @@ public class ThemeView {
 
                     rv.errorMessage("예, 재수정, 아니오 중 하나를 입력해주세요.");
                 }
+            }
+        }
+    }
+
+    public void deleteTheme() {
+        deleteLoop:
+        while (true) {
+            int id = selectIdTheme();
+            if (id == 0) return;
+
+            while (true) {
+                String str = scv.scannString(sc, "정말 삭제하시겠습니까? 완료 / 재선택 / 취소");
+                if (str.equals("취소")) return;
+                if (str.equals("재선택")) continue deleteLoop;
+                if (str.equals("완료")) {
+                    int result = tc.deleteTheme(id);
+                    if (result > 0) {
+                        rv.successMessage("삭제가 완료되었습니다.");
+                        return;
+                    }
+                }
+
+                rv.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요");
             }
         }
     }

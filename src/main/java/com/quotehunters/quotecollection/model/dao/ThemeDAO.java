@@ -140,4 +140,22 @@ public class ThemeDAO {
             JDBC.close(pstmt);
         }
     }
+
+    public int deleteTheme(Connection con, int id) {
+        PreparedStatement pstmt = null;
+        String query = prop.getProperty("deleteTheme");
+        int result = 0;
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, id);
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Delete theme failed " + e.getMessage());
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
 }
