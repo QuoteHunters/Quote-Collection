@@ -150,6 +150,6 @@
         WHERE
             q.quote_content Like ?
         ORDER BY
-            p.person_name;
+            p.person_name
     </entry>
 </properties>
