@@ -71,6 +71,23 @@ public class MemberService {
     }
 
     /*
+     * [Member-002 + Member-003] 로그인 정보를 조회한다.
+     */
+    public MemberDTO login(String userId, String userPw) {
+
+        Connection con = getOpenConnection();
+
+        try {
+            // DAO의 조회 결과 MemberDTO 또는 null을 View 쪽으로 그대로 돌려준다.
+            return memberDAO.selectMemberByLoginInfo(con, userId, userPw);
+
+        } finally {
+            // SELECT만 했어도 DB 연결 자원은 사용했으므로 닫는다.
+            JDBC.close(con);
+        }
+    }
+
+    /*
      * JDBC.getConnection()이 DB 연결 실패 시 null을 반환할 수 있다.
      */
     private Connection getOpenConnection() {

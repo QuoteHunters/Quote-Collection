@@ -109,6 +109,59 @@ public class MemberDAO {
         }
     }
 
+    /*
+     * [Member-002 + Member-003] ID와 비밀번호가 모두 맞는 회원 한 명을 찾는다.
+     *
+     * 반환값 MemberDTO : 로그인에 성공한 회원의 번호, 아이디, 권한을 담은 객체다.
+     * 반환값 null      : ID가 없거나 비밀번호가 다른 경우이다.
+     *
+     */
+    public MemberDTO selectMemberByLoginInfo(
+            Connection con,
+            String userId,
+            String userPw
+    ) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        String query = getQuery("selectMemberByLoginInfo");
+
+        try {
+            // XML에서 읽어 온 로그인 SELECT문을 실행할 준비를 한다.
+            pstmt = con.prepareStatement(query);
+
+            // SQL의 첫 번째 ?에는 ID, 두 번째 ?에는 비밀번호를 순서대로 넣는다.
+            pstmt.setString(1, userId);
+            pstmt.setString(2, userPw);
+
+            // SELECT 실행 결과를 ResultSet으로 받는다.
+            rset = pstmt.executeQuery();
+
+            // ID는 UNIQUE이므로 로그인 성공 결과는 최대 한 행이다.
+            if (rset.next()) {
+                // 조회한 DB 한 행을 Java의 MemberDTO 한 객체로 옮긴다.
+                MemberDTO member = new MemberDTO();
+                member.setMemberId(rset.getInt("member_id"));
+                member.setUserId(rset.getString("user_id"));
+                member.setUserAuth(rset.getInt("user_auth"));
+
+                return member;
+            }
+
+            // ID 또는 비밀번호가 맞지 않으면 SQL 결과 행이 없으므로 null을 반환한다.
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("회원 로그인 조회 중 DB 오류가 발생했습니다.", e);
+
+        } finally {
+            // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+    }
+
     // XML key를 잘못 썼을 때 원인을 명확하게 알려 주는 보조 메서드다.
     private String getQuery(String key) {
         String query = prop.getProperty(key);

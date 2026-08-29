@@ -29,4 +29,23 @@
         )
     </entry>
 
+    <!--
+        [Member-002 + Member-003 / 공통 로그인]
+        아이디와 비밀번호가 모두 맞는 회원 한 명을 찾는다.
+
+        결과가 없으면 DAO는 null을 반환하고,
+        View는 "아이디 또는 비밀번호가 올바르지 않습니다"를 출력한 뒤 다시 입력을 받는다.
+    -->
+    <entry key="selectMemberByLoginInfo">
+        SELECT
+        member_id,
+        user_id,
+        user_auth
+        FROM quote_user
+        WHERE user_id = ?
+        AND user_pw = ?
+    </entry>
+
+
+
 </properties>

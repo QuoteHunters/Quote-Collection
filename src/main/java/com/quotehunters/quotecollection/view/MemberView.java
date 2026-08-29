@@ -83,6 +83,68 @@ public class MemberView {
         }
     }
 
+
+    /*
+     * [Member-002 + Member-003] 사용자와 관리자가 함께 쓰는 로그인 입력 화면이다.
+     *
+     * 이 메서드는 user_auth로 메뉴를 고르지 않는다.
+     * 로그인에 성공한 MemberDTO를 Application에 반환하고,
+     * Application이 user_auth == 0 / 1을 보고 관리자·사용자 메뉴를 고른다.
+     *
+     * 반환값 MemberDTO : ID와 비밀번호가 맞아 로그인에 성공했다는 뜻이다.
+     * 반환값 null      : 사용자가 0을 입력해 로그인 화면을 취소했다는 뜻이다.
+     */
+    public MemberDTO login(Scanner sc) {
+
+        System.out.println();
+        System.out.println("=========== 로그인 ===========");
+        System.out.println("각 입력 단계에서 0을 입력하면 회원 관리 메뉴로 돌아갑니다.");
+
+        while (true) {
+            // 1. DB 열 길이를 넘지 않는 아이디를 입력받는다.
+            String userId = readTextWithinLength(
+                    sc,
+                    "아이디 입력 (0: 뒤로가기)",
+                    MAX_USER_ID_LENGTH,
+                    "아이디"
+            );
+
+            if (userId == null) {
+                return null;
+            }
+
+            // 2. DB 열 길이를 넘지 않는 비밀번호를 입력받는다.
+            String userPw = readTextWithinLength(
+                    sc,
+                    "비밀번호 입력 (0: 뒤로가기)",
+                    MAX_USER_PW_LENGTH,
+                    "비밀번호"
+            );
+
+            if (userPw == null) {
+                return null;
+            }
+
+            try {
+                // 3. View → Controller → Service → DAO → SELECT 로그인 조회를 요청한다.
+                MemberDTO loginMember = memberController.login(userId, userPw);
+
+                if (loginMember != null) {
+                    // 4. 성공한 회원 정보를 Application에 반환한다.
+                    resultView.successMessage(loginMember.getUserId() + "님, 로그인되었습니다.");
+                    return loginMember;
+                }
+
+                // ID가 없거나 비밀번호가 달라도 같은 메시지만 보여 준다.
+                resultView.errorMessage("아이디 또는 비밀번호가 올바르지 않습니다. 다시 입력해주세요.");
+
+            } catch (RuntimeException e) {
+                resultView.errorMessage("로그인 중 DB 오류가 발생했습니다. 다시 시도해주세요.");
+            }
+        }
+    }
+
+
     /*
      * 아이디 입력 전용 메서드다.
      *

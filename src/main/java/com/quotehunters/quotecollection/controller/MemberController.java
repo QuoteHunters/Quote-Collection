@@ -22,4 +22,9 @@ public class MemberController {
     public int signUp(MemberDTO member) {
         return memberService.signUp(member);
     }
+
+    // View가 받은 ID와 비밀번호를 Service에 전달하고, 로그인 회원 DTO 또는 null을 돌려준다.
+    public MemberDTO login(String userId, String userPw) {
+        return memberService.login(userId, userPw);
+    }
 }
