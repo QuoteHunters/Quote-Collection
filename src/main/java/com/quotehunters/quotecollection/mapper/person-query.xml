@@ -100,7 +100,8 @@
         ORDER BY
             p.person_id
     </entry>
-    
+
+    <!-- Person-006: 인물의 이름으로 인물 조회 -->
     <entry key="selectPersonByName">
         SELECT
             p.person_id,
@@ -125,7 +126,7 @@
             p.person_name
     </entry>
 
-    <!-- Person-007: 명언에 입력한 키워드가 포함된 인물 조회 -->
+    <!-- Person-007: 입력한 명언의 키워드가 포함된 인물 조회 -->
     <entry key="selectPersonByQuoteKeyword">
         SELECT DISTINCT
             p.person_id,
