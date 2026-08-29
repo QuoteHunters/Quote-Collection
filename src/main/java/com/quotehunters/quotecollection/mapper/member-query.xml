@@ -1,5 +1,51 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<!--
+    의도1: Member-001 회원가입에 필요한 SQL을 Java 코드 밖에 이름표와 함께 보관한다.
+    의도2: 실제 실행은 MemberDAO에서, commit / rollback은 MemberService에서 담당한다.
+-->
+
 <properties>
+
+    <!-- [Member-001 / 가입 전] 입력한 아이디와 같은 회원이 이미 있는지 확인한다. -->
+    <entry key="existsMemberByUserId">
+        SELECT COUNT(*)
+        FROM quote_user
+        WHERE user_id = ?
+    </entry>
+
+    <!-- [Member-001 / 가입 확정] 공개 가입 회원을 USER 권한으로 저장한다. -->
+    <entry key="insertMember">
+        INSERT INTO quote_user (
+            user_id,
+            user_pw,
+            user_auth
+        )
+        VALUES (
+            ?,
+            ?,
+            ?
+        )
+    </entry>
+
+    <!--
+        [Member-002 + Member-003 / 공통 로그인]
+        아이디와 비밀번호가 모두 맞는 회원 한 명을 찾는다.
+
+        결과가 없으면 DAO는 null을 반환하고,
+        View는 "아이디 또는 비밀번호가 올바르지 않습니다"를 출력한 뒤 다시 입력을 받는다.
+    -->
+    <entry key="selectMemberByLoginInfo">
+        SELECT
+        member_id,
+        user_id,
+        user_auth
+        FROM quote_user
+        WHERE user_id = ?
+        AND user_pw = ?
+    </entry>
+
+
 
 </properties>
