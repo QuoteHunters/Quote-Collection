@@ -22,11 +22,29 @@ public class FieldService {
         return fields;
     }
 
+    public boolean existsFieldName(String fieldName) {
+        Connection con = getConnection();
+
+        try {
+            if (fieldDAO.existsFieldName(con, fieldName)) {
+                con.close();
+                return true;
+            }
+
+            con.close();
+            return false;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
     public boolean existsFieldName(int id, String fieldName) {
         Connection con = getConnection();
 
         try {
             if (fieldDAO.existsFieldName(con, id, fieldName)) {
+                con.close();
                 return true;
             }
 
@@ -34,13 +52,54 @@ public class FieldService {
 
             return false;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return false;
         }
     }
 
     public int updateField(int id, String fieldName) {
         Connection con = getConnection();
         int result = fieldDAO.updateField(con, id, fieldName);
+
+        try {
+            if (result > 0) {
+                con.commit();
+            } else {
+                con.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con);
+        }
+
+        return result;
+    }
+
+    public int insertField(String fieldName) {
+        Connection con = getConnection();
+
+        int result = fieldDAO.insertField(con, fieldName);
+
+        try {
+            if (result > 0) {
+                con.commit();
+            } else {
+                con.rollback();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            close(con);
+        }
+
+        return result;
+    }
+
+    public int deleteField(int id) {
+        Connection con = getConnection();
+
+        int result = fieldDAO.deleteField(con, id);
 
         try {
             if (result > 0) {
