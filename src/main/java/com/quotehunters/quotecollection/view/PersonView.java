@@ -122,12 +122,31 @@ public class PersonView {
     }
 
     /* 인물 수정 */
+    // 0. 수정할 인물 선택
+    // 1차 조회 결과에서 수정할 인물 선택
+    public PersonDTO selectPerson(Scanner sc, List<PersonDTO> personList) {
+        if (personList.isEmpty()) { return null; }
+
+        while (true) {
+            int personId = scannerView.scannInt(sc, "수정할 인물 번호 선택 (0: 뒤로가기)");
+
+            if (personId == 0) { return null; }
+
+            for (PersonDTO person : personList) {
+                if (person.getPersonId() == personId) {
+                    return person;
+                }
+            }
+
+            resultView.errorMessage("조회된 목록에 있는 인물 번호를 선택해주세요.");
+        }
+    }
 
     /* 1. 인물의 국가 수정 */
     // 1-1. 인물의 국가를 수정하기 위해 새 국가를 선택
     public int selectCountryForUpdate(Scanner sc, PersonDTO selectedPerson, List<CountryDTO> countryList) {
 
-        // 입럭받은 인물의 이름과 현재 국가를 출력
+        // 1차 조회에서 전달받은 인물의 이름과 현재 국가를 출력
         System.out.println("\n========== 인물의 국가 수정 ==========");
         System.out.println("인물 이름 : " + selectedPerson.getPersonName());
         System.out.println("현재 국가 : " + selectedPerson.getCountryName());
@@ -149,7 +168,7 @@ public class PersonView {
         while (true) {
             int choice = scannerView.scannInt(sc, "변경할 국가 선택 (0: 뒤로가기)");
 
-            // 뒤로 가기 선택시 정확히 한 Depth 위로 전달
+            // 뒤로 가기 선택시 전 단계로 이동
             // 호출한 곳에 0을 반환하고 무한루프문을 빠져나감
             if (choice == 0) {
                 return 0;

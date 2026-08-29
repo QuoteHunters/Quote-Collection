@@ -13,7 +13,7 @@ public class PersonController {
     private PersonView personView = new PersonView();
 
     // 전체 인물 조회
-    public void selectAllPerson() {
+    public List<PersonDTO> selectAllPerson() {
 
         List<PersonDTO> personList = personService.selectAllPerson();
 
@@ -25,6 +25,7 @@ public class PersonController {
             // View에 전체 인물의 정보를 전달
             personView.displayAllPerson(personList);
         }
+        return personList;
 
     }
 
