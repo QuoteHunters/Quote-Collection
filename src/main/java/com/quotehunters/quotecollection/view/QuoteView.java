@@ -395,4 +395,31 @@ public class QuoteView {
         }
     }
 
+    // 선택한 주제의 명언을 화면 순번과 함께 출력한다.
+    public void printQuotesByTheme(
+            QuoteDTO selectedTheme,
+            List<QuoteDTO> quoteList
+    ) {
+
+        System.out.println();
+        System.out.println(
+                "========== " +
+                        selectedTheme.getThemeName() +
+                        " 주제 명언 =========="
+        );
+
+        for (int i = 0; i < quoteList.size(); i++) {
+            QuoteDTO quote = quoteList.get(i);
+
+            System.out.println("번호 : " + (i + 1));
+            System.out.println(
+                    "명언 : " + quote.getQuoteContent()
+            );
+            System.out.println(
+                    "인물 : " + quote.getPersonName()
+            );
+            System.out.println("------------------------------");
+        }
+    }
+
 }

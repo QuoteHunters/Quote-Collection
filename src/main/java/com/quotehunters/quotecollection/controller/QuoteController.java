@@ -117,6 +117,64 @@ public class QuoteController {
         executeQuoteInsert(quote);
     }
 
+    // 전체 주제에서 하나를 선택하고 해당 주제의 명언을 조회한다.
+    public void selectQuotesByTheme(Scanner scanner) {
+
+        try {
+            List<QuoteDTO> themeList =
+                    quoteService.selectThemesForQuoteRegistration();
+
+            if (themeList.isEmpty()) {
+                resultView.printMessage(
+                        "등록된 주제가 없습니다."
+                );
+                return;
+            }
+
+            // 전체 주제를 화면 순번과 함께 출력한다.
+            resultView.printThemeCandidates(themeList);
+
+            int selectedNumber =
+                    resultView.inputListNumber(
+                            scanner,
+                            themeList.size(),
+                            "조회할 주제 번호를 입력해주세요"
+                    );
+
+            if (selectedNumber == 0) {
+                return;
+            }
+
+            QuoteDTO selectedTheme =
+                    themeList.get(selectedNumber - 1);
+
+            // 선택된 DTO의 실제 themeId로 명언을 조회한다.
+            List<QuoteDTO> quoteList =
+                    quoteService.selectQuotesByThemeId(
+                            selectedTheme.getThemeId()
+                    );
+
+            if (quoteList.isEmpty()) {
+                resultView.printMessage(
+                        "등록된 명언이 없습니다."
+                );
+                return;
+            }
+
+            resultView.printQuotesByTheme(
+                    selectedTheme,
+                    quoteList
+            );
+
+        } catch (RuntimeException e) {
+            e.printStackTrace();
+
+            resultView.printMessage(
+                    "주제별 명언 조회 중 오류가 발생했습니다."
+            );
+        }
+    }
+
     // 인물을 검색하고 화면 순번으로 등록 대상 인물을 선택한다.
     private boolean selectPersonForRegistration(
             Scanner scanner,
