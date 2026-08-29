@@ -512,6 +512,61 @@ public class PersonView {
         }
     }
 
+    /* 인물 삭제 */
+    // 1. 삭제할 인물 선택
+    public PersonDTO selectPersonForDelete(Scanner sc, List<PersonDTO> personList) {
+
+        // 삭제할 인물이 아예 없다면(empty) 화면 진행x
+        // 아예 인물 리스트가 비어있는 경우 while문 내 두번째 if문이 실행되지 않음
+        // 그러면 바로 errmessage로 넘어가고 다시 while문 처음으로 돌아와서 삭제할 인물 물어보게됨 (반복)
+        // 그래서 들어가기 전에 한 번 검사
+        if (personList.isEmpty()) {
+            return null;
+        }
+
+        while (true) {
+            int personId = scannerView.scannInt(sc, "삭제할 인물 번호 선택 (0: 뒤로가기)");
+
+            // 정확히 한 단계 위로 이동
+            if (personId == 0) {
+                return null;
+            }
+
+            // 조회된 인물 중 입력한 번호와 일치하는 인물 반환
+            for (PersonDTO person : personList) {
+                if (person.getPersonId() == personId) {
+                    return person;
+                }
+            }
+
+            resultView.errorMessage("조회된 목록에 있는 인물 번호를 선택해주세요.");
+        }
+    }
+
+    // 2. 삭제할 인물 정보 출력
+    public void displayPersonForDelete(PersonDTO person) {
+        System.out.println("\n========== 삭제할 인물 정보 ==========");
+        System.out.println("인물 번호 : " + person.getPersonId());
+        System.out.println("인물 이름 : " + person.getPersonName());
+        System.out.println("국가 : " + person.getCountryName());
+        System.out.println("시대 : " + person.getPeriodName());
+        System.out.println("분야 : " + person.getFieldName());
+        System.out.println("====================================");
+    }
+
+    // 최종 삭제 여부
+    public String confirmPersonForDelete(Scanner sc) {
+        while (true) {
+            String choice = scannerView.scannString(sc, "작업 선택 (삭제 / 취소)");
+
+            if ("삭제".equals(choice) || "취소".equals(choice)) {
+                return choice;
+            }
+
+            resultView.errorMessage("삭제 또는 취소를 입력해주세요.");
+        }
+    }
+
     // 성공·실패·안내 메세지 출력
     public void printMessage(String message) {
         // View : 받은 문장을 보여주기만 하는 역할

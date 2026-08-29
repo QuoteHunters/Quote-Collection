@@ -444,4 +444,54 @@ public class PersonDAO {
 
         return result;
     }
+
+    /* 인물 삭제 */
+    // 1. 선택한 인물의 명언 삭제
+    public int deleteQuoteByPerson(Connection con, int personId) {
+        PreparedStatement pstmt = null;
+
+        int result = 0;
+
+        String query = prop.getProperty("deleteQuoteByPerson");
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, personId);
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e); // Service에서 catch문이 실행하게끔
+        } finally {
+            JDBC.close(pstmt);
+        }
+        // result가 다른 때랑 다르게 여러 개 나올 수 있음
+        // 여러 개의 명언이 삭제될 수도 있으니까
+        return result;
+    }
+
+    // 2. 선택한 인물 삭제
+    public int deletePerson(Connection con, int personId) {
+
+        PreparedStatement pstmt = null;
+
+        int result = 0;
+
+        String query = prop.getProperty("deletePerson");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, personId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            JDBC.close(pstmt);
+        }
+        // 얘는 1이나 0만
+        return result;
+    }
+
 }

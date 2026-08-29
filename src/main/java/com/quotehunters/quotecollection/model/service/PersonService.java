@@ -211,4 +211,40 @@ public class PersonService {
 
         return result;
     }
+
+    /* 인물 삭제 */
+    // 선택한 인물의 명언과 인물 정보 삭제
+    public int deletePerson(int personId) {
+        // 하나의 트랜잭션으로 처리함
+        Connection con = JDBC.getConnection();
+
+        int result = 0;
+
+        try {
+            // 1. 인물이 보유한 명언 먼저 삭제
+            // 명언은 없는데 인물만 존재하는 경우가 있을 수도 있기 떄문에 결과가 0이어도 정상
+            personDAO.deleteQuoteByPerson(con, personId);
+
+            // 2. 인물 정보도 삭제
+            result = personDAO.deletePerson(con, personId);
+
+            if (result > 0) {
+                JDBC.commit(con);
+            } else {
+                JDBC.rollback(con);
+            }
+        }
+        catch (RuntimeException e) {
+            // 두 DELETE 중 SQL 오류가 발생하면 전체 취소
+            // ex. 인물 A의 명언은 삭제했는데 인물 정보는 삭제를 실패했을 경우 rollback으로 명언도 복구
+            JDBC.rollback(con);
+            e.printStackTrace();
+            result = 0;
+
+        } finally {
+            JDBC.close(con);
+        }
+
+        return result;
+    }
 }

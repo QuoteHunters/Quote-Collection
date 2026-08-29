@@ -122,5 +122,8 @@ public class PersonController {
         return personService.insertPerson(personDTO);
     }
 
-
+    /* 인물 삭제 */
+    public int deletePerson(int personId) {
+        return personService.deletePerson(personId);
+    }
 }
