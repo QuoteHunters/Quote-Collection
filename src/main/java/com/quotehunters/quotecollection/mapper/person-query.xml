@@ -24,4 +24,132 @@
         ORDER BY
             p.person_id
     </entry>
+
+    <!-- Person-003: 선택한 국가의 인물 조회 -->
+    <entry key="selectPersonByCountry">
+
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.country_id = ?
+        ORDER BY
+            p.person_id
+    </entry>
+
+    <!-- Person-004: 선택한 시대의 인물 조회 -->
+    <entry key="selectPersonByPeriod">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.period_id = ?
+        ORDER BY
+            p.person_id
+    </entry>
+
+    <!-- Person-005: 선택한 분야의 인물 조회 -->
+    <entry key="selectPersonByField">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.field_id= ?
+        ORDER BY
+            p.person_id
+    </entry>
+
+    <!-- Person-006: 인물의 이름으로 인물 조회 -->
+    <entry key="selectPersonByName">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.person_name LIKE ?
+        ORDER BY
+            p.person_name
+    </entry>
+
+    <!-- Person-007: 입력한 명언의 키워드가 포함된 인물 조회 -->
+    <entry key="selectPersonByQuoteKeyword">
+        SELECT DISTINCT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        JOIN
+            quote q ON q.person_id = p.person_id
+        WHERE
+            q.quote_content Like ?
+        ORDER BY
+            p.person_name
+    </entry>
 </properties>

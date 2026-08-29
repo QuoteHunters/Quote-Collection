@@ -1,5 +1,6 @@
 package com.quotehunters.quotecollection.controller;
 
+import com.quotehunters.quotecollection.common.JDBC;
 import com.quotehunters.quotecollection.model.dto.PersonDTO;
 import com.quotehunters.quotecollection.model.service.PersonService;
 import com.quotehunters.quotecollection.view.PersonView;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public class PersonController {
 
-    private PersonService personService =  new PersonService();
+    private PersonService personService = new PersonService();
     private PersonView personView = new PersonView();
 
     // 전체 인물 조회
@@ -27,4 +28,60 @@ public class PersonController {
 
     }
 
+    // 국가별 인물 조회
+    public void selectPersonByCountry(int countryId) {
+
+        List<PersonDTO> personList = personService.selectPersonByCountry(countryId);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("해당 국가에 등록된 인물이 없습니다.");
+        } else {
+            personView.selectPersonByCountry(personList);
+        }
+    }
+
+    // 시대별 인물 조회
+    public void selectPersonByPeriod(int periodId) {
+        List<PersonDTO> personList = personService.selectPersonByPeriod(periodId);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("해당 시대에 등록된 인물이 없습니다.");
+        } else {
+            personView.selectPersonByPeriod(personList);
+        }
+
+    }
+
+    // 분야별 인물 조회
+    public void selectPersonByField(int fieldId) {
+        List<PersonDTO> personList = personService.selectPersonByField(fieldId);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("해당 분야에 등록된 인물이 없습니다.");
+        } else {
+            personView.selectPersonByField(personList);
+        }
+    }
+
+    // 인물 이름 조회
+    public void selectPersonByName(String personName) {
+        List<PersonDTO> personList = personService.selectPersonByName(personName);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("'" + personName + "'에 해당하는 인물이 존재하지 않습니다.");
+        } else {
+            personView.selectPersonByName(personList);
+        }
+    }
+
+    // 명언 키워드 검색에 따른 인물 조회
+    public void selectPersonByQuoteKeyword(String quoteKeyword) {
+        List<PersonDTO> personList = personService.selectPersonByQuoteKeyword(quoteKeyword);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("'" + quoteKeyword + "' 키워드가 포함된 명언을 남긴 인물이 없습니다.");
+        } else {
+            personView.selectPersonByQuoteKeyword(personList, quoteKeyword);
+        }
+    }
 }

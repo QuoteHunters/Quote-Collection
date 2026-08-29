@@ -22,4 +22,68 @@ public class PersonService {
 
         return personList;
     }
+
+    // 국가별 인물 조회
+    public List<PersonDTO> selectPersonByCountry(int countryId) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByCountry(con, countryId);
+
+        JDBC.close(con);
+
+        return personList;
+
+    }
+
+    // 시대별 인물 조회
+    public List<PersonDTO> selectPersonByPeriod(int periodId) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByPeriod(con, periodId);
+
+        JDBC.close(con);
+
+        return personList;
+
+    }
+
+    // 분야별 인물 조회
+    public List<PersonDTO> selectPersonByField(int fieldId) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByField(con, fieldId);
+
+        JDBC.close(con);
+
+        return personList;
+
+    }
+
+    // 인물 이름 조회
+    public List<PersonDTO> selectPersonByName(String personName) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByName(con, personName);
+
+        JDBC.close(con);
+
+        return personList;
+
+    }
+
+    // 명언 키워드 검색에 따른 인물 조회
+    public List<PersonDTO> selectPersonByQuoteKeyword(String quoteKeyword) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByQuoteKeyword(con, quoteKeyword);
+
+        JDBC.close(con);
+
+        return personList;
+    }
 }
