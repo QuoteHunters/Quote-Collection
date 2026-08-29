@@ -5,6 +5,8 @@ import com.quotehunters.quotecollection.model.dto.PersonDTO;
 import com.quotehunters.quotecollection.model.service.PersonService;
 import com.quotehunters.quotecollection.view.PersonView;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.util.List;
 
 public class PersonController {
@@ -12,8 +14,9 @@ public class PersonController {
     private PersonService personService = new PersonService();
     private PersonView personView = new PersonView();
 
-    // 전체 인물 조회
-    public void selectAllPerson() {
+    /* 인물 조회*/
+    // 1. 전체 인물 조회
+    public List<PersonDTO> selectAllPerson() {
 
         List<PersonDTO> personList = personService.selectAllPerson();
 
@@ -25,10 +28,11 @@ public class PersonController {
             // View에 전체 인물의 정보를 전달
             personView.displayAllPerson(personList);
         }
+        return personList;
 
     }
 
-    // 국가별 인물 조회
+    // 2. 국가별 인물 조회
     public void selectPersonByCountry(int countryId) {
 
         List<PersonDTO> personList = personService.selectPersonByCountry(countryId);
@@ -40,7 +44,7 @@ public class PersonController {
         }
     }
 
-    // 시대별 인물 조회
+    // 3. 시대별 인물 조회
     public void selectPersonByPeriod(int periodId) {
         List<PersonDTO> personList = personService.selectPersonByPeriod(periodId);
 
@@ -52,7 +56,7 @@ public class PersonController {
 
     }
 
-    // 분야별 인물 조회
+    // 4. 분야별 인물 조회
     public void selectPersonByField(int fieldId) {
         List<PersonDTO> personList = personService.selectPersonByField(fieldId);
 
@@ -63,7 +67,7 @@ public class PersonController {
         }
     }
 
-    // 인물 이름 조회
+    // 5. 인물 이름 조회
     public void selectPersonByName(String personName) {
         List<PersonDTO> personList = personService.selectPersonByName(personName);
 
@@ -74,7 +78,7 @@ public class PersonController {
         }
     }
 
-    // 명언 키워드 검색에 따른 인물 조회
+    // 6. 명언 키워드 검색에 따른 인물 조회
     public void selectPersonByQuoteKeyword(String quoteKeyword) {
         List<PersonDTO> personList = personService.selectPersonByQuoteKeyword(quoteKeyword);
 
@@ -84,4 +88,39 @@ public class PersonController {
             personView.selectPersonByQuoteKeyword(personList, quoteKeyword);
         }
     }
+
+    /* 인물 정보 수정 */
+    // 1. 인물 국가 수정
+    public int updatePersonCountry(int personId, int newCountryId) {
+       // 여기서는 View에게 중복 여부와 등록 결과를 그대로 돌려줌
+        return personService.updatePersonCountry(personId, newCountryId);
+    }
+
+    // 2. 인물 시대 수정
+    public int updatePersonPeriod(int personId, int periodId) {
+        return personService.updatePersonPeriod(personId, periodId);
+    }
+
+    // 3. 인물 분야 수정
+    public int updatePersonField(int personId, int fieldId) {
+        return personService.updatePersonField(personId, fieldId);
+    }
+
+    // 4. 인물 이름 수정
+    public int updatePersonName(int personId, String personName) {
+        return personService.updatePersonName(personId, personName);
+    }
+
+    /* 인물 등록 */
+    // 1. 인물의 이름 중복 확인
+    public boolean existsPersonName(String personName) {
+        return  personService.existsPersonName(personName);
+    }
+
+    // 2. 인물 등록
+    public int insertPerson(PersonDTO personDTO) {
+        return personService.insertPerson(personDTO);
+    }
+
+
 }

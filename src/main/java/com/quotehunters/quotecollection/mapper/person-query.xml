@@ -152,4 +152,70 @@
         ORDER BY
             p.person_name
     </entry>
+
+    <!-- Person-008: 선택한 인물의 국가 수정 -->
+    <entry key="updatePersonCountry">
+        UPDATE
+            person
+        SET
+          country_id = ?
+        WHERE
+          person_id = ?
+    </entry>
+
+    <!-- Person-010: 선택한 인물의 시대 수정 -->
+    <entry key="updatePersonPeriod">
+        UPDATE
+           person
+        SET
+           period_id = ?
+        WHERE
+          person_id = ?
+    </entry>
+
+    <!-- Person-009: 선택한 인물의 분야 수정 -->
+    <entry key="updatePersonField">
+        UPDATE
+           person
+        SET
+           field_id = ?
+        WHERE
+           person_id = ?
+    </entry>
+
+    <!-- Person-011: 선택한 인물의 이름 수정 -->
+    <entry key="updatePersonName">
+        UPDATE
+            person
+        SET
+            person_name = ?
+        WHERE
+            person_id = ?
+    </entry>
+
+    <!-- Person-001: 인물 이름 중복 확인 -->
+    <entry key="existsPersonName">
+        SELECT
+            COUNT(*)
+        FROM
+            person
+        WHERE
+            person_name = ?
+    </entry>
+
+    <!-- Person-001: 인물 등록 -->
+    <entry key="insertPerson">
+        INSERT INTO person (
+            country_id,
+            period_id,
+            field_id,
+            person_name
+        )
+        VALUES (
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    </entry>
 </properties>
