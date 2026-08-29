@@ -57,7 +57,7 @@ public class CountryView {
         return countries.get(choice - 1).getCountryId();
     }
 
-    // [국가 등록] 워크플로우: 국가명 입력 → 등록 Validation → [등록 / 수정 / 취소]
+    // [국가 등록] 국가명 입력 → 등록 Validation → [등록 / 수정 / 취소]
     public void registCountry() {
         while (true) {
 
@@ -89,7 +89,7 @@ public class CountryView {
         }
     }
 
-    // [국가 수정] 워크플로우: 리스트 추출 → 선택 → 입력 → 수정 Validation → [완료 / 재수정 / 취소]
+    // [국가 수정]  리스트 추출 → 선택 → 입력 → 수정 Validation → [완료 / 재수정 / 취소]
     public void modifyCountry() {
         selectLoop:
         // '재수정' 시 여기(대상 선택)로 돌아옴
@@ -102,7 +102,7 @@ public class CountryView {
                 String newName = scv.scannString(sc, "변경할 국가명 입력 (0: 뒤로가기)");
                 if (newName.equals("0")) continue selectLoop;   // 0이면 대상 선택부터 다시
 
-                // 수정 여부 확인 (워크플로우의 [완료/재수정/취소]
+
                 while (true) {
                     String check = scv.scannString(sc, "[" + newName + "] (으)로 수정하시겠습니까? 예 / 재수정 / 아니오");
 
