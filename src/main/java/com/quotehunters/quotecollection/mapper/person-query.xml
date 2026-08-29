@@ -163,6 +163,16 @@
           person_id = ?
     </entry>
 
+    <!-- Person-010: 선택한 인물의 시대 수정 -->
+    <entry key="updatePersonPeriod">
+        UPDATE
+           person
+        SET
+           period_id = ?
+        WHERE
+          person_id = ?
+    </entry>
+
     <!-- Person-001: 인물 이름 중복 확인 -->
     <entry key="existsPersonName">
         SELECT
