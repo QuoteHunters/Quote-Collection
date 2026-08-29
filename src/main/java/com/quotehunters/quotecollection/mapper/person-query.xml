@@ -152,4 +152,14 @@
         ORDER BY
             p.person_name
     </entry>
+
+    <!-- Person-008: 선택한 인물의 국가 수정 -->
+    <entry key="updatePersonCountry">
+        UPDATE
+            person
+        SET
+          country_id = ?
+        WHERE
+          person_id = ?
+    </entry>
 </properties>

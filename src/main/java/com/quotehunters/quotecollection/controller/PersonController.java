@@ -84,4 +84,9 @@ public class PersonController {
             personView.selectPersonByQuoteKeyword(personList, quoteKeyword);
         }
     }
+
+    // 인물 수정
+    public int updatePersonCountry(int personId, int newCountryId) {
+        return personService.updatePersonCountry(personId, newCountryId);
+    }
 }

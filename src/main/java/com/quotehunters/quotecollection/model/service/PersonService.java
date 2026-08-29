@@ -86,4 +86,25 @@ public class PersonService {
 
         return personList;
     }
+
+    // 인물의 국가 수정
+    public int updatePersonCountry(int personId, int countryId) {
+
+        Connection con = JDBC.getConnection();
+
+        int result = 0;
+
+        try {
+            result = personDAO.updatePersonCountry(con, personId, countryId);
+
+            if (result > 0) {
+                JDBC.commit(con);
+            } else {
+                JDBC.rollback(con);
+            }
+        } finally {
+            JDBC.close(con);
+        }
+        return result;
+    }
 }

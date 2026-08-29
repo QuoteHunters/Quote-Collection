@@ -265,4 +265,33 @@ public class PersonDAO {
         return personList;
     }
 
+    // 인물의 국가 수정
+    // 변경에 성공하면 1 아니면 0을 반환
+    public int updatePersonCountry(Connection con, int personId, int countryId) {
+
+        PreparedStatement pstmt = null;
+        int result = 0;
+
+        String query = prop.getProperty("updatePersonCountry");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 새로운 국가의 번호
+            pstmt.setInt(1, countryId);
+            // 수정할 인물의 번호
+            pstmt.setInt(2, personId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
+
 }
