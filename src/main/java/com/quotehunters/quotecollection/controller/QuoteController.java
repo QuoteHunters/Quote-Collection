@@ -12,6 +12,10 @@ public class QuoteController {
     private QuoteService quoteService = new QuoteService();
     private QuoteView resultView = new QuoteView();
 
+    private static final int NO_DATA = -1;
+    private static final int BACK = 0;
+    private static final int SELECTED = 1;
+
     public void selectAllQuotes() {
 
         List<QuoteDTO> quoteList = quoteService.selectAllQuotes();
@@ -80,33 +84,31 @@ public class QuoteController {
 
         QuoteDTO quote = new QuoteDTO();
 
-        if (!selectPersonForRegistration(scanner, quote)) {
-            return;
-        }
-
-        if (!selectThemeForRegistration(scanner, quote)) {
-            return;
-        }
-
-        quote.setQuoteContent(resultView.inputQuoteContent(scanner));
-
         while (true) {
-            resultView.printQuoteRegistrationSummary(quote);
 
-            String decision =
-                    resultView.inputRegistrationDecision(scanner);
-
-            if (decision.equals("Y")) {
-                executeQuoteInsert(quote);
+            if (!selectPersonForRegistration(scanner, quote)) {
                 return;
             }
 
-            if (decision.equals("N")) {
+            int themeResult =
+                    selectThemeForRegistration(scanner, quote);
+
+            if (themeResult == NO_DATA) {
                 return;
             }
 
-            modifyQuoteRegistration(scanner, quote);
+            if (themeResult == BACK) {
+                continue;
+            }
+
+            break;
         }
+
+        quote.setQuoteContent(
+                resultView.inputQuoteContent(scanner)
+        );
+
+        executeQuoteInsert(quote);
     }
 
     // 인물을 검색하고 화면 순번으로 등록 대상 인물을 선택한다.
@@ -118,6 +120,10 @@ public class QuoteController {
         while (true) {
             String personName =
                     resultView.inputPersonName(scanner);
+
+            if (personName == null) {
+                return false;
+            }
 
             List<QuoteDTO> personList =
                     quoteService.searchPersonsForQuoteRegistration(personName);
@@ -135,6 +141,10 @@ public class QuoteController {
                     "등록할 인물 번호를 입력해주세요"
             );
 
+            if (selectedNumber == 0) {
+                continue;
+            }
+
             QuoteDTO selectedPerson =
                     personList.get(selectedNumber - 1);
 
@@ -148,8 +158,8 @@ public class QuoteController {
         }
     }
 
-    // 전체 주제를 조회하고 화면 순번으로 등록 대상 주제를 선택한다.
-    private boolean selectThemeForRegistration(
+    // 주제를 선택하고 선택·뒤로가기·데이터 없음 상태를 반환한다.
+    private int selectThemeForRegistration(
             Scanner scanner,
             QuoteDTO quote
     ) {
@@ -159,7 +169,7 @@ public class QuoteController {
 
         if (themeList.isEmpty()) {
             resultView.printMessage("등록된 주제가 없습니다.");
-            return false;
+            return NO_DATA;
         }
 
         resultView.printThemeCandidates(themeList);
@@ -170,13 +180,17 @@ public class QuoteController {
                 "등록할 주제 번호를 입력해주세요"
         );
 
+        if (selectedNumber == 0) {
+            return BACK;
+        }
+
         QuoteDTO selectedTheme =
                 themeList.get(selectedNumber - 1);
 
         quote.setThemeId(selectedTheme.getThemeId());
         quote.setThemeName(selectedTheme.getThemeName());
 
-        return true;
+        return SELECTED;
     }
 
     // 사용자가 고른 항목만 다시 입력받고 나머지 등록 정보는 유지한다.
@@ -242,6 +256,10 @@ public class QuoteController {
         while (true) {
             QuoteDTO selectedPerson = selectPerson(scanner);
 
+            if (selectedPerson == null) {
+                return;
+            }
+
             List<QuoteDTO> quoteList =
                     quoteService.selectQuotesByPersonIdForUpdate(
                             selectedPerson.getPersonId()
@@ -263,6 +281,11 @@ public class QuoteController {
                     quoteList.size(),
                     "수정할 명언 번호를 입력해주세요"
             );
+
+            if (selectedNumber == 0) {
+                continue updateFlow;
+            }
+
 
             /*
              * 사용자가 입력한 값은 화면 순번이다.
@@ -348,6 +371,10 @@ public class QuoteController {
             String personName =
                     resultView.inputPersonName(scanner);
 
+            if (personName == null) {
+                return null;
+            }
+
             List<QuoteDTO> personList =
                     quoteService.searchPersonsForQuoteRegistration(
                             personName
@@ -365,6 +392,10 @@ public class QuoteController {
                     personList.size(),
                     "인물 번호를 입력해주세요"
             );
+
+            if (selectedNumber == 0) {
+                continue;
+            }
 
             /*
              * 사용자는 화면 순번을 입력한다.

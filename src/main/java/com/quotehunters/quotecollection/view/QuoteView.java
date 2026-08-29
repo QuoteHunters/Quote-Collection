@@ -49,13 +49,19 @@ public class QuoteView {
         }
     }
 
-    // 등록할 인물을 검색하기 위한 이름을 입력받는다.
+    // 인물 이름을 입력받고 0이면 뒤로가기를 반환한다.
     public String inputPersonName(Scanner scanner) {
 
         while (true) {
-            System.out.print("검색할 인물 이름을 입력해주세요 : ");
+            System.out.print(
+                    "검색할 인물 이름을 입력해주세요 (0: 뒤로가기) : "
+            );
 
             String personName = scanner.nextLine().trim();
+
+            if (personName.equals("0")) {
+                return null;
+            }
 
             if (personName.isEmpty()) {
                 printMessage("인물 이름을 입력해주세요.");
@@ -103,6 +109,7 @@ public class QuoteView {
     }
 
     // 목록 크기를 기준으로 유효한 화면 선택 번호를 입력받는다.
+    // 목록 번호를 입력받고 0이면 뒤로가기를 반환한다.
     public int inputListNumber(
             Scanner scanner,
             int listSize,
@@ -110,15 +117,21 @@ public class QuoteView {
     ) {
 
         while (true) {
-            System.out.print(prompt + " : ");
+            System.out.print(prompt + " (0: 뒤로가기) : ");
 
             String input = scanner.nextLine().trim();
 
             try {
                 int selectedNumber = Integer.parseInt(input);
 
+                if (selectedNumber == 0) {
+                    return 0;
+                }
+
                 if (selectedNumber < 1 || selectedNumber > listSize) {
-                    printMessage("리스트에 존재하는 번호를 입력해주세요.");
+                    printMessage(
+                            "리스트에 존재하는 번호를 입력해주세요."
+                    );
                     continue;
                 }
 
