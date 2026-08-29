@@ -196,6 +196,53 @@ public class QuoteDAO {
         return result;
     }
 
+    // 선택한 인물 ID에 해당하는 명언 목록을 조회한다.
+    public List<QuoteDTO> selectQuotesByPersonIdForUpdate(
+            Connection con,
+            int personId
+    ) {
+
+        String query =
+                prop.getProperty("selectQuotesByPersonIdForUpdate");
+
+        /*
+         * 기존 공통 조회 메서드를 재사용한다.
+         * 쿼리 결과에 quote_id, quote_content,
+         * person_name, theme_name이 있으므로
+         * 기존 convertToQuote()를 그대로 사용할 수 있다.
+         */
+        return selectQuoteList(con, query, personId);
+    }
+
+    // 선택한 명언의 내용만 수정하고 반영된 행 개수를 반환한다.
+    public int updateQuoteContent(
+            Connection con,
+            QuoteDTO quote
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = prop.getProperty("updateQuoteContent");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setString(1, quote.getQuoteContent());
+            pstmt.setInt(2, quote.getQuoteId());
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "명언 수정 중 오류가 발생했습니다.",
+                    e
+            );
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+    }
+
     // 여러 개의 명언을 조회하는 공통 메서드
     private List<QuoteDTO> selectQuoteList(
             Connection con,

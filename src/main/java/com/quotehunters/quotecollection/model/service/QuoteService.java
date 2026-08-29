@@ -119,4 +119,55 @@ public class QuoteService {
             JDBC.close(con);
         }
     }
+
+    // 선택한 인물이 가진 명언 목록을 조회한다.
+    public List<QuoteDTO> selectQuotesByPersonIdForUpdate(
+            int personId
+    ) {
+
+        Connection con = JDBC.getConnection();
+
+        try {
+            return quoteDAO.selectQuotesByPersonIdForUpdate(
+                    con,
+                    personId
+            );
+
+        } finally {
+            JDBC.close(con);
+        }
+    }
+
+    // 명언 내용을 수정하고 성공 여부에 따라 commit 또는 rollback한다.
+    public boolean updateQuoteContent(QuoteDTO quote) {
+
+        Connection con = JDBC.getConnection();
+
+        try {
+            int result = quoteDAO.updateQuoteContent(con, quote);
+
+            if (result > 0) {
+                JDBC.commit(con);
+                return true;
+            }
+
+            JDBC.rollback(con);
+            return false;
+
+        } catch (RuntimeException e) {
+            JDBC.rollback(con);
+            throw e;
+
+        } finally {
+            JDBC.close(con);
+        }
+    }
+
+
+
+
+
+
+
+
 }

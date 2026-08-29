@@ -230,4 +230,147 @@ public class QuoteController {
             );
         }
     }
+
+    // 인물과 명언을 선택하고 명언 내용만 수정하는 전체 흐름을 처리한다.
+    public void updateQuote(Scanner scanner) {
+
+        /*
+         * UPDATE 결과가 0이거나 예외가 발생하면
+         * 이 지점부터 다시 시작한다.
+         */
+        updateFlow:
+        while (true) {
+            QuoteDTO selectedPerson = selectPerson(scanner);
+
+            List<QuoteDTO> quoteList =
+                    quoteService.selectQuotesByPersonIdForUpdate(
+                            selectedPerson.getPersonId()
+                    );
+
+            /*
+             * 선택한 인물에게 등록된 명언이 없으면
+             * 인물 검색 단계로 돌아간다.
+             */
+            if (quoteList.isEmpty()) {
+                resultView.printMessage("등록된 명언이 없습니다.");
+                continue;
+            }
+
+            resultView.printQuotesForUpdate(quoteList);
+
+            int selectedNumber = resultView.inputListNumber(
+                    scanner,
+                    quoteList.size(),
+                    "수정할 명언 번호를 입력해주세요"
+            );
+
+            /*
+             * 사용자가 입력한 값은 화면 순번이다.
+             * 실제 UPDATE에는 DTO의 quoteId가 사용된다.
+             */
+            QuoteDTO selectedQuote =
+                    quoteList.get(selectedNumber - 1);
+
+            resultView.printCurrentQuoteForUpdate(selectedQuote);
+
+            /*
+             * 재수정을 선택하면 인물과 명언 선택을 유지한 채
+             * 새 명언 내용만 다시 입력한다.
+             */
+            while (true) {
+                String originalContent =
+                        selectedQuote.getQuoteContent();
+
+                String newContent =
+                        resultView.inputQuoteContent(scanner);
+
+                String decision =
+                        resultView.inputUpdateDecision(scanner);
+
+                if (decision.equals("N")) {
+                    return;
+                }
+
+                if (decision.equals("재수정")) {
+                    continue;
+                }
+
+                /*
+                 * 같은 내용을 입력한 경우도 허용한다.
+                 * 불필요한 UPDATE를 실행하지 않고 정상 수정으로 처리한다.
+                 */
+                if (originalContent.equals(newContent)) {
+                    resultView.printMessage("수정되었습니다.");
+                    return;
+                }
+
+                selectedQuote.setQuoteContent(newContent);
+
+                try {
+                    boolean success =
+                            quoteService.updateQuoteContent(
+                                    selectedQuote
+                            );
+
+                    if (success) {
+                        resultView.printMessage("수정되었습니다.");
+                        return;
+                    }
+
+                    /*
+                     * UPDATE 결과가 0이면 수정 흐름의 처음으로 돌아가
+                     * 인물부터 다시 선택한다.
+                     */
+                    resultView.printMessage(
+                            "명언 수정에 실패했습니다. 다시 시도해주세요."
+                    );
+
+                    continue updateFlow;
+
+                } catch (RuntimeException e) {
+                    e.printStackTrace();
+
+                    resultView.printMessage(
+                            "명언 수정에 실패했습니다. 다시 시도해주세요."
+                    );
+
+                    continue updateFlow;
+                }
+            }
+        }
+    }
+
+
+    // 이름으로 인물을 검색하고 화면 번호로 선택한 인물 DTO를 반환한다.
+    private QuoteDTO selectPerson(Scanner scanner) {
+
+        while (true) {
+            String personName =
+                    resultView.inputPersonName(scanner);
+
+            List<QuoteDTO> personList =
+                    quoteService.searchPersonsForQuoteRegistration(
+                            personName
+                    );
+
+            if (personList.isEmpty()) {
+                resultView.printMessage("조회된 인물이 없습니다.");
+                continue;
+            }
+
+            resultView.printPersonCandidates(personList);
+
+            int selectedNumber = resultView.inputListNumber(
+                    scanner,
+                    personList.size(),
+                    "인물 번호를 입력해주세요"
+            );
+
+            /*
+             * 사용자는 화면 순번을 입력한다.
+             * 실제 personId는 반환되는 DTO 안에 보관되어 있다.
+             */
+            return personList.get(selectedNumber - 1);
+        }
+    }
 }

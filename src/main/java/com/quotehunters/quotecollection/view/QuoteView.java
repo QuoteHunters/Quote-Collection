@@ -209,4 +209,59 @@ public class QuoteView {
                 "수정할 항목 번호를 입력해주세요"
         );
     }
+
+    // 선택한 인물의 명언을 DB ID가 아닌 화면 순번과 함께 출력한다.
+    public void printQuotesForUpdate(List<QuoteDTO> quoteList) {
+
+        System.out.println();
+        System.out.println("========== 수정할 명언 목록 ==========");
+
+        for (int i = 0; i < quoteList.size(); i++) {
+            QuoteDTO quote = quoteList.get(i);
+
+            System.out.println(
+                    (i + 1) + ". " +
+                            quote.getQuoteContent() +
+                            " | 주제: " + quote.getThemeName()
+            );
+        }
+
+        System.out.println("====================================");
+    }
+
+    // 수정 대상으로 선택한 명언의 현재 정보를 출력한다.
+    public void printCurrentQuoteForUpdate(QuoteDTO quote) {
+
+        System.out.println();
+        System.out.println("========== 현재 명언 정보 ==========");
+        System.out.println("인물 : " + quote.getPersonName());
+        System.out.println("명언 : " + quote.getQuoteContent());
+        System.out.println("주제 : " + quote.getThemeName());
+        System.out.println("===================================");
+    }
+
+    // 명언 수정, 취소 또는 재입력을 선택받는다.
+    public String inputUpdateDecision(Scanner scanner) {
+
+        while (true) {
+            System.out.print("수정하시겠습니까? [Y/N/재수정] : ");
+
+            String decision = scanner.nextLine().trim();
+
+            if (decision.equalsIgnoreCase("Y")) {
+                return "Y";
+            }
+
+            if (decision.equalsIgnoreCase("N")) {
+                return "N";
+            }
+
+            if (decision.equals("재수정")) {
+                return "재수정";
+            }
+
+            printMessage("Y, N, 재수정 중 하나를 입력해주세요.");
+        }
+    }
+
 }
