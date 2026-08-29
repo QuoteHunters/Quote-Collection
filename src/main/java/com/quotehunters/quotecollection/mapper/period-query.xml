@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
-<!-- Period(시대) 기능에서 사용하는 SQL 모음 파일 -->
 <properties>
 
     <!-- [조회] 전체 시대 목록 조회 (Period-002: 수정/삭제 진입 시 리스트 출력용) -->

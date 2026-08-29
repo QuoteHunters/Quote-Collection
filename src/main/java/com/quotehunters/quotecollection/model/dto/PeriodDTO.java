@@ -16,6 +16,7 @@ public class PeriodDTO {
     public int getPeriodId() {
         return periodId;
     }
+
     public String getPeriodName() {
         return periodName;
     }
@@ -24,6 +25,7 @@ public class PeriodDTO {
     public void setPeriodId(int periodId) {
         this.periodId = periodId;
     }
+
     public void setPeriodName(String periodName) {
         this.periodName = periodName;
     }
@@ -35,7 +37,7 @@ public class PeriodDTO {
                 ", periodName='" + periodName + '\'' +
                 '}';
 
-        }
     }
+}
 
 
