@@ -10,6 +10,40 @@ public class ThemeView {
     private final ResultView rv = new ResultView();
     private final ThemeController tc = new ThemeController();
 
+    public void themeMainView() {
+        while (true) {
+            System.out.println("1. 조회");
+            System.out.println("2. 등록");
+            System.out.println("3. 수정");
+            System.out.println("4. 삭제");
+            System.out.println("0. 메인화면으로");
+
+            int choice = scv.scannInt(sc, "선택");
+            switch (choice) {
+                case 1: {
+                    System.out.println("조회");
+                    break;
+                }
+                case 2: {
+                    insertTheme();
+                    break;
+                }
+                case 3: {
+                    System.out.println("수정");
+                    break;
+                }
+                case 4: {
+                    System.out.println("삭제");
+                    break;
+                }
+                default: {
+                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
+                    break;
+                }
+            }
+        }
+    }
+
     public void insertTheme() {
         System.out.println("======= 주제 등록 ========");
         insertLoop:
