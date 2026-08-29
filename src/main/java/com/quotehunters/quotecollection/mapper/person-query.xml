@@ -173,6 +173,16 @@
           person_id = ?
     </entry>
 
+    <!-- Person-009: 선택한 인물의 분야 수정 -->
+    <entry key="updatePersonField">
+        UPDATE
+           person
+        SET
+           field_id = ?
+        WHERE
+           person_id = ?
+    </entry>
+
     <!-- Person-001: 인물 이름 중복 확인 -->
     <entry key="existsPersonName">
         SELECT

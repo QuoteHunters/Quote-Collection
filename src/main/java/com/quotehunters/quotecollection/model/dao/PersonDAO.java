@@ -320,6 +320,33 @@ public class PersonDAO {
         return result;
     }
 
+    // 인물의 분야 수정
+    public int updatePersonField(Connection con, int personId, int fieldId) {
+
+        PreparedStatement pstmt = null;
+
+        int result = 0;
+
+        String query = prop.getProperty("updatePersonField");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 새로 변경할 분야의 번호
+            pstmt.setInt(1, fieldId);
+            // 수정할 인물 번호
+            pstmt.setInt(2, personId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
 
     /* 인물 등록 */
     // 1. 입력된 이름의 이름 존재 유무 확인

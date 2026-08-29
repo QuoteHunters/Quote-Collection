@@ -1,6 +1,7 @@
 package com.quotehunters.quotecollection.view;
 
 import com.quotehunters.quotecollection.model.dto.CountryDTO;
+import com.quotehunters.quotecollection.model.dto.FieldDTO;
 import com.quotehunters.quotecollection.model.dto.PersonDTO;
 
 import java.util.List;
@@ -265,6 +266,70 @@ public class PersonView {
 
     // 2-2. 인물 시대 수정 최종 확인
     public String confirmPeriodUpdate(Scanner sc) {
+
+        while (true) {
+            String choice = scannerView.scannString(sc, "작업 선택 (완료 / 재수정 / 취소)");
+
+            if ("완료".equals(choice) || "재수정".equals(choice) || "취소".equals(choice)) {
+                return choice;
+            }
+
+            resultView.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
+        }
+    }
+
+    /* 3. 인물의 분야 수정 */
+    // 3-1. 인물의 분야를 수정하기 위해 새로운 분야 선택
+    public int selectFieldForUpdate(Scanner sc, PersonDTO selectedPerson, List<FieldDTO> fieldList) {
+
+        System.out.println("\n========== 인물의 분야 수정 ==========");
+        System.out.println("인물 이름 : " + selectedPerson.getPersonName());
+        System.out.println("현재 분야 : " + selectedPerson.getFieldName());
+
+        // 등록된 분야가 없으면 선택할 수 없음
+        if (fieldList.isEmpty()) {
+            printMessage("등록된 분야가 없습니다.");
+            return 0;
+        }
+
+        System.out.println("\n========== 분야 목록 ==========");
+
+        for (int i = 0; i < fieldList.size(); i++) {
+            System.out.println((i + 1) + ". " + fieldList.get(i).getFieldName());
+        }
+
+        while (true) {
+            int choice = scannerView.scannInt(sc, "변경할 분야 선택 (0: 뒤로가기)");
+
+            // 정확히 한 단계 위인 인물 선택으로 이동
+            if (choice == 0) {
+                return 0;
+            }
+
+            // 출력한 목록의 선택 범위 확인
+            if (choice < 1 || choice > fieldList.size()) {
+                resultView.errorMessage("목록에 있는 분야 번호를 선택해주세요.");
+                continue;
+            }
+
+            // 화면 선택 번호를 실제 FieldDTO로 변환
+            FieldDTO selectedField = fieldList.get(choice - 1);
+
+            // 현재 분야와 동일한 분야인지 확인
+            if (selectedPerson.getFieldId() == selectedField.getFieldId()) {
+                resultView.errorMessage("현재 분야와 동일한 분야입니다.");
+                continue;
+            }
+
+            System.out.println("새로 변경할 분야명 : " + selectedField.getFieldName());
+
+            // 화면 순번이 아니라 실제 DB의 field_id 반환
+            return selectedField.getFieldId();
+        }
+    }
+
+    // 3-2. 인물 분야 수정 최종 확인
+    public String confirmFieldUpdate(Scanner sc) {
 
         while (true) {
             String choice = scannerView.scannString(sc, "작업 선택 (완료 / 재수정 / 취소)");

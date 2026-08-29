@@ -129,6 +129,28 @@ public class PersonService {
         return result;
     }
 
+    // 인물의 분야 수정
+    public int updatePersonField(int personId, int fieldId) {
+
+        Connection con = JDBC.getConnection();
+
+        int result = 0;
+
+        try {
+            result = personDAO.updatePersonField(con, personId, fieldId);
+
+            if (result > 0) {
+                JDBC.commit(con);
+            } else {
+                JDBC.rollback(con);
+            }
+        } finally {
+            JDBC.close(con);
+        }
+
+        return result;
+    }
+
     // 인물의 이름 중복 확인
     public boolean existsPersonName(String personName) {
         Connection con = JDBC.getConnection();

@@ -98,6 +98,11 @@ public class PersonController {
         return personService.updatePersonPeriod(personId, periodId);
     }
 
+    // 인물 분야 수정
+    public int updatePersonField(int personId, int fieldId) {
+        return personService.updatePersonField(personId, fieldId);
+    }
+
     /* 인물 등록
     * 여기서는 View에게 중복 여부와 등록 결과를 그대로 돌려줌
     */
