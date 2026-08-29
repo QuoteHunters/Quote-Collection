@@ -47,5 +47,31 @@
     </entry>
 
 
+    <!--
+        [Member-004 / 현재 비밀번호 확인]
+        로그인에 성공한 회원 번호(member_id)로 DB에 저장된 현재 비밀번호 하나를 조회한다.
+
+        이 SQL은 현재 비밀번호를 화면에 출력하지 않는다.
+        DAO가 반환한 값을 Service가 사용자가 방금 입력한 값과 비교한다.
+    -->
+    <entry key="selectMemberPasswordByMemberId">
+        SELECT user_pw
+        FROM quote_user
+        WHERE member_id = ?
+    </entry>
+
+    <!--
+        [Member-004 / 비밀번호 변경]
+        로그인 성공 때 받은 member_id와 일치하는 회원 한 명의 비밀번호만 변경한다.
+
+        첫 번째 ? : 사용자가 새로 정한 비밀번호
+        두 번째 ? : 로그인한 회원의 member_id
+    -->
+    <entry key="updateMemberPassword">
+        UPDATE quote_user
+        SET user_pw = ?
+        WHERE member_id = ?
+    </entry>
+
 
 </properties>

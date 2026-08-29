@@ -162,6 +162,90 @@ public class MemberDAO {
         }
     }
 
+
+    /*
+     * [Member-004] 로그인한 회원 번호로 DB에 저장된 현재 비밀번호를 한 개 조회한다.
+     *
+     * 반환값 String : DB에 저장된 user_pw 문자열이다.
+     * 반환값 null   : member_id와 일치하는 회원 행이 없다는 뜻이다.
+     *
+     * 이 메서드는 비밀번호를 화면에 출력하지 않는다.
+     * Service가 반환된 값과 사용자가 입력한 현재 비밀번호를 안전하게 비교한다.
+     */
+    public String selectMemberPasswordByMemberId(
+            Connection con,
+            int memberId
+    ) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        String query = getQuery("selectMemberPasswordByMemberId");
+
+        try {
+            // XML에서 읽어 온 현재 비밀번호 조회 SELECT문을 실행할 준비를 한다.
+            pstmt = con.prepareStatement(query);
+
+            // SQL의 첫 번째 ? 자리에 로그인 성공 때 받은 회원 번호를 넣는다.
+            pstmt.setInt(1, memberId);
+
+            // SELECT 실행 결과를 ResultSet으로 받는다.
+            rset = pstmt.executeQuery();
+
+            // member_id는 PRIMARY KEY이므로 결과는 최대 한 행이다.
+            if (rset.next()) {
+                return rset.getString("user_pw");
+            }
+
+            return null;
+
+        } catch (SQLException e) {
+            throw new RuntimeException("현재 비밀번호 조회 중 DB 오류가 발생했습니다.", e);
+
+        } finally {
+            // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+    }
+
+    /*
+     * [Member-004] 로그인한 회원 한 명의 비밀번호를 새 비밀번호로 UPDATE한다.
+     *
+     * 반환값은 UPDATE된 행 수다.
+     * member_id가 존재하는 회원 한 명을 정상 변경하면 보통 1을 반환한다.
+     */
+    public int updateMemberPassword(
+            Connection con,
+            int memberId,
+            String newUserPw
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = getQuery("updateMemberPassword");
+
+        try {
+            // XML에서 읽어 온 UPDATE문을 실행할 준비를 한다.
+            pstmt = con.prepareStatement(query);
+
+            // 첫 번째 ?에는 새 비밀번호, 두 번째 ?에는 로그인 회원 번호를 순서대로 넣는다.
+            pstmt.setString(1, newUserPw);
+            pstmt.setInt(2, memberId);
+
+            // executeUpdate()는 실제로 변경된 행 수를 int로 반환한다.
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("비밀번호 변경 DB 처리 중 오류가 발생했습니다.", e);
+
+        } finally {
+            // UPDATE에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
+            JDBC.close(pstmt);
+        }
+    }
+
+
     // XML key를 잘못 썼을 때 원인을 명확하게 알려 주는 보조 메서드다.
     private String getQuery(String key) {
         String query = prop.getProperty(key);
