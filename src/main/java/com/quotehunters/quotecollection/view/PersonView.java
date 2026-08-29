@@ -124,6 +124,49 @@ public class PersonView {
         System.out.println("----------------------------------");
     }
 
+    // 인물 이름 검색어 입력 및 Validation
+    public String inputPersonNameForSearch(Scanner sc) {
+
+        while (true) {
+            String personName = scannerView.scannString(sc, "검색할 인물 이름 입력 (0: 뒤로가기)");
+
+            if ("0".equals(personName)) {
+                return null;
+            }
+
+            // person_name VARCHAR(50) 길이 검증
+            if (personName.length() > 50) {
+                resultView.errorMessage("검색할 인물 이름은 50자 이하로 입력해주세요.");
+                continue;
+            }
+
+            return personName;
+        }
+    }
+
+    // 명언 키워드 입력 및 Validation
+    public String inputQuoteKeywordForSearch(Scanner sc) {
+
+        while (true) {
+            String quoteKeyword = scannerView.scannString(
+                    sc,
+                    "검색할 명언 키워드 입력 (0: 뒤로가기)"
+            );
+
+            if ("0".equals(quoteKeyword)) {
+                return null;
+            }
+
+            // quote_content VARCHAR(255) 길이 검증
+            if (quoteKeyword.length() > 255) {
+                resultView.errorMessage("명언 검색 키워드는 255자 이하로 입력해주세요.");
+                continue;
+            }
+
+            return quoteKeyword;
+        }
+    }
+
     /* 인물 수정 */
     // 0. 수정할 인물 선택
     public PersonDTO selectPerson(Scanner sc, List<PersonDTO> personList) {
