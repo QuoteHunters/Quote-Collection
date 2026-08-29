@@ -163,7 +163,53 @@ public class QuoteService {
         }
     }
 
+    // 주제 이름 일부로 명언을 검색한다.
+    public List<QuoteDTO> searchQuotesByTheme(String themeName) {
 
+        Connection con = JDBC.getConnection();
+
+        try {
+            return quoteDAO.searchQuotesByTheme(
+                    con,
+                    themeName.trim()
+            );
+
+        } finally {
+            JDBC.close(con);
+        }
+    }
+
+    // 명언의 주제를 수정하고 트랜잭션을 처리한다.
+    public boolean updateQuoteTheme(
+            int quoteId,
+            int themeId
+    ) {
+
+        Connection con = JDBC.getConnection();
+
+        try {
+            int result = quoteDAO.updateQuoteTheme(
+                    con,
+                    quoteId,
+                    themeId
+            );
+
+            if (result > 0) {
+                JDBC.commit(con);
+                return true;
+            }
+
+            JDBC.rollback(con);
+            return false;
+
+        } catch (RuntimeException e) {
+            JDBC.rollback(con);
+            throw e;
+
+        } finally {
+            JDBC.close(con);
+        }
+    }
 
 
 

@@ -126,4 +126,27 @@
         SET quote_content = ?
         WHERE quote_id = ?
     </entry>
+
+    <!-- 주제 이름 일부로 명언을 검색한다. -->
+    <entry key="searchQuotesByTheme">
+        SELECT
+        q.quote_id,
+        q.quote_content,
+        p.person_name,
+        t.theme_name
+        FROM quote q
+        JOIN person p
+        ON p.person_id = q.person_id
+        JOIN theme t
+        ON t.theme_id = q.theme_id
+        WHERE t.theme_name LIKE CONCAT('%', ?, '%')
+        ORDER BY q.quote_id ASC
+    </entry>
+
+    <!-- 선택한 명언의 주제만 수정한다. -->
+    <entry key="updateQuoteTheme">
+        UPDATE quote
+        SET theme_id = ?
+        WHERE quote_id = ?
+    </entry>
 </properties>

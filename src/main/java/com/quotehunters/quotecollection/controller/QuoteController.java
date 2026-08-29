@@ -404,4 +404,188 @@ public class QuoteController {
             return personList.get(selectedNumber - 1);
         }
     }
+
+    // 선택한 검색 방식에 따라 명언 목록을 조회한다.
+    private List<QuoteDTO> searchQuotesForThemeUpdate(
+            Scanner scanner,
+            int searchType
+    ) {
+
+        String keyword;
+
+        switch (searchType) {
+            case 1:
+                keyword = resultView.inputSearchWord(
+                        scanner,
+                        "주제"
+                );
+
+                if (keyword == null) {
+                    return null;
+                }
+
+                return quoteService.searchQuotesByTheme(keyword);
+
+            case 2:
+                keyword = resultView.inputSearchWord(
+                        scanner,
+                        "명언 내용"
+                );
+
+                if (keyword == null) {
+                    return null;
+                }
+
+                return quoteService.searchQuotesByKeyword(keyword);
+
+            case 3:
+                keyword = resultView.inputSearchWord(
+                        scanner,
+                        "인물 이름"
+                );
+
+                if (keyword == null) {
+                    return null;
+                }
+
+                return quoteService.searchQuotesByPerson(keyword);
+
+            default:
+                return null;
+        }
+    }
+
+    // 검색한 명언을 선택하고 해당 명언의 주제만 수정한다.
+    public void updateQuoteTheme(Scanner scanner) {
+
+        searchFlow:
+        while (true) {
+            int searchType =
+                    resultView.inputThemeUpdateSearchType(scanner);
+
+            if (searchType == 0) {
+                return;
+            }
+
+            List<QuoteDTO> quoteList =
+                    searchQuotesForThemeUpdate(
+                            scanner,
+                            searchType
+                    );
+
+            if (quoteList == null) {
+                continue;
+            }
+
+            if (quoteList.isEmpty()) {
+                resultView.printMessage(
+                        "조회된 명언이 없습니다."
+                );
+                continue;
+            }
+
+            quoteSelection:
+            while (true) {
+                resultView.printQuotesForThemeUpdate(quoteList);
+
+                int selectedQuoteNumber =
+                        resultView.inputListNumber(
+                                scanner,
+                                quoteList.size(),
+                                "수정할 명언 번호를 입력해주세요"
+                        );
+
+                if (selectedQuoteNumber == 0) {
+                    continue searchFlow;
+                }
+
+                QuoteDTO selectedQuote =
+                        quoteList.get(selectedQuoteNumber - 1);
+
+                resultView.printCurrentQuoteForUpdate(
+                        selectedQuote
+                );
+
+                themeSelection:
+                while (true) {
+                    List<QuoteDTO> themeList =
+                            quoteService
+                                    .selectThemesForQuoteRegistration();
+
+                    if (themeList.isEmpty()) {
+                        resultView.printMessage(
+                                "등록된 주제가 없습니다."
+                        );
+                        return;
+                    }
+
+                    resultView.printThemeCandidates(themeList);
+
+                    int selectedThemeNumber =
+                            resultView.inputListNumber(
+                                    scanner,
+                                    themeList.size(),
+                                    "새로운 주제 번호를 입력해주세요"
+                            );
+
+                    if (selectedThemeNumber == 0) {
+                        continue quoteSelection;
+                    }
+
+                    QuoteDTO selectedTheme =
+                            themeList.get(
+                                    selectedThemeNumber - 1
+                            );
+
+                    resultView.printThemeUpdateSummary(
+                            selectedQuote,
+                            selectedTheme
+                    );
+
+                    String decision =
+                            resultView.inputUpdateDecision(scanner);
+
+                    if (decision.equals("N")) {
+                        return;
+                    }
+
+                    if (decision.equals("재수정")) {
+                        continue themeSelection;
+                    }
+
+                    try {
+                        boolean success =
+                                quoteService.updateQuoteTheme(
+                                        selectedQuote.getQuoteId(),
+                                        selectedTheme.getThemeId()
+                                );
+
+                        if (success) {
+                            resultView.printMessage(
+                                    "수정되었습니다."
+                            );
+                            return;
+                        }
+
+                        resultView.printMessage(
+                                "명언 주제 수정에 실패했습니다. " +
+                                        "다시 시도해주세요."
+                        );
+
+                        continue searchFlow;
+
+                    } catch (RuntimeException e) {
+                        e.printStackTrace();
+
+                        resultView.printMessage(
+                                "명언 주제 수정 중 " +
+                                        "오류가 발생했습니다."
+                        );
+
+                        return;
+                    }
+                }
+            }
+        }
+    }
 }

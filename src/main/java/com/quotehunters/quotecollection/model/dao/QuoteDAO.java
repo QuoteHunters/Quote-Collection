@@ -342,4 +342,45 @@ public class QuoteDAO {
 
         return quote;
     }
+
+    // 주제 이름 일부로 명언 목록을 검색한다.
+    public List<QuoteDTO> searchQuotesByTheme(
+            Connection con,
+            String themeName
+    ) {
+
+        String query = prop.getProperty("searchQuotesByTheme");
+
+        return selectQuoteList(con, query, themeName);
+    }
+
+    // 선택한 명언의 주제 ID만 수정한다.
+    public int updateQuoteTheme(
+            Connection con,
+            int quoteId,
+            int themeId
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = prop.getProperty("updateQuoteTheme");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, themeId);
+            pstmt.setInt(2, quoteId);
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "명언 주제 수정 중 오류가 발생했습니다.",
+                    e
+            );
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+    }
 }

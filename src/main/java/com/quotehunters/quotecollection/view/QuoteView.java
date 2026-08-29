@@ -277,4 +277,85 @@ public class QuoteView {
         }
     }
 
+    // 명언 주제 수정에 사용할 검색 방식을 선택받는다.
+    public int inputThemeUpdateSearchType(Scanner scanner) {
+
+        System.out.println();
+        System.out.println("========== 명언 검색 방식 ==========");
+        System.out.println("1. 주제 검색");
+        System.out.println("2. 명언 내용 검색");
+        System.out.println("3. 인물 검색");
+        System.out.println("===================================");
+
+        return inputListNumber(
+                scanner,
+                3,
+                "검색 방식 번호를 입력해주세요"
+        );
+    }
+
+    // 검색어를 입력받고 0이면 이전 화면으로 돌아간다.
+    public String inputSearchWord(
+            Scanner scanner,
+            String target
+    ) {
+
+        while (true) {
+            System.out.print(
+                    "검색할 " + target +
+                            "을(를) 입력해주세요 (0: 뒤로가기) : "
+            );
+
+            String keyword = scanner.nextLine().trim();
+
+            if (keyword.equals("0")) {
+                return null;
+            }
+
+            if (keyword.isEmpty()) {
+                printMessage(target + "을(를) 입력해주세요.");
+                continue;
+            }
+
+            return keyword;
+        }
+    }
+
+    // 주제 수정 대상 명언을 화면 순번과 함께 출력한다.
+    public void printQuotesForThemeUpdate(
+            List<QuoteDTO> quoteList
+    ) {
+
+        System.out.println();
+        System.out.println("========== 명언 검색 결과 ==========");
+
+        for (int i = 0; i < quoteList.size(); i++) {
+            QuoteDTO quote = quoteList.get(i);
+
+            System.out.println(
+                    (i + 1) + ". " +
+                            quote.getQuoteContent() +
+                            " | 인물: " + quote.getPersonName() +
+                            " | 현재 주제: " + quote.getThemeName()
+            );
+        }
+
+        System.out.println("==================================");
+    }
+
+    // 현재 주제와 새로 선택한 주제를 최종 확인용으로 출력한다.
+    public void printThemeUpdateSummary(
+            QuoteDTO quote,
+            QuoteDTO newTheme
+    ) {
+
+        System.out.println();
+        System.out.println("========== 명언 주제 수정 ==========");
+        System.out.println("명언 : " + quote.getQuoteContent());
+        System.out.println("인물 : " + quote.getPersonName());
+        System.out.println("현재 주제 : " + quote.getThemeName());
+        System.out.println("변경할 주제 : " + newTheme.getThemeName());
+        System.out.println("==================================");
+    }
+
 }
