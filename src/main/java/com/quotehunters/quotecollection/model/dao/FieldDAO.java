@@ -77,10 +77,35 @@ public class FieldDAO {
         return fieldDTO;
     }
 
-    public boolean existsFieldName(Connection connection, int id, String fieldName) {
+    public boolean existsFieldName(Connection connection, String fieldName) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
         String query = prop.getProperty("existsFieldName");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, fieldName);
+            rset = pstmt.executeQuery();
+
+            if (rset.next()) {
+                if (rset.getInt(1) > 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Exists Field Name SQL Exception");
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return false;
+    }
+
+    public boolean existsFieldName(Connection connection, int id, String fieldName) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        String query = prop.getProperty("existsFieldNameExceptId");
 
         try {
             pstmt = connection.prepareStatement(query);
@@ -116,6 +141,46 @@ public class FieldDAO {
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println("Update Fields SQL Exception");
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
+    public int insertField(Connection connection, String fieldName) {
+        PreparedStatement pstmt = null;
+
+        int result = 0;
+
+        String query = prop.getProperty("insertField");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, fieldName);
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Insert Fields SQL Exception");
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
+    public int deleteField(Connection connection, int id) {
+        PreparedStatement pstmt = null;
+        int result = 0;
+        String query = prop.getProperty("deleteField");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setInt(1, id);
+
+            result = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println("Delete Fields SQL Exception");
         } finally {
             JDBC.close(pstmt);
         }

@@ -26,7 +26,7 @@ public class PersonDAO {
 
     }
 
-    // 전체 인물 조회용 메소드
+    // 전체 인물 조회
     public List<PersonDTO> selectAllPerson(Connection con) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -62,6 +62,206 @@ public class PersonDAO {
             JDBC.close(rset);
             JDBC.close(pstmt);
         }
+        return personList;
+    }
+
+    // 국가별 인물 조회
+    public List<PersonDTO> selectPersonByCountry(Connection con, int countryId) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<PersonDTO> personList = new ArrayList<>();
+
+        String query = prop.getProperty("selectPersonByCountry");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, countryId);
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                PersonDTO person = new PersonDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryId(rset.getInt("country_id"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodId(rset.getInt("period_id"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldId(rset.getInt("field_id"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+        return personList;
+    }
+
+    // 시대별 인물 조회
+    public List<PersonDTO> selectPersonByPeriod(Connection con, int periodId) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<PersonDTO> personList = new ArrayList<>();
+
+        String query = prop.getProperty("selectPersonByPeriod");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, periodId);
+
+            rset = pstmt.executeQuery();
+            while (rset.next()) {
+                PersonDTO person = new PersonDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryId(rset.getInt("country_id"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodId(rset.getInt("period_id"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldId(rset.getInt("field_id"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+        return personList;
+    }
+
+    // 분야별 인물 조회
+    public List<PersonDTO> selectPersonByField(Connection con, int fieldId) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<PersonDTO> personList = new ArrayList<>();
+
+        String query = prop.getProperty("selectPersonByField");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, fieldId);
+
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                PersonDTO person = new PersonDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryId(rset.getInt("country_id"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodId(rset.getInt("period_id"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldId(rset.getInt("field_id"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return personList;
+    }
+
+    // 인물 이름 조회
+    public List<PersonDTO> selectPersonByName(Connection con, String personName) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<PersonDTO> personList = new ArrayList<>();
+
+        String query = prop.getProperty("selectPersonByName");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 입력된 문자열이 이름의 일부에 포함된 인물을 모두 검색
+            pstmt.setString(1, "%"+ personName + "%");
+
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                PersonDTO person = new PersonDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryId(rset.getInt("country_id"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodId(rset.getInt("period_id"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldId(rset.getInt("field_id"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+        return personList;
+    }
+
+    // 입력된 명언의 키워드가 포함된 명언을 말한 인물 조회
+    public List<PersonDTO> selectPersonByQuoteKeyword(Connection con, String quoteKeyword) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<PersonDTO> personList = new ArrayList<>();
+
+        // 중복인물 발생 시 XML 쿼리에서 Distinct로 제거해서 뽑아옴
+        String query = prop.getProperty("selectPersonByQuoteKeyword");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 명언 내용에 입력된 키워드가 포함되어 있는지 검색
+            pstmt.setString(1, "%" + quoteKeyword + "%");
+
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                PersonDTO person = new PersonDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryId(rset.getInt("country_id"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodId(rset.getInt("period_id"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldId(rset.getInt("field_id"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
         return personList;
     }
 

@@ -2,7 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
 
-    <!-- 국가 전체 조회: country 테이블의 모든 줄을 번호 순으로 가져온다 -->
+
     <entry key="selectAllCountry">
         SELECT country_id, country_name
         FROM country
@@ -22,6 +22,37 @@
         VALUES (?)
     </entry>
 
+    <entry key="updateCountry">
+        UPDATE country
+        SET country_name = ?
+        WHERE country_id = ?
+    </entry>
+
+    <!-- 연쇄 삭제 1단계: 해당 국가 소속 인물들의 명언에 달린 즐겨찾기 삭제 -->
+    <entry key="deleteBookmarkByCountry">
+        DELETE FROM bookmark
+        WHERE quote_id IN (
+        SELECT quote_id FROM quote
+        WHERE person_id IN (
+        SELECT person_id FROM person WHERE country_id = ?
+        )
+        )
+    </entry>
+
+
+    <!-- 연쇄 삭제 2단계: 해당 국가 소속 인물들의 명언 삭제 -->
+    <entry key="deleteQuoteByCountry">
+        DELETE FROM quote
+        WHERE person_id IN (
+        SELECT person_id FROM person WHERE country_id = ?
+        )
+    </entry>
+
+    <!-- 연쇄 삭제 3단계: 해당 국가 소속 인물 삭제 -->
+    <entry key="deletePersonByCountry">
+        DELETE FROM person
+        WHERE country_id = ?
+    </entry>
 
     <entry key="deleteCountry">
         DELETE FROM country
