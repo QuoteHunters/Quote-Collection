@@ -69,6 +69,32 @@ public class ThemeDAO {
         }
     }
 
+    public boolean existsThemeName(Connection connection, int id, String fieldName) {
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+        String query = prop.getProperty("existsThemeNameExceptId");
+
+        try {
+            pstmt = connection.prepareStatement(query);
+            pstmt.setString(1, fieldName);
+            pstmt.setInt(2, id);
+            rset = pstmt.executeQuery();
+
+            if (rset.next()) {
+                if (rset.getInt(1) > 0) {
+                    return true;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("Exists Theme Name faild " + e.getMessage());
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return false;
+    }
+
     public List<ThemeDTO> selectThemes(Connection con) {
         PreparedStatement pstmt = null;
         ResultSet rs = null;
@@ -94,5 +120,24 @@ public class ThemeDAO {
         }
 
         return themes;
+    }
+
+    public int updateTheme(Connection con, int id, String themeName) {
+        PreparedStatement pstmt = null;
+        String query = prop.getProperty("updateTheme");
+        int result = 0;
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, themeName);
+            pstmt.setInt(2, id);
+            result = pstmt.executeUpdate();
+            return result;
+        } catch (SQLException e) {
+            System.out.println("Update theme failed " + e.getMessage());
+            return result;
+        } finally {
+            JDBC.close(pstmt);
+        }
     }
 }

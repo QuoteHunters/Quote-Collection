@@ -32,7 +32,7 @@ public class ThemeView {
                     break;
                 }
                 case 3: {
-                    System.out.println("수정");
+                    updateTheme();
                     break;
                 }
                 case 4: {
@@ -97,5 +97,74 @@ public class ThemeView {
             System.out.println((i + 1) + ". " + themes.get(i).getTheme_name());
         }
         System.out.println("----------------------------");
+    }
+
+    public int selectIdTheme() {
+        List<ThemeDTO> themes = tc.selectThemes();
+
+        selectThemes();
+
+        int choice = 0;
+
+        while (true) {
+            choice = scv.scannInt(sc, "선택 (0: 뒤로가기)");
+            if (choice < 0 || choice > themes.size()) {
+                rv.errorMessage("메뉴에 있는 번호를 선택해주세요");
+                continue;
+            }
+
+            break;
+        }
+
+        if (choice == 0) return 0;
+
+        return themes.get(choice - 1).getTheme_id();
+    }
+
+    public void updateTheme() {
+        selectLoop:
+        while (true) {
+            int id = selectIdTheme();
+
+            System.out.println(id);
+
+            if (id == 0) return;
+
+            updateLoop:
+            while (true) {
+                String changeName = scv.scannString(sc, "변경할 주제명 입력 (0: 뒤로가기)");
+                if (changeName.equals("0")) continue selectLoop;
+                if (changeName.length() > 10) {
+                    rv.errorMessage("분야명은 10글자 이하로 입력해주세요.");
+                    continue;
+                }
+
+                if (tc.existsTheme(id, changeName)) {
+                    rv.errorMessage("중복되는 분야가 존재합니다.");
+                    continue;
+                }
+
+                while (true) {
+                    String check = scv.scannString(sc, "정말 수정하시겠습니까? 예 / 재수정 / 아니오");
+
+                    if (check.equals("예")) {
+                        int result = tc.updateTheme(id, changeName);
+                        if (result > 0) {
+                            rv.successMessage("수정이 완료되었습니다.");
+                            return;
+                        }
+
+                        rv.errorMessage("수정에 실패하였습니다. 다시 시도해주세요");
+                        return;
+                    }
+
+                    if (check.equals("재수정")) continue updateLoop;
+
+                    if (check.equals("아니오")) return;
+
+                    rv.errorMessage("예, 재수정, 아니오 중 하나를 입력해주세요.");
+                }
+            }
+        }
     }
 }

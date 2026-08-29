@@ -16,7 +16,15 @@ public class ThemeController {
         return themeService.existsTheme(themeName);
     }
 
+    public boolean existsTheme(int id, String themeName) {
+        return themeService.existsTheme(id, themeName);
+    }
+
     public List<ThemeDTO> selectThemes() {
         return themeService.selectThemes();
+    }
+
+    public int updateTheme(int id, String themeName) {
+        return themeService.updateTheme(id, themeName);
     }
 }
