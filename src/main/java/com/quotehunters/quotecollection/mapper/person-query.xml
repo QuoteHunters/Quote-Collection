@@ -148,7 +148,7 @@
         JOIN
             quote q ON q.person_id = p.person_id
         WHERE
-            q.quote_content Like '%?%'
+            q.quote_content Like ?
         ORDER BY
             p.person_name;
     </entry>
