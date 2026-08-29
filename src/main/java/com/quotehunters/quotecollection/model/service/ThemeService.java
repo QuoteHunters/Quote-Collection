@@ -2,9 +2,12 @@ package com.quotehunters.quotecollection.model.service;
 
 import com.quotehunters.quotecollection.common.JDBC;
 import com.quotehunters.quotecollection.model.dao.ThemeDAO;
+import com.quotehunters.quotecollection.model.dto.ThemeDTO;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ThemeService {
     private final ThemeDAO themeDAO = new ThemeDAO();
@@ -43,5 +46,14 @@ public class ThemeService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public List<ThemeDTO> selectThemes() {
+        Connection con = JDBC.getConnection();
+        List<ThemeDTO> themes = themeDAO.selectThemes(con);
+
+        JDBC.close(con);
+
+        return themes;
     }
 }

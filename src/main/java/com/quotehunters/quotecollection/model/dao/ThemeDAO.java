@@ -1,6 +1,7 @@
 package com.quotehunters.quotecollection.model.dao;
 
 import com.quotehunters.quotecollection.common.JDBC;
+import com.quotehunters.quotecollection.model.dto.ThemeDTO;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,7 +10,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.InvalidPropertiesFormatException;
+import java.util.List;
 import java.util.Properties;
 
 public class ThemeDAO {
@@ -64,5 +67,32 @@ public class ThemeDAO {
             JDBC.close(rs);
             JDBC.close(pstmt);
         }
+    }
+
+    public List<ThemeDTO> selectThemes(Connection con) {
+        PreparedStatement pstmt = null;
+        ResultSet rs = null;
+        String query = prop.getProperty("selectThemes");
+        List<ThemeDTO> themes = new ArrayList<>();
+
+        try {
+            pstmt = con.prepareStatement(query);
+            rs = pstmt.executeQuery();
+
+            while (rs.next()) {
+                ThemeDTO theme = new ThemeDTO();
+                theme.setTheme_id(rs.getInt("theme_id"));
+                theme.setTheme_name(rs.getString("theme_name"));
+
+                themes.add(theme);
+            }
+        } catch (SQLException e) {
+            System.out.println("Select themes failed " + e.getMessage());
+        } finally {
+            JDBC.close(rs);
+            JDBC.close(pstmt);
+        }
+
+        return themes;
     }
 }

@@ -1,6 +1,9 @@
 package com.quotehunters.quotecollection.controller;
 
+import com.quotehunters.quotecollection.model.dto.ThemeDTO;
 import com.quotehunters.quotecollection.model.service.ThemeService;
+
+import java.util.List;
 
 public class ThemeController {
     private final ThemeService themeService = new ThemeService();
@@ -11,5 +14,9 @@ public class ThemeController {
 
     public boolean existsTheme(String themeName) {
         return themeService.existsTheme(themeName);
+    }
+
+    public List<ThemeDTO> selectThemes() {
+        return themeService.selectThemes();
     }
 }

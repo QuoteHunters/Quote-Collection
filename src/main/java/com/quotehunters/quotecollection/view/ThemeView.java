@@ -1,7 +1,10 @@
 package com.quotehunters.quotecollection.view;
 
 import com.quotehunters.quotecollection.controller.ThemeController;
+import com.quotehunters.quotecollection.model.dto.ThemeDTO;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 
 public class ThemeView {
@@ -21,7 +24,7 @@ public class ThemeView {
             int choice = scv.scannInt(sc, "선택");
             switch (choice) {
                 case 1: {
-                    System.out.println("조회");
+                    selectThemes();
                     break;
                 }
                 case 2: {
@@ -79,5 +82,20 @@ public class ThemeView {
                 continue;
             }
         }
+    }
+
+    public void selectThemes() {
+        List<ThemeDTO> themes = tc.selectThemes();
+
+        System.out.println("----------------------------");
+        if (themes.isEmpty()) {
+            System.out.println("조회 결과 없음");
+            return;
+        }
+
+        for (int i = 0; i < themes.size(); i++) {
+            System.out.println((i + 1) + ". " + themes.get(i).getTheme_name());
+        }
+        System.out.println("----------------------------");
     }
 }
