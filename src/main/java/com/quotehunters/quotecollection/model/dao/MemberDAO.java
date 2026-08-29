@@ -1,0 +1,124 @@
+/*
+ * 의도1: Member-001 회원가입에 필요한 SELECT와 INSERT SQL을 quote_user에 실행한다.
+ * 의도2: DAO는 DB 작업만 담당, 화면 입력은 MemberView에서, 업무 규칙과 트랜잭션은 MemberService에서 담당한다.
+ */
+
+package com.quotehunters.quotecollection.model.dao;
+
+import com.quotehunters.quotecollection.common.JDBC;
+import com.quotehunters.quotecollection.model.dto.MemberDTO;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.Properties;
+
+public class MemberDAO {
+
+    // member-query.xml 안의 SQL을 key-value 형태로 보관한다.
+    private final Properties prop = new Properties();
+
+    /*
+     * DAO 객체가 만들어질 때 XML 파일을 읽는다.
+     * 이후 prop.getProperty("키 이름")으로 필요한 SQL을 가져온다.
+     */
+    public MemberDAO() {
+        try {
+            prop.loadFromXML(new FileInputStream(
+                    "src/main/java/com/quotehunters/quotecollection/mapper/member-query.xml"
+            ));
+        } catch (IOException e) {
+            throw new RuntimeException("회원 SQL 설정 파일을 불러오지 못했습니다.", e);
+        }
+    }
+
+    /*
+     * [Member-001] 입력한 아이디가 DB에 이미 존재하는지 확인한다.
+     *
+     * true  : 같은 user_id가 있음 → View가 아이디를 다시 받는다.
+     * false : 같은 user_id가 없음 → 다음 가입 단계로 진행한다.
+     */
+    public boolean existsMemberByUserId(Connection con, String userId) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        String query = getQuery("existsMemberByUserId");
+
+        try {
+            // XML에서 읽어 온 SELECT문을 실행할 준비를 한다.
+            pstmt = con.prepareStatement(query);
+
+            // SQL의 첫 번째 ? 자리에 입력한 아이디를 넣는다.
+            pstmt.setString(1, userId);
+
+            // SELECT 실행 결과를 ResultSet으로 받는다.
+            rset = pstmt.executeQuery();
+
+            // COUNT(*) 결과는 정확히 한 행이어야 한다.
+            if (rset.next()) {
+                // COUNT가 1 이상이면 이미 같은 아이디가 있다.
+                return rset.getInt(1) > 0;
+            }
+
+            return false;
+
+        } catch (SQLException e) {
+            // View가 "아이디 중복"과 "DB 오류"를 구분할 수 있도록 예외를 위로 보낸다.
+            throw new RuntimeException("회원 아이디 중복 조회 중 DB 오류가 발생했습니다.", e);
+
+        } finally {
+            // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+    }
+
+    /*
+     * [Member-001] MemberDTO에 담긴 새 회원 정보를 quote_user에 INSERT한다.
+     *
+     * 반환값은 INSERT된 행 수다.
+     * 회원 한 명이 정상 저장되면 보통 1을 반환한다.
+     */
+    public int insertMember(Connection con, MemberDTO member) {
+
+        PreparedStatement pstmt = null;
+
+        String query = getQuery("insertMember");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // INSERT문의 첫 번째 ?부터 MemberDTO 값을 순서대로 넣는다.
+            pstmt.setString(1, member.getUserId());
+            pstmt.setString(2, member.getUserPw());
+            pstmt.setInt(3, member.getUserAuth());
+
+            // executeUpdate()는 INSERT에 성공한 행 수를 int로 반환한다.
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("회원가입 DB 저장 중 오류가 발생했습니다.", e);
+
+        } finally {
+            // INSERT에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
+            JDBC.close(pstmt);
+        }
+    }
+
+    // XML key를 잘못 썼을 때 원인을 명확하게 알려 주는 보조 메서드다.
+    private String getQuery(String key) {
+        String query = prop.getProperty(key);
+
+        if (query == null) {
+            throw new IllegalStateException(
+                    "member-query.xml에 '" + key + "' SQL이 없습니다."
+            );
+        }
+
+        return query;
+    }
+}
