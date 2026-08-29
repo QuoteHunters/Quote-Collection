@@ -56,18 +56,6 @@ public class QuoteService {
             JDBC.close(con);
         }
     }
-    // 인물 이름으로 명언을 검색하고 Connection을 반환한다.
-    public List<QuoteDTO> searchQuotesByPerson(String personName) {
-
-        Connection con = JDBC.getConnection();
-
-        try {
-            return quoteDAO.searchQuotesByPerson(con, personName);
-        } finally {
-            JDBC.close(con);
-        }
-    }
-
     // 인물 이름의 앞뒤 공백을 제거한 후 등록 대상 인물을 검색한다.
     public List<QuoteDTO> searchPersonsForQuoteRegistration(String personName) {
 
@@ -163,22 +151,6 @@ public class QuoteService {
         }
     }
 
-    // 주제 이름 일부로 명언을 검색한다.
-    public List<QuoteDTO> searchQuotesByTheme(String themeName) {
-
-        Connection con = JDBC.getConnection();
-
-        try {
-            return quoteDAO.searchQuotesByTheme(
-                    con,
-                    themeName.trim()
-            );
-
-        } finally {
-            JDBC.close(con);
-        }
-    }
-
     // 명언의 주제를 수정하고 트랜잭션을 처리한다.
     public boolean updateQuoteTheme(
             int quoteId,
@@ -211,9 +183,46 @@ public class QuoteService {
         }
     }
 
+    // 명언을 삭제하고 결과에 따라 commit 또는 rollback한다.
+    public boolean deleteQuote(int quoteId) {
 
+        Connection con = JDBC.getConnection();
 
+        try {
+            int result = quoteDAO.deleteQuote(con, quoteId);
 
+            if (result > 0) {
+                JDBC.commit(con);
+                return true;
+            }
+
+            JDBC.rollback(con);
+            return false;
+
+        } catch (RuntimeException e) {
+            JDBC.rollback(con);
+            throw e;
+
+        } finally {
+            JDBC.close(con);
+        }
+    }
+
+    // 선택한 주제 ID에 해당하는 명언을 조회한다.
+    public List<QuoteDTO> selectQuotesByThemeId(int themeId) {
+
+        Connection con = JDBC.getConnection();
+
+        try {
+            return quoteDAO.selectQuotesByThemeId(
+                    con,
+                    themeId
+            );
+
+        } finally {
+            JDBC.close(con);
+        }
+    }
 
 
 }

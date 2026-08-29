@@ -40,8 +40,10 @@ public class QuoteView {
         System.out.println();
         System.out.println("========== 검색 결과 ==========");
 
-        for (QuoteDTO quote : quoteList) {
-            System.out.println("번호 : " + quote.getQuoteId());
+        for (int i = 0; i < quoteList.size(); i++) {
+            QuoteDTO quote = quoteList.get(i);
+
+            System.out.println("번호 : " + (i + 1));
             System.out.println("명언 : " + quote.getQuoteContent());
             System.out.println("인물 : " + quote.getPersonName());
             System.out.println("주제 : " + quote.getThemeName());
@@ -278,7 +280,7 @@ public class QuoteView {
     }
 
     // 명언 주제 수정에 사용할 검색 방식을 선택받는다.
-    public int inputThemeUpdateSearchType(Scanner scanner) {
+    public int inputQuoteSearchType(Scanner scanner) {
 
         System.out.println();
         System.out.println("========== 명언 검색 방식 ==========");
@@ -322,7 +324,7 @@ public class QuoteView {
     }
 
     // 주제 수정 대상 명언을 화면 순번과 함께 출력한다.
-    public void printQuotesForThemeUpdate(
+    public void printQuoteSearchResults(
             List<QuoteDTO> quoteList
     ) {
 
@@ -356,6 +358,41 @@ public class QuoteView {
         System.out.println("현재 주제 : " + quote.getThemeName());
         System.out.println("변경할 주제 : " + newTheme.getThemeName());
         System.out.println("==================================");
+    }
+
+    // 삭제할 명언 정보와 즐겨찾기 삭제 안내를 출력한다.
+    public void printQuoteDeleteSummary(QuoteDTO quote) {
+
+        System.out.println();
+        System.out.println("========== 삭제할 명언 ==========");
+        System.out.println("명언 : " + quote.getQuoteContent());
+        System.out.println("인물 : " + quote.getPersonName());
+        System.out.println("주제 : " + quote.getThemeName());
+        System.out.println("--------------------------------");
+        System.out.println(
+                "※ 해당 명언의 즐겨찾기도 함께 삭제됩니다."
+        );
+        System.out.println("===============================");
+    }
+
+    // 명언 삭제 여부를 Y 또는 N으로 입력받는다.
+    public String inputDeleteDecision(Scanner scanner) {
+
+        while (true) {
+            System.out.print("삭제하시겠습니까? [Y/N] : ");
+
+            String decision = scanner.nextLine().trim();
+
+            if (decision.equalsIgnoreCase("Y")) {
+                return "Y";
+            }
+
+            if (decision.equalsIgnoreCase("N")) {
+                return "N";
+            }
+
+            printMessage("Y 또는 N을 입력해주세요.");
+        }
     }
 
 }

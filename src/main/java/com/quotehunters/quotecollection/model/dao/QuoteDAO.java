@@ -85,17 +85,6 @@ public class QuoteDAO {
         return selectQuoteList(con, query, keyword);
     }
 
-    // 인물 이름 검색
-    public List<QuoteDTO> searchQuotesByPerson(
-            Connection con,
-            String personName
-    ) {
-
-        String query = prop.getProperty("searchQuotesByPerson");
-
-        return selectQuoteList(con, query, personName);
-    }
-
     // 명언 등록에 사용할 인물 후보를 이름 일부로 검색한다.
     public List<QuoteDTO> searchPersonsForQuoteRegistration(
             Connection con,
@@ -343,17 +332,6 @@ public class QuoteDAO {
         return quote;
     }
 
-    // 주제 이름 일부로 명언 목록을 검색한다.
-    public List<QuoteDTO> searchQuotesByTheme(
-            Connection con,
-            String themeName
-    ) {
-
-        String query = prop.getProperty("searchQuotesByTheme");
-
-        return selectQuoteList(con, query, themeName);
-    }
-
     // 선택한 명언의 주제 ID만 수정한다.
     public int updateQuoteTheme(
             Connection con,
@@ -382,5 +360,43 @@ public class QuoteDAO {
         } finally {
             JDBC.close(pstmt);
         }
+    }
+
+    // 선택한 명언 ID에 해당하는 명언을 삭제한다.
+    public int deleteQuote(
+            Connection con,
+            int quoteId
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = prop.getProperty("deleteQuote");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, quoteId);
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "명언 삭제 중 오류가 발생했습니다.",
+                    e
+            );
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+    }
+
+    // 선택한 주제 ID에 해당하는 명언 목록을 조회한다.
+    public List<QuoteDTO> selectQuotesByThemeId(
+            Connection con,
+            int themeId
+    ) {
+
+        String query = prop.getProperty("selectQuotesByThemeId");
+
+        return selectQuoteList(con, query, themeId);
     }
 }

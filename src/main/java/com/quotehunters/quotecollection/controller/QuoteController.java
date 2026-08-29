@@ -58,17 +58,23 @@ public class QuoteController {
             resultView.printMessage("명언 검색 중 오류가 발생했습니다.");
         }
     }
-    // 인물별 검색 결과의 존재 여부에 따라 목록 또는 안내 문장을 출력한다.
-    public void searchQuotesByPerson(String personName) {
+    // 인물 후보를 선택한 뒤 해당 인물의 명언만 조회한다.
+    public void searchQuotesByPerson(Scanner scanner) {
+
+        QuoteDTO selectedPerson = selectPersonFromAll(scanner);
+
+        if (selectedPerson == null) {
+            return;
+        }
 
         try {
             List<QuoteDTO> quoteList =
-                    quoteService.searchQuotesByPerson(personName);
+                    quoteService.selectQuotesByPersonIdForUpdate(
+                            selectedPerson.getPersonId()
+                    );
 
             if (quoteList.isEmpty()) {
-                resultView.printMessage(
-                        "'" + personName + "'(으)로 조회된 명언이 없습니다."
-                );
+                resultView.printMessage("등록된 명언이 없습니다.");
             } else {
                 resultView.printSearchedQuoteList(quoteList);
             }
@@ -405,55 +411,7 @@ public class QuoteController {
         }
     }
 
-    // 선택한 검색 방식에 따라 명언 목록을 조회한다.
-    private List<QuoteDTO> searchQuotesForThemeUpdate(
-            Scanner scanner,
-            int searchType
-    ) {
 
-        String keyword;
-
-        switch (searchType) {
-            case 1:
-                keyword = resultView.inputSearchWord(
-                        scanner,
-                        "주제"
-                );
-
-                if (keyword == null) {
-                    return null;
-                }
-
-                return quoteService.searchQuotesByTheme(keyword);
-
-            case 2:
-                keyword = resultView.inputSearchWord(
-                        scanner,
-                        "명언 내용"
-                );
-
-                if (keyword == null) {
-                    return null;
-                }
-
-                return quoteService.searchQuotesByKeyword(keyword);
-
-            case 3:
-                keyword = resultView.inputSearchWord(
-                        scanner,
-                        "인물 이름"
-                );
-
-                if (keyword == null) {
-                    return null;
-                }
-
-                return quoteService.searchQuotesByPerson(keyword);
-
-            default:
-                return null;
-        }
-    }
 
     // 검색한 명언을 선택하고 해당 명언의 주제만 수정한다.
     public void updateQuoteTheme(Scanner scanner) {
@@ -461,14 +419,14 @@ public class QuoteController {
         searchFlow:
         while (true) {
             int searchType =
-                    resultView.inputThemeUpdateSearchType(scanner);
+                    resultView.inputQuoteSearchType(scanner);
 
             if (searchType == 0) {
                 return;
             }
 
             List<QuoteDTO> quoteList =
-                    searchQuotesForThemeUpdate(
+                    searchQuotesByCondition(
                             scanner,
                             searchType
                     );
@@ -486,7 +444,7 @@ public class QuoteController {
 
             quoteSelection:
             while (true) {
-                resultView.printQuotesForThemeUpdate(quoteList);
+                resultView.printQuoteSearchResults(quoteList);
 
                 int selectedQuoteNumber =
                         resultView.inputListNumber(
@@ -587,5 +545,192 @@ public class QuoteController {
                 }
             }
         }
+    }
+
+    // 검색 방식에 따라 주제 또는 인물을 먼저 선택한 뒤 명언을 조회한다.
+    private List<QuoteDTO> searchQuotesByCondition(
+            Scanner scanner,
+            int searchType
+    ) {
+
+        switch (searchType) {
+            case 1:
+                QuoteDTO selectedTheme =
+                        selectThemeFromAll(scanner);
+
+                if (selectedTheme == null) {
+                    return null;
+                }
+
+                return quoteService.selectQuotesByThemeId(
+                        selectedTheme.getThemeId()
+                );
+
+            case 2:
+                String keyword = resultView.inputSearchWord(
+                        scanner,
+                        "명언 내용"
+                );
+
+                if (keyword == null) {
+                    return null;
+                }
+
+                return quoteService.searchQuotesByKeyword(keyword);
+
+            case 3:
+                QuoteDTO selectedPerson =
+                        selectPersonFromAll(scanner);
+
+                if (selectedPerson == null) {
+                    return null;
+                }
+
+                return quoteService
+                        .selectQuotesByPersonIdForUpdate(
+                                selectedPerson.getPersonId()
+                        );
+
+            default:
+                return null;
+        }
+    }
+
+    // 검색 결과에서 명언을 선택하고 최종 확인 후 삭제한다.
+    public void deleteQuote(Scanner scanner) {
+
+        searchFlow:
+        while (true) {
+            int searchType =
+                    resultView.inputQuoteSearchType(scanner);
+
+            if (searchType == 0) {
+                return;
+            }
+
+            List<QuoteDTO> quoteList =
+                    searchQuotesByCondition(
+                            scanner,
+                            searchType
+                    );
+
+            if (quoteList == null) {
+                continue;
+            }
+
+            if (quoteList.isEmpty()) {
+                resultView.printMessage(
+                        "조회된 명언이 없습니다."
+                );
+                continue;
+            }
+
+            resultView.printQuoteSearchResults(quoteList);
+
+            int selectedNumber =
+                    resultView.inputListNumber(
+                            scanner,
+                            quoteList.size(),
+                            "삭제할 명언 번호를 입력해주세요"
+                    );
+
+            if (selectedNumber == 0) {
+                continue;
+            }
+
+            QuoteDTO selectedQuote =
+                    quoteList.get(selectedNumber - 1);
+
+            resultView.printQuoteDeleteSummary(selectedQuote);
+
+            String decision =
+                    resultView.inputDeleteDecision(scanner);
+
+            if (decision.equals("N")) {
+                return;
+            }
+
+            try {
+                boolean success =
+                        quoteService.deleteQuote(
+                                selectedQuote.getQuoteId()
+                        );
+
+                if (success) {
+                    resultView.printMessage(
+                            "명언이 삭제되었습니다."
+                    );
+                    return;
+                }
+
+                resultView.printMessage(
+                        "명언 삭제에 실패했습니다. " +
+                                "다시 시도해주세요."
+                );
+
+                continue searchFlow;
+
+            } catch (RuntimeException e) {
+                e.printStackTrace();
+
+                resultView.printMessage(
+                        "명언 삭제 중 오류가 발생했습니다."
+                );
+
+                return;
+            }
+        }
+    }
+
+    // 전체 주제 목록을 출력하고 화면 번호로 하나를 선택한다.
+    private QuoteDTO selectThemeFromAll(Scanner scanner) {
+
+        List<QuoteDTO> themeList =
+                quoteService.selectThemesForQuoteRegistration();
+
+        if (themeList.isEmpty()) {
+            resultView.printMessage("등록된 주제가 없습니다.");
+            return null;
+        }
+
+        resultView.printThemeCandidates(themeList);
+
+        int selectedNumber = resultView.inputListNumber(
+                scanner,
+                themeList.size(),
+                "주제 번호를 입력해주세요"
+        );
+
+        if (selectedNumber == 0) {
+            return null;
+        }
+
+        return themeList.get(selectedNumber - 1);
+    }
+
+    // 전체 인물 목록을 출력하고 화면 번호로 하나를 선택한다.
+    private QuoteDTO selectPersonFromAll(Scanner scanner) {
+
+        List<QuoteDTO> personList =
+                quoteService.searchPersonsForQuoteRegistration("");
+
+        if (personList.isEmpty()) {
+            resultView.printMessage("등록된 인물이 없습니다.");
+            return null;
+        }
+
+        resultView.printPersonCandidates(personList);
+
+        int selectedNumber = resultView.inputListNumber(
+                scanner,
+                personList.size(),
+                "인물 번호를 입력해주세요"
+        );
+
+        if (selectedNumber == 0) {
+            return null;
+        }
+
+        return personList.get(selectedNumber - 1);
     }
 }
