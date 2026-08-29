@@ -85,15 +85,151 @@ public class QuoteDAO {
         return selectQuoteList(con, query, keyword);
     }
 
-    // 인물 이름 검색
-    public List<QuoteDTO> searchQuotesByPerson(
+    // 명언 등록에 사용할 인물 후보를 이름 일부로 검색한다.
+    public List<QuoteDTO> searchPersonsForQuoteRegistration(
             Connection con,
             String personName
     ) {
 
-        String query = prop.getProperty("searchQuotesByPerson");
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
 
-        return selectQuoteList(con, query, personName);
+        List<QuoteDTO> personList = new ArrayList<>();
+        String query = prop.getProperty("searchPersonsForQuoteRegistration");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, personName);
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                QuoteDTO person = new QuoteDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 등록용 인물 검색 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return personList;
+    }
+
+    // 명언 등록에 사용할 전체 주제 목록을 조회한다.
+    public List<QuoteDTO> selectThemesForQuoteRegistration(Connection con) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<QuoteDTO> themeList = new ArrayList<>();
+        String query = prop.getProperty("selectThemesForQuoteRegistration");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                QuoteDTO theme = new QuoteDTO();
+
+                theme.setThemeId(rset.getInt("theme_id"));
+                theme.setThemeName(rset.getString("theme_name"));
+
+                themeList.add(theme);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 등록용 주제 조회 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return themeList;
+    }
+
+    // 선택한 인물, 주제 및 명언 내용을 quote 테이블에 등록한다.
+    public int insertQuote(Connection con, QuoteDTO quote) {
+
+        PreparedStatement pstmt = null;
+
+        int result;
+        String query = prop.getProperty("insertQuote");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, quote.getThemeId());
+            pstmt.setInt(2, quote.getPersonId());
+            pstmt.setString(3, quote.getQuoteContent());
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 등록 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
+    // 선택한 인물 ID에 해당하는 명언 목록을 조회한다.
+    public List<QuoteDTO> selectQuotesByPersonIdForUpdate(
+            Connection con,
+            int personId
+    ) {
+
+        String query =
+                prop.getProperty("selectQuotesByPersonIdForUpdate");
+
+        /*
+         * 기존 공통 조회 메서드를 재사용한다.
+         * 쿼리 결과에 quote_id, quote_content,
+         * person_name, theme_name이 있으므로
+         * 기존 convertToQuote()를 그대로 사용할 수 있다.
+         */
+        return selectQuoteList(con, query, personId);
+    }
+
+    // 선택한 명언의 내용만 수정하고 반영된 행 개수를 반환한다.
+    public int updateQuoteContent(
+            Connection con,
+            QuoteDTO quote
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = prop.getProperty("updateQuoteContent");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setString(1, quote.getQuoteContent());
+            pstmt.setInt(2, quote.getQuoteId());
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "명언 수정 중 오류가 발생했습니다.",
+                    e
+            );
+
+        } finally {
+            JDBC.close(pstmt);
+        }
     }
 
     // 여러 개의 명언을 조회하는 공통 메서드
@@ -194,5 +330,73 @@ public class QuoteDAO {
         quote.setThemeName(rset.getString("theme_name"));
 
         return quote;
+    }
+
+    // 선택한 명언의 주제 ID만 수정한다.
+    public int updateQuoteTheme(
+            Connection con,
+            int quoteId,
+            int themeId
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = prop.getProperty("updateQuoteTheme");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, themeId);
+            pstmt.setInt(2, quoteId);
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "명언 주제 수정 중 오류가 발생했습니다.",
+                    e
+            );
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+    }
+
+    // 선택한 명언 ID에 해당하는 명언을 삭제한다.
+    public int deleteQuote(
+            Connection con,
+            int quoteId
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = prop.getProperty("deleteQuote");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, quoteId);
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "명언 삭제 중 오류가 발생했습니다.",
+                    e
+            );
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+    }
+
+    // 선택한 주제 ID에 해당하는 명언 목록을 조회한다.
+    public List<QuoteDTO> selectQuotesByThemeId(
+            Connection con,
+            int themeId
+    ) {
+
+        String query = prop.getProperty("selectQuotesByThemeId");
+
+        return selectQuoteList(con, query, themeId);
     }
 }
