@@ -18,6 +18,10 @@
     </entry>
 
     <entry key="updateTheme">
-        UPDATE theme SET theme_name = ? WHERE theme_id = ?;
+        UPDATE theme SET theme_name = ? WHERE theme_id = ?
+    </entry>
+
+    <entry key="deleteTheme">
+        DELETE FROM theme WHERE theme_id = ?
     </entry>
 </properties>
