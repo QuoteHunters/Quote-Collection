@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+    <entry key="insertTheme">
+        INSERT INTO theme (theme_name) VALUES (?)
+    </entry>
+
+    <entry key="existsThemeName">
+        SELECT COUNT(*) FROM theme WHERE theme_name = ?
+    </entry>
 </properties>
