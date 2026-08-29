@@ -21,7 +21,7 @@ public class PeriodService {
         return periods;
     }
 
-    // [중복확인] 이미 등록된 시대명인지 (있으면 true)
+    // [중복확인]
     public boolean existsPeriodName(String periodName) {
         Connection con = getConnection();
         boolean exists = false;
@@ -68,7 +68,7 @@ public class PeriodService {
     }
 
     // [삭제] bookmark→quote→person→period 순서로 삭제
-    // 성공하면 1, 실패하면 0 반환
+    //
     public int deletePeriod(int periodId) {
         Connection con = getConnection();
         int result = 0;
