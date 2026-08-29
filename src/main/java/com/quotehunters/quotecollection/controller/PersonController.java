@@ -88,7 +88,7 @@ public class PersonController {
         }
     }
 
-    // 인물 수정
+    // 인물 국가 수정
     public int updatePersonCountry(int personId, int newCountryId) {
         return personService.updatePersonCountry(personId, newCountryId);
     }
