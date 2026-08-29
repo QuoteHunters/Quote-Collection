@@ -74,4 +74,16 @@ public class PersonService {
         return personList;
 
     }
+
+    // 명언 키워드 검색에 따른 인물 조회
+    public List<PersonDTO> selectPersonByQuoteKeyword(String quoteKeyword) {
+
+        Connection con = JDBC.getConnection();
+
+        List<PersonDTO> personList = personDAO.selectPersonByQuoteKeyword(con, quoteKeyword);
+
+        JDBC.close(con);
+
+        return personList;
+    }
 }

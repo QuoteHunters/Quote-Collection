@@ -9,7 +9,7 @@ import java.util.List;
 
 public class PersonController {
 
-    private PersonService personService =  new PersonService();
+    private PersonService personService = new PersonService();
     private PersonView personView = new PersonView();
 
     // 전체 인물 조회
@@ -30,13 +30,13 @@ public class PersonController {
 
     // 국가별 인물 조회
     public void selectPersonByCountry(int countryId) {
-        
+
         List<PersonDTO> personList = personService.selectPersonByCountry(countryId);
-        
+
         if (personList.isEmpty()) {
             personView.printMessage("해당 국가에 등록된 인물이 없습니다.");
         } else {
-           personView.selectPersonByCountry(personList);
+            personView.selectPersonByCountry(personList);
         }
     }
 
@@ -71,6 +71,17 @@ public class PersonController {
             personView.printMessage("'" + personName + "'에 해당하는 인물이 존재하지 않습니다.");
         } else {
             personView.selectPersonByName(personList);
+        }
+    }
+
+    // 명언 키워드 검색에 따른 인물 조회
+    public void selectPersonByQuoteKeyword(String quoteKeyword) {
+        List<PersonDTO> personList = personService.selectPersonByQuoteKeyword(quoteKeyword);
+
+        if (personList.isEmpty()) {
+            personView.printMessage("'" + quoteKeyword + "' 키워드가 포함된 명언을 남긴 인물이 없습니다.");
+        } else {
+            personView.selectPersonByQuoteKeyword(personList, quoteKeyword);
         }
     }
 }
