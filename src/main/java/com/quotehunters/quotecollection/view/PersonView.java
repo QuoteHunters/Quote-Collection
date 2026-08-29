@@ -342,6 +342,53 @@ public class PersonView {
         }
     }
 
+    /* 4. 인물의 이름 수정 */
+    // 4-1. 변경할 인물 이름 입력 및 Validation
+    public String inputPersonNameForUpdate(Scanner sc, PersonDTO selectedPerson) {
+
+        System.out.println("\n========== 인물의 이름 수정 ==========");
+        System.out.println("현재 이름 : " + selectedPerson.getPersonName());
+
+        while (true) {
+            String newPersonName = scannerView.scannString(sc, "변경할 인물 이름 입력 (0: 뒤로가기)");
+
+            // 정확히 한 단계 위인 인물 선택으로 이동
+            if ("0".equals(newPersonName)) {
+                return null;
+            }
+
+            // person_name VARCHAR(50) 길이 검증
+            if (newPersonName.length() > 50) {
+                resultView.errorMessage("인물 이름은 50자 이하로 입력해주세요.");
+                continue;
+            }
+
+            // 현재 이름과 동일한지 검증
+            if (selectedPerson.getPersonName().equals(newPersonName)) {
+                resultView.errorMessage("현재 이름과 동일한 이름입니다.");
+                continue;
+            }
+
+            System.out.println("새로 변경할 인물 이름 : " + newPersonName);
+
+            return newPersonName;
+        }
+    }
+
+    // 4-2. 인물 이름 수정 최종 확인
+    public String confirmPersonNameUpdate(Scanner sc) {
+
+        while (true) {
+            String choice = scannerView.scannString(sc, "작업 선택 (완료 / 재수정 / 취소)");
+
+            if ("완료".equals(choice) || "재수정".equals(choice) || "취소".equals(choice)) {
+                return choice;
+            }
+
+            resultView.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
+        }
+    }
+
 
     /* 인물 등록 */
     // 1. 등록할 인물 이름 입력 및 길이 검증

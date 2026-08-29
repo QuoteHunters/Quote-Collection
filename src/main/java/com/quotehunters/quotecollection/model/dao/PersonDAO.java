@@ -348,6 +348,35 @@ public class PersonDAO {
         return result;
     }
 
+    // 인물의 이름 수정
+    public int updatePersonName(Connection con, int personId, String personName) {
+
+        PreparedStatement pstmt = null;
+
+        int result = 0;
+
+        String query = prop.getProperty("updatePersonName");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            // 새로 변경할 이름
+            pstmt.setString(1, personName);
+
+            // 수정할 인물의 번호
+            pstmt.setInt(2, personId);
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
     /* 인물 등록 */
     // 1. 입력된 이름의 이름 존재 유무 확인
     public boolean existsPersonName(Connection con, String personName) {

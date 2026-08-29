@@ -103,6 +103,11 @@ public class PersonController {
         return personService.updatePersonField(personId, fieldId);
     }
 
+    // 인물 이름 수정
+    public int updatePersonName(int personId, String personName) {
+        return personService.updatePersonName(personId, personName);
+    }
+
     /* 인물 등록
     * 여기서는 View에게 중복 여부와 등록 결과를 그대로 돌려줌
     */

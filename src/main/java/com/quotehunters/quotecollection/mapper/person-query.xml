@@ -183,6 +183,16 @@
            person_id = ?
     </entry>
 
+    <!-- Person-011: 선택한 인물의 이름 수정 -->
+    <entry key="updatePersonName">
+        UPDATE
+            person
+        SET
+            person_name = ?
+        WHERE
+            person_id = ?
+    </entry>
+
     <!-- Person-001: 인물 이름 중복 확인 -->
     <entry key="existsPersonName">
         SELECT
