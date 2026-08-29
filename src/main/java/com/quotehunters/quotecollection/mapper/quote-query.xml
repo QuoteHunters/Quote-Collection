@@ -66,5 +66,42 @@
         ORDER BY q.quote_id
     </entry>
 
+    <!-- 명언 등록 시 인물 이름으로 인물 후보를 검색한다. -->
+    <entry key="searchPersonsForQuoteRegistration">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_name,
+            pe.period_name,
+            f.field_name
+        FROM person p
+        JOIN country c
+            ON c.country_id = p.country_id
+        JOIN period pe
+            ON pe.period_id = p.period_id
+        JOIN field f
+            ON f.field_id = p.field_id
+        WHERE p.person_name LIKE CONCAT('%', ?, '%')
+        ORDER BY p.person_name ASC, p.person_id ASC
+    </entry>
+
+    <!-- 명언 등록 시 선택할 전체 주제 목록을 조회한다. -->
+    <entry key="selectThemesForQuoteRegistration">
+        SELECT
+            theme_id,
+            theme_name
+        FROM theme
+        ORDER BY theme_id ASC
+    </entry>
+
+    <!-- 선택한 인물, 주제와 입력한 내용으로 명언을 등록한다. -->
+    <entry key="insertQuote">
+        INSERT INTO quote (
+            theme_id,
+            person_id,
+            quote_content
+        )
+        VALUES (?, ?, ?)
+    </entry>
 
 </properties>

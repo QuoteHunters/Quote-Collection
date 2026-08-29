@@ -3,10 +3,16 @@ package com.quotehunters.quotecollection.model.dto;
 public class QuoteDTO {
     private int quoteId;
     private String quoteContent;
+
     private String personName;
     private String themeName;
+    private String countryName;
+    private String periodName;
+    private String fieldName;
+
     private int themeId;
     private int personId;
+
 
     @Override
     public String toString() {
@@ -15,9 +21,36 @@ public class QuoteDTO {
                 ", quoteContent='" + quoteContent + '\'' +
                 ", personName='" + personName + '\'' +
                 ", themeName='" + themeName + '\'' +
+                ", countryName='" + countryName + '\'' +
+                ", periodName='" + periodName + '\'' +
+                ", fieldName='" + fieldName + '\'' +
                 ", themeId=" + themeId +
                 ", personId=" + personId +
                 '}';
+    }
+
+    public String getCountryName() {
+        return countryName;
+    }
+
+    public void setCountryName(String countryName) {
+        this.countryName = countryName;
+    }
+
+    public String getPeriodName() {
+        return periodName;
+    }
+
+    public void setPeriodName(String periodName) {
+        this.periodName = periodName;
+    }
+
+    public String getFieldName() {
+        return fieldName;
+    }
+
+    public void setFieldName(String fieldName) {
+        this.fieldName = fieldName;
     }
 
     public int getThemeId() {

@@ -96,6 +96,106 @@ public class QuoteDAO {
         return selectQuoteList(con, query, personName);
     }
 
+    // 명언 등록에 사용할 인물 후보를 이름 일부로 검색한다.
+    public List<QuoteDTO> searchPersonsForQuoteRegistration(
+            Connection con,
+            String personName
+    ) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<QuoteDTO> personList = new ArrayList<>();
+        String query = prop.getProperty("searchPersonsForQuoteRegistration");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setString(1, personName);
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                QuoteDTO person = new QuoteDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+                person.setCountryName(rset.getString("country_name"));
+                person.setPeriodName(rset.getString("period_name"));
+                person.setFieldName(rset.getString("field_name"));
+
+                personList.add(person);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 등록용 인물 검색 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return personList;
+    }
+
+    // 명언 등록에 사용할 전체 주제 목록을 조회한다.
+    public List<QuoteDTO> selectThemesForQuoteRegistration(Connection con) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<QuoteDTO> themeList = new ArrayList<>();
+        String query = prop.getProperty("selectThemesForQuoteRegistration");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                QuoteDTO theme = new QuoteDTO();
+
+                theme.setThemeId(rset.getInt("theme_id"));
+                theme.setThemeName(rset.getString("theme_name"));
+
+                themeList.add(theme);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 등록용 주제 조회 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return themeList;
+    }
+
+    // 선택한 인물, 주제 및 명언 내용을 quote 테이블에 등록한다.
+    public int insertQuote(Connection con, QuoteDTO quote) {
+
+        PreparedStatement pstmt = null;
+
+        int result;
+        String query = prop.getProperty("insertQuote");
+
+        try {
+            pstmt = con.prepareStatement(query);
+
+            pstmt.setInt(1, quote.getThemeId());
+            pstmt.setInt(2, quote.getPersonId());
+            pstmt.setString(3, quote.getQuoteContent());
+
+            result = pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 등록 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+
+        return result;
+    }
+
     // 여러 개의 명언을 조회하는 공통 메서드
     private List<QuoteDTO> selectQuoteList(
             Connection con,
