@@ -26,7 +26,8 @@ public class PersonDAO {
 
     }
 
-    // 전체 인물 조회
+    /* 인물 조회 */
+    // 1. 전체 인물 조회
     public List<PersonDTO> selectAllPerson(Connection con) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -65,7 +66,7 @@ public class PersonDAO {
         return personList;
     }
 
-    // 국가별 인물 조회
+    // 2. 국가별 인물 조회
     public List<PersonDTO> selectPersonByCountry(Connection con, int countryId) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -103,7 +104,7 @@ public class PersonDAO {
         return personList;
     }
 
-    // 시대별 인물 조회
+    // 3. 시대별 인물 조회
     public List<PersonDTO> selectPersonByPeriod(Connection con, int periodId) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -141,7 +142,7 @@ public class PersonDAO {
         return personList;
     }
 
-    // 분야별 인물 조회
+    // 4. 분야별 인물 조회
     public List<PersonDTO> selectPersonByField(Connection con, int fieldId) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -181,7 +182,7 @@ public class PersonDAO {
         return personList;
     }
 
-    // 인물 이름 조회
+    // 5. 인물 이름 조회
     public List<PersonDTO> selectPersonByName(Connection con, String personName) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
@@ -221,7 +222,7 @@ public class PersonDAO {
         return personList;
     }
 
-    // 입력된 명언의 키워드가 포함된 명언을 말한 인물 조회
+    // 6. 입력된 명언의 키워드가 포함된 명언을 말한 인물 조회
     public List<PersonDTO> selectPersonByQuoteKeyword(Connection con, String quoteKeyword) {
 
         PreparedStatement pstmt = null;
@@ -265,8 +266,8 @@ public class PersonDAO {
         return personList;
     }
 
-    // 인물의 국가 수정
-    // 변경에 성공하면 1 아니면 0을 반환
+    /* 인물 정보 수정 */
+    // 1. 인물의 국가 수정
     public int updatePersonCountry(Connection con, int personId, int countryId) {
 
         PreparedStatement pstmt = null;
@@ -289,11 +290,11 @@ public class PersonDAO {
         } finally {
             JDBC.close(pstmt);
         }
-
+        // 변경에 성공하면 1 아니면 0을 반환
         return result;
     }
 
-    // 인물의 시대 수정
+    // 2. 인물의 시대 수정
     public int updatePersonPeriod(Connection con, int personId, int periodId) {
 
         PreparedStatement pstmt = null;
@@ -320,7 +321,7 @@ public class PersonDAO {
         return result;
     }
 
-    // 인물의 분야 수정
+    // 3. 인물의 분야 수정
     public int updatePersonField(Connection con, int personId, int fieldId) {
 
         PreparedStatement pstmt = null;
@@ -348,7 +349,7 @@ public class PersonDAO {
         return result;
     }
 
-    // 인물의 이름 수정
+    // 4. 인물의 이름 수정
     public int updatePersonName(Connection con, int personId, String personName) {
 
         PreparedStatement pstmt = null;

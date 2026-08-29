@@ -11,7 +11,8 @@ public class PersonService {
     private PersonDAO personDAO = new PersonDAO();
 
 
-    // 전체 인물 조회
+    /* 인물 조회*/
+    // 1. 전체 인물 조회
     public List<PersonDTO> selectAllPerson() {
 
         Connection con = JDBC.getConnection();
@@ -23,7 +24,7 @@ public class PersonService {
         return personList;
     }
 
-    // 국가별 인물 조회
+    // 2. 국가별 인물 조회
     public List<PersonDTO> selectPersonByCountry(int countryId) {
 
         Connection con = JDBC.getConnection();
@@ -36,7 +37,7 @@ public class PersonService {
 
     }
 
-    // 시대별 인물 조회
+    // 3. 시대별 인물 조회
     public List<PersonDTO> selectPersonByPeriod(int periodId) {
 
         Connection con = JDBC.getConnection();
@@ -49,7 +50,7 @@ public class PersonService {
 
     }
 
-    // 분야별 인물 조회
+    // 4. 분야별 인물 조회
     public List<PersonDTO> selectPersonByField(int fieldId) {
 
         Connection con = JDBC.getConnection();
@@ -62,7 +63,7 @@ public class PersonService {
 
     }
 
-    // 인물 이름 조회
+    // 5. 인물 이름 조회
     public List<PersonDTO> selectPersonByName(String personName) {
 
         Connection con = JDBC.getConnection();
@@ -75,7 +76,7 @@ public class PersonService {
 
     }
 
-    // 명언 키워드 검색에 따른 인물 조회
+    // 6. 명언 키워드 검색에 따른 인물 조회
     public List<PersonDTO> selectPersonByQuoteKeyword(String quoteKeyword) {
 
         Connection con = JDBC.getConnection();
@@ -87,7 +88,8 @@ public class PersonService {
         return personList;
     }
 
-    // 인물의 국가 수정
+    /* 인물 정보 수정*/
+    // 1. 인물의 국가 수정
     public int updatePersonCountry(int personId, int countryId) {
 
         Connection con = JDBC.getConnection();
@@ -108,7 +110,7 @@ public class PersonService {
         return result;
     }
 
-    // 인물의 시대 수정
+    // 2. 인물의 시대 수정
     public int updatePersonPeriod(int personId, int periodId) {
 
         Connection con = JDBC.getConnection();
@@ -129,7 +131,7 @@ public class PersonService {
         return result;
     }
 
-    // 인물의 분야 수정
+    // 3. 인물의 분야 수정
     public int updatePersonField(int personId, int fieldId) {
 
         Connection con = JDBC.getConnection();
@@ -151,7 +153,7 @@ public class PersonService {
         return result;
     }
 
-    // 인물의 이름 수정
+    // 4. 인물의 이름 수정
     public int updatePersonName(int personId, String personName) {
         Connection con = JDBC.getConnection();
 
@@ -172,6 +174,7 @@ public class PersonService {
     }
 
 
+    /* 인물 등록 */
     // 인물의 이름 중복 확인
     public boolean existsPersonName(String personName) {
         Connection con = JDBC.getConnection();

@@ -13,12 +13,13 @@ public class PersonView {
     private final ScannerView scannerView = new ScannerView();
     private final ResultView resultView = new ResultView();
 
+    /* 인물 목록 조회 */
     // 전체 인물 목록 출력
-    // 인물 식별 번호는 출력하되 국가·시대·분야 ID는 사용자에게 노출하지 않음
     public void displayAllPerson(List<PersonDTO> personList) {
 
         System.out.println("\n========== 전체 인물 목록 ==========");
 
+        // 인물 식별 번호는 출력하되 국가·시대·분야 ID는 사용자에게 노출하지 않음
         for (PersonDTO person : personList) {
             System.out.println("----------------------------------");
             System.out.print("인물 번호 : " + person.getPersonId());
@@ -125,8 +126,9 @@ public class PersonView {
 
     /* 인물 수정 */
     // 0. 수정할 인물 선택
-    // 1차 조회 결과에서 수정할 인물 선택
     public PersonDTO selectPerson(Scanner sc, List<PersonDTO> personList) {
+        // 1차 조회 결과에서 수정할 인물 선택
+
         if (personList.isEmpty()) { return null; }
 
         while (true) {
@@ -392,8 +394,6 @@ public class PersonView {
 
     /* 인물 등록 */
     // 1. 등록할 인물 이름 입력 및 길이 검증
-    // 중복 확인은 Application에서
-    // PersonView가 PersonController를 직접 만들면 순환 생성 문제가 생길 수 있음
     public String inputPersonName(Scanner sc) {
 
         while (true) {
@@ -423,7 +423,7 @@ public class PersonView {
         System.out.println("==================================");
     }
 
-    // 3. 인물 등록 여부 확인 (1차)
+    // 3. 인물 등록 여부 확인
     public String confirmPersonInsert(Scanner sc) {
 
         while (true) {
@@ -470,9 +470,9 @@ public class PersonView {
     }
 
     // 성공·실패·안내 메세지 출력
-    // View : 받은 문장을 보여주기만 하는 역할
-    // Controller : 실행 결과에 따라 어떤 문장을 보여줄지 결정
     public void printMessage(String message) {
+        // View : 받은 문장을 보여주기만 하는 역할
+        // Controller : 실행 결과에 따라 어떤 문장을 보여줄지 결정
         System.out.println();
         System.out.println(message);
     }
