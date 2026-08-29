@@ -16,11 +16,13 @@ public class FieldController {
         return fieldService.allFields().get(index).getFieldId();
     }
 
-    public boolean existsField(int id, String fieldName) {
-        return fieldService.existsFieldName(id, fieldName);
-    }
+    public boolean existsField(String fieldName) { return fieldService.existsFieldName(fieldName); }
 
-    public int updateField(int id, String fieldName) {
-        return fieldService.updateField(id, fieldName);
-    }
+    public boolean existsField(int id, String fieldName) { return fieldService.existsFieldName(id, fieldName); }
+
+    public int updateField(int id, String fieldName) { return fieldService.updateField(id, fieldName); }
+
+    public int insertField(String fieldName) { return fieldService.insertField(fieldName); }
+
+    public int deleteField(int id) { return fieldService.deleteField(id); }
 }

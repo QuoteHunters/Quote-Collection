@@ -12,6 +12,44 @@ public class FieldView {
     private final Scanner sc = new Scanner(System.in);
     private final ResultView rv = new ResultView();
 
+    public void fieldMainView() {
+        while (true) {
+            System.out.println("1. 조회");
+            System.out.println("2. 등록");
+            System.out.println("3. 수정");
+            System.out.println("4. 삭제");
+            System.out.println("0. 메인 화면으로");
+
+            int num = scv.scannInt(sc, "선택");
+
+            switch (num) {
+                case 0: {
+                    return;
+                }
+                case 1: {
+                    allFields();
+                    break;
+                }
+                case 2: {
+                    insertField();
+                    break;
+                }
+                case 3: {
+                    updateField();
+                    break;
+                }
+                case 4: {
+                    deleteField();
+                    break;
+                }
+                default: {
+                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
+                    break;
+                }
+            }
+        }
+    }
+
     public void allFields() {
         List<FieldDTO> fields = fieldController.allFields();
 
@@ -51,7 +89,7 @@ public class FieldView {
         return fields.get(choice - 1).getFieldId();
     }
 
-    public void modifyField() {
+    public void updateField() {
         selectLoop:
         while (true) {
             int id = selectFields();
@@ -63,6 +101,11 @@ public class FieldView {
                 String changeName = scv.scannString(sc, "변경할 분야명 입력 (0: 뒤로가기)");
                 if (changeName.equals("0")) {
                     continue selectLoop;
+                }
+
+                if (changeName.length() > 10) {
+                    rv.errorMessage("분야명은 10글자 이하로 입력해주세요.");
+                    continue;
                 }
 
                 if (fieldController.existsField(id, changeName)) {
@@ -92,6 +135,71 @@ public class FieldView {
                 }
             }
 
+        }
+    }
+
+    public void insertField() {
+        System.out.println("---------- 분야 등록 ----------");
+
+        insertLoop:
+        while (true) {
+            String name = scv.scannString(sc, "입력 (0: 뒤로가기)");
+
+            if (name.equals("0")) return;
+
+            if (name.length() > 10) {
+                rv.errorMessage("분야명은 10글자 이하로 입력해주세요.");
+                continue;
+            }
+
+            if (fieldController.existsField(name)) {
+                rv.errorMessage("중복되는 분야가 존재합니다.");
+                continue;
+            }
+
+            while (true) {
+                String check = scv.scannString(sc, "등록 / 수정 / 취소");
+
+                if (check.equals("수정")) continue insertLoop;
+                if (check.equals("취소")) return;
+                if (check.equals("등록")) {
+                    int result = fieldController.insertField(name);
+
+                    if (result > 0) {
+                        rv.successMessage("등록이 완료되었습니다.");
+                        return;
+                    }
+
+                    rv.errorMessage("등록에 실패하였습니다.");
+                    return;
+                }
+
+                rv.errorMessage("등록, 수정, 취소 중 하나를 입력해주세요");
+                continue;
+            }
+        }
+    }
+
+    public void deleteField() {
+        deleteLoop:
+        while (true) {
+            int id = selectFields();
+            if (id == 0) return;
+
+            while (true) {
+                String str = scv.scannString(sc, "정말 삭제하시겠습니까? 완료 / 재선택 / 취소");
+                if (str.equals("취소")) return;
+                if (str.equals("재선택")) continue deleteLoop;
+                if (str.equals("완료")) {
+                    int result = fieldController.deleteField(id);
+                    if (result > 0) {
+                        rv.successMessage("삭제가 완료되었습니다.");
+                        return;
+                    }
+                }
+
+                rv.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요");
+            }
         }
     }
 }
