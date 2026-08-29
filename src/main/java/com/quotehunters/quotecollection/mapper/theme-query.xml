@@ -8,4 +8,8 @@
     <entry key="existsThemeName">
         SELECT COUNT(*) FROM theme WHERE theme_name = ?
     </entry>
+
+    <entry key="selectThemes">
+        SELECT * FROM theme ORDER BY theme_id
+    </entry>
 </properties>
