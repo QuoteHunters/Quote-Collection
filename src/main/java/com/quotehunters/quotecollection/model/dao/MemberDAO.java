@@ -1,6 +1,6 @@
 /*
- * 의도1: Member-001 회원가입에 필요한 SELECT와 INSERT SQL을 quote_user에 실행한다.
- * 의도2: DAO는 DB 작업만 담당, 화면 입력은 MemberView에서, 업무 규칙과 트랜잭션은 MemberService에서 담당한다.
+ * 의도1: Member-001 회원가입, Member-002~003 로그인, Member-004 비밀번호 변경에 필요한 SQL을 quote_user에 실행한다.
+ * 의도2: DAO는 DB 작업만 담당하며, 화면 입력은 MemberView에서, 업무 규칙과 트랜잭션은 MemberService에서 담당한다.
  */
 
 package com.quotehunters.quotecollection.model.dao;
@@ -58,7 +58,7 @@ public class MemberDAO {
             // SELECT 실행 결과를 ResultSet으로 받는다.
             rset = pstmt.executeQuery();
 
-            // COUNT(*) 결과는 정확히 한 행이어야 한다.
+            // COUNT(*) 결과는 정확히 한 행이다.
             if (rset.next()) {
                 // COUNT가 1 이상이면 이미 같은 아이디가 있다.
                 return rset.getInt(1) > 0;
@@ -113,7 +113,10 @@ public class MemberDAO {
      * [Member-002 + Member-003] ID와 비밀번호가 모두 맞는 회원 한 명을 찾는다.
      *
      * 반환값 MemberDTO : 로그인에 성공한 회원의 번호, 아이디, 권한을 담은 객체다.
-     * 반환값 null      : ID가 없거나 비밀번호가 다른 경우이다.
+     * 반환값 null      : ID가 없거나 비밀번호가 다른 경우다.
+     *
+     * user_pw는 WHERE 조건으로만 사용한다.
+     * 로그인 뒤 화면 분기에 필요한 member_id, user_id, user_auth만 DTO에 담는다.
      */
     public MemberDTO selectMemberByLoginInfo(
             Connection con,
@@ -161,12 +164,14 @@ public class MemberDAO {
         }
     }
 
-
     /*
      * [Member-004] 로그인한 회원 번호로 DB에 저장된 현재 비밀번호를 한 개 조회한다.
      *
      * 반환값 String : DB에 저장된 user_pw 문자열이다.
      * 반환값 null   : member_id와 일치하는 회원 행이 없다는 뜻이다.
+     *
+     * 이 메서드는 비밀번호를 화면에 출력하지 않는다.
+     * Service가 반환된 값과 사용자가 입력한 현재 비밀번호를 안전하게 비교한다.
      */
     public String selectMemberPasswordByMemberId(
             Connection con,
@@ -209,7 +214,7 @@ public class MemberDAO {
      * [Member-004] 로그인한 회원 한 명의 비밀번호를 새 비밀번호로 UPDATE한다.
      *
      * 반환값은 UPDATE된 행 수다.
-     * member_id가 존재하는 회원 한 명을 정상 변경하면 1을 반환하여야 한다.
+     * member_id가 존재하는 회원 한 명을 정상 변경하면 보통 1을 반환한다.
      */
     public int updateMemberPassword(
             Connection con,
@@ -240,8 +245,6 @@ public class MemberDAO {
             JDBC.close(pstmt);
         }
     }
-
-
 
     // XML key를 잘못 썼을 때 원인을 명확하게 알려 주는 보조 메서드다.
     private String getQuery(String key) {
