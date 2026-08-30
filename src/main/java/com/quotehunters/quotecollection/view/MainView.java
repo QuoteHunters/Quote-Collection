@@ -3,6 +3,7 @@ package com.quotehunters.quotecollection.view;
 import com.quotehunters.quotecollection.controller.PersonController;
 import com.quotehunters.quotecollection.controller.QuoteController;
 import com.quotehunters.quotecollection.model.dto.MemberDTO;
+import com.quotehunters.quotecollection.model.dto.PersonDTO;
 
 import java.util.Scanner;
 
@@ -20,6 +21,7 @@ public class MainView {
     public void start() {
         Scanner scanner = new Scanner(System.in);
         ScannerView scannerView = new ScannerView();
+        ResultView resultView = new ResultView();
         MemberDTO member = null;
 
         System.out.println("Quote Collection - 명언 도감 시스템");
@@ -40,7 +42,7 @@ public class MainView {
                     if (member == null) break;
                     switch (member.getUserAuth()) {
                         case 0: {
-                            adminMainView(scannerView, scanner, member);
+                            adminMainView(scannerView, scanner, member, resultView);
                             break;
                         }
                         case 1: {
@@ -203,7 +205,7 @@ public class MainView {
         }
     }
 
-    private void adminMainView(ScannerView scannerView, Scanner scanner, MemberDTO member) {
+    private void adminMainView(ScannerView scannerView, Scanner scanner, MemberDTO member, ResultView resultView) {
         while (true) {
             System.out.println();
             System.out.println("=================================");
@@ -220,7 +222,7 @@ public class MainView {
                     break;
                 }
                 case 2: {
-
+                    insertMainView(scannerView, scanner, resultView);
                     break;
                 }
                 case 3: {
@@ -303,7 +305,7 @@ public class MainView {
         }
     }
 
-    private void insertMainView(ScannerView scannerView, Scanner scanner) {
+    private void insertMainView(ScannerView scannerView, Scanner scanner, ResultView resultView) {
         while (true) {
             System.out.println();
             System.out.println("========== 등록 ==========");
@@ -318,7 +320,7 @@ public class MainView {
             switch (scannerView.scannInt(scanner, "선택")) {
                 case 0: return;
                 case 1: {
-
+                    personController.testInsertPerson(scannerView, scanner, resultView);
                     break;
                 }
                 case 2: {

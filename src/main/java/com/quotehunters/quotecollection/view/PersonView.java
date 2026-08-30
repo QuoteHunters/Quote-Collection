@@ -437,10 +437,10 @@ public class PersonView {
 
     /* 인물 등록 */
     // 1. 등록할 인물 이름 입력 및 길이 검증
-    public String inputPersonName(Scanner sc) {
+    public String inputPersonName(ScannerView scannerView, Scanner scanner) {
 
         while (true) {
-            String personName = scannerView.scannString(sc, "등록할 인물 이름 입력 (0: 뒤로가기)");
+            String personName = scannerView.scannString(scanner, "등록할 인물 이름 입력 (0: 뒤로가기)");
 
             // 이름 입력 단계에서 뒤로가기
             if ("0".equals(personName)) { return null;}
@@ -467,7 +467,7 @@ public class PersonView {
     }
 
     // 3. 인물 등록 여부 확인
-    public String confirmPersonInsert(Scanner sc) {
+    public String confirmPersonInsert(ScannerView scannerView, Scanner sc) {
 
         while (true) {
             String choice = scannerView.scannString(sc, "작업 선택 (등록 / 취소)");
@@ -481,9 +481,9 @@ public class PersonView {
     }
 
     // 4. 등록 취소 선택 시 완전 취소 또는 수정 구간 선택
-    public String selectPersonInsertCancelAction(Scanner sc) {
+    public String selectPersonInsertCancelAction(ScannerView scannerView, Scanner scanner) {
         while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (완전 취소 / 수정 구간 선택)");
+            String choice = scannerView.scannString(scanner, "작업 선택 (완전 취소 / 수정 구간 선택)");
 
             if ("완전 취소".equals(choice) || "수정 구간 선택".equals(choice)) {
                 return choice;
@@ -494,7 +494,7 @@ public class PersonView {
     }
 
     // 5. 다시 입력할 등록 정보 구간 선택
-    public int selectPersonInsertSection(Scanner sc) {
+    public int selectPersonInsertSection(ScannerView scannerView, Scanner scanner) {
 
         System.out.println("\n========== 수정 구간 선택 ==========");
         System.out.println("1. 국가");
@@ -504,7 +504,7 @@ public class PersonView {
         System.out.println("0. 뒤로가기"); // 취소 or 완전취소 선택 구간으로 돌아감
 
         while (true) {
-            int choice = scannerView.scannInt(sc, "수정할 구간 선택");
+            int choice = scannerView.scannInt(scanner, "수정할 구간 선택");
 
             if (choice >= 0 && choice <= 4) { return choice; }
 

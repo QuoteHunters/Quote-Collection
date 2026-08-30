@@ -136,4 +136,177 @@ public class PersonController {
     public int deletePerson(int personId) {
         return personService.deletePerson(personId);
     }
+
+    public void testInsertPerson(ScannerView scannerView, Scanner scanner, ResultView resultView) {
+
+        PersonDTO newPerson = new PersonDTO();
+
+
+        int countryId = countryView.selectCountry(scannerView, scanner);
+        newPerson.setCountryId(countryId);
+        newPerson.setCountryName("대한민국");
+
+
+        /*
+         * TODO [국가 목록 조회 연동]
+         * 국가 담당자의 전체 국가 조회 기능이 병합되면
+         * 임시값을 사용자가 선택한 CountryDTO 값으로 교체
+         */
+
+        /*
+         * TODO [시대 목록 조회 연동]
+         * 시대 담당자의 전체 시대 조회 기능이 병합되면
+         * 임시값을 사용자가 선택한 PeriodDTO 값으로 교체
+         */
+        newPerson.setPeriodId(1);
+        newPerson.setPeriodName("AD 16세기");
+
+        /*
+         * TODO [분야 목록 조회 연동]
+         * 분야 담당자의 전체 분야 조회 기능이 병합되면
+         * 임시값을 사용자가 선택한 FieldDTO 값으로 교체
+         */
+        int fieldId = fieldView.selectFields(scannerView, scanner);
+        newPerson.setFieldId(fieldId);
+        newPerson.setFieldName("철학");
+
+        // 인물 이름 입력 및 중복 검증
+        while (true) {
+            String personName = personView.inputPersonName(scannerView, scanner);
+
+            if (personName == null) {
+                /*
+                 * TODO [분야 목록 조회 연동]
+                 * 실제 등록 흐름에서는 한 단계 위인
+                 * 분야 선택 화면으로 이동
+                 *
+                 * 임시 테스트에서는 분야 선택 화면이 없으므로
+                 * 인물 기능 테스트 메뉴로 이동
+                 */
+                return;
+            }
+
+            if (existsPersonName(personName)) {
+                resultView.errorMessage("이미 등록된 인물 이름입니다.");
+                continue;
+            }
+            newPerson.setPersonName(personName);
+            break;
+        }
+
+        // 등록 정보 확인 및 수정 반복
+        registrationConfirmLoop:
+        while (true) {
+
+            // INSERT 전 등록할 정보 출력
+            personView.displayPersonForInsert(newPerson);
+
+            String choice = personView.confirmPersonInsert(scannerView, scanner);
+
+            // 등록 선택 시 INSERT 실행
+            if ("등록".equals(choice)) {
+
+                int result = insertPerson(newPerson);
+
+                if (result > 0) {
+                    resultView.successMessage("인물이 등록되었습니다.");
+                } else {
+                    resultView.errorMessage("인물 등록에 실패했습니다.");
+                }
+
+                return;
+            }
+
+            // 취소 선택 시:
+            // 완전 취소 또는 수정 구간 선택
+            cancelActionLoop:
+            while (true) {
+
+                String cancelAction = personView.selectPersonInsertCancelAction(scannerView, scanner);
+
+                // INSERT를 실행하지 않고 등록 완전 취소
+                if ("완전 취소".equals(cancelAction)) {
+                    personView.printMessage("인물 등록을 취소했습니다.");
+                    return;
+                }
+
+                // 수정할 등록 정보 구간 선택
+                sectionSelectLoop:
+                while (true) {
+                    int section = personView.selectPersonInsertSection(scannerView, scanner);
+
+                    // 한 단계 위인 취소 후 작업 선택으로 이동
+                    if (section == 0) {
+                        continue cancelActionLoop;
+                    }
+
+                    switch (section) {
+                        case 1:
+                            /*
+                             * TODO [국가 목록 조회 연동]
+                             * 국가 담당자의 전체 국가 조회 기능이 병합되면
+                             * 국가 목록을 출력하고 CountryDTO를 재선택
+                             *
+                             * 선택한 countryId와 countryName을
+                             * newPerson에 다시 저장한 뒤
+                             * registrationConfirmLoop로 이동
+                             */
+                            resultView.errorMessage("국가 목록 조회 기능 연동 후 사용할 수 있습니다.");
+                            continue sectionSelectLoop;
+
+                        case 2:
+                            /*
+                             * TODO [시대 목록 조회 연동]
+                             * 시대 담당자의 전체 시대 조회 기능이 병합되면
+                             * 시대 목록을 출력하고 PeriodDTO를 재선택
+                             *
+                             * 선택한 periodId와 periodName을
+                             * newPerson에 다시 저장한 뒤
+                             * registrationConfirmLoop로 이동
+                             */
+                            resultView.errorMessage("시대 목록 조회 기능 연동 후 사용할 수 있습니다.");
+                            continue sectionSelectLoop;
+
+                        case 3:
+                            /*
+                             * TODO [분야 목록 조회 연동]
+                             * 분야 담당자의 전체 분야 조회 기능이 병합되면
+                             * 분야 목록을 출력하고 FieldDTO를 재선택
+                             *
+                             * 선택한 fieldId와 fieldName을
+                             * newPerson에 다시 저장한 뒤
+                             * registrationConfirmLoop로 이동
+                             */
+                            resultView.errorMessage("분야 목록 조회 기능 연동 후 사용할 수 있습니다.");
+                            continue sectionSelectLoop;
+
+                        case 4:
+                            // 인물 이름 재입력 및 검증
+                            while (true) {
+                                String changedName =
+                                        personView.inputPersonName(scannerView, scanner);
+
+                                // 이름 재입력에서 뒤로가기
+                                if (changedName == null) {
+                                    continue sectionSelectLoop;
+                                }
+
+                                if (existsPersonName(changedName)) {
+                                    resultView.errorMessage(
+                                            "이미 등록된 인물 이름입니다."
+                                    );
+                                    continue;
+                                }
+
+                                newPerson.setPersonName(changedName);
+
+                                // 수정된 전체 등록 정보를 다시 확인
+                                continue registrationConfirmLoop;
+                            }
+                    }
+                }
+            }
+        }
+
+    } //testInsertPerson()
 }
