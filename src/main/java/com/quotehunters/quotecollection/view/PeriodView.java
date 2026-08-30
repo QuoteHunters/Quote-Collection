@@ -30,7 +30,7 @@ public class PeriodView {
     }
 
     // [시대 선택]
-    public int selectPeriod() {
+    public int selectPeriod(ScannerView scannerView, Scanner scanner) {
         List<PeriodDTO> periods = periodController.allPeriods();
 
         allPeriods();
@@ -40,7 +40,7 @@ public class PeriodView {
         int choice = 0;
 
         while (true) {
-            choice = scv.scannInt(sc, "선택 (0: 뒤로가기)");
+            choice = scannerView.scannInt(scanner, "선택 (0: 뒤로가기)");
             if (choice == 0) break;
 
             if (choice < 0 || periods.size() < choice) {
@@ -88,12 +88,12 @@ public class PeriodView {
     }
 
     // [시대 수정] 리스트 추출 → 선택 → 입력 → 수정 Validation → [완료 / 재수정 / 취소] (Period-003)
-    public void modifyPeriod() {
+    public void modifyPeriod(ScannerView scannerView, Scanner scanner) {
         selectLoop:
         // '재수정' 시 여기(대상 선택)로 돌아옴
         while (true) {
 
-            int id = selectPeriod();
+            int id = selectPeriod(scannerView, scanner);
             if (id == 0) return;
 
             while (true) {
@@ -127,11 +127,11 @@ public class PeriodView {
     }
 
     // [시대 삭제] 명세 Period-004: 목록 → 선택 → 1차 경고 → 2차 경고 → [완료/재선택/취소]
-    public void removePeriod() {
+    public void removePeriod(ScannerView scannerView, Scanner scanner) {
         selectLoop:
         while (true) {
 
-            int id = selectPeriod();
+            int id = selectPeriod(scannerView, scanner);
             if (id == 0) return;                           // 이전 메뉴로
 
             // --- 1차 경고 (명세 S4~S5-1) ---

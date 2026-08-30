@@ -1,7 +1,9 @@
 package com.quotehunters.quotecollection.controller;
 
+import com.quotehunters.quotecollection.model.dto.MemberDTO;
 import com.quotehunters.quotecollection.model.dto.QuoteDTO;
 import com.quotehunters.quotecollection.model.service.QuoteService;
+import com.quotehunters.quotecollection.view.BookmarkView;
 import com.quotehunters.quotecollection.view.QuoteView;
 
 import java.util.List;
@@ -11,12 +13,18 @@ public class QuoteController {
 
     private QuoteService quoteService = new QuoteService();
     private QuoteView resultView = new QuoteView();
+    private BookmarkView bookmarkView = new BookmarkView();
 
     private static final int NO_DATA = -1;
     private static final int BACK = 0;
     private static final int SELECTED = 1;
 
-    public void selectAllQuotes() {
+    private void bookmarkQuote(Scanner scanner, MemberDTO member, List<QuoteDTO> quoteList) {
+        QuoteDTO quote = bookmarkView.selectQuoteForFavorite(scanner, quoteList);
+        bookmarkView.showQuoteDetailForFavorite(scanner, member, quote);
+    }
+
+    public void selectAllQuotes(Scanner scanner, MemberDTO member) {
 
         List<QuoteDTO> quoteList = quoteService.selectAllQuotes();
 
@@ -24,6 +32,7 @@ public class QuoteController {
             resultView.printMessage("등록된 명언이 없습니다.");
         } else {
             resultView.printQuoteList(quoteList);
+            bookmarkQuote(scanner, member, quoteList);
         }
     }
 
@@ -39,7 +48,7 @@ public class QuoteController {
     }
 
     // 키워드 검색 결과의 존재 여부에 따라 목록 또는 안내 메시지를 출력한다.
-    public void searchQuotesByKeyword(String keyword) {
+    public void searchQuotesByKeyword(Scanner scanner, MemberDTO member, String keyword) {
 
         try {
             List<QuoteDTO> quoteList =
@@ -51,6 +60,7 @@ public class QuoteController {
                 );
             } else {
                 resultView.printSearchedQuoteList(quoteList);
+                bookmarkQuote(scanner, member, quoteList);
             }
 
         } catch (RuntimeException e) {
@@ -59,7 +69,7 @@ public class QuoteController {
         }
     }
     // 인물 후보를 선택한 뒤 해당 인물의 명언만 조회한다.
-    public void searchQuotesByPerson(Scanner scanner) {
+    public void searchQuotesByPerson(Scanner scanner, MemberDTO member) {
 
         QuoteDTO selectedPerson = selectPersonFromAll(scanner);
 
@@ -77,6 +87,7 @@ public class QuoteController {
                 resultView.printMessage("등록된 명언이 없습니다.");
             } else {
                 resultView.printSearchedQuoteList(quoteList);
+                bookmarkQuote(scanner, member, quoteList);
             }
 
         } catch (RuntimeException e) {
@@ -118,7 +129,7 @@ public class QuoteController {
     }
 
     // 전체 주제에서 하나를 선택하고 해당 주제의 명언을 조회한다.
-    public void selectQuotesByTheme(Scanner scanner) {
+    public void selectQuotesByTheme(Scanner scanner, MemberDTO member) {
 
         try {
             List<QuoteDTO> themeList =
@@ -165,6 +176,7 @@ public class QuoteController {
                     selectedTheme,
                     quoteList
             );
+            bookmarkQuote(scanner, member, quoteList);
 
         } catch (RuntimeException e) {
             e.printStackTrace();

@@ -31,7 +31,7 @@ public class QuoteView {
         System.out.println("명언 : " + quote.getQuoteContent());
         System.out.println("인물 : " + quote.getPersonName());
         System.out.println("주제 : " + quote.getThemeName());
-        System.out.println("================================");
+        System.out.println("=================================");
     }
 
     // 키워드로 검색된 명언 목록을 선택 가능한 번호와 함께 출력한다.

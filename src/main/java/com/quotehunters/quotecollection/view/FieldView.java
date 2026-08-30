@@ -12,43 +12,43 @@ public class FieldView {
     private final Scanner sc = new Scanner(System.in);
     private final ResultView rv = new ResultView();
 
-    public void fieldMainView() {
-        while (true) {
-            System.out.println("1. 조회");
-            System.out.println("2. 등록");
-            System.out.println("3. 수정");
-            System.out.println("4. 삭제");
-            System.out.println("0. 메인 화면으로");
-
-            int num = scv.scannInt(sc, "선택");
-
-            switch (num) {
-                case 0: {
-                    return;
-                }
-                case 1: {
-                    allFields();
-                    break;
-                }
-                case 2: {
-                    insertField();
-                    break;
-                }
-                case 3: {
-                    updateField();
-                    break;
-                }
-                case 4: {
-                    deleteField();
-                    break;
-                }
-                default: {
-                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
-                    break;
-                }
-            }
-        }
-    }
+//    public void fieldMainView() {
+//        while (true) {
+//            System.out.println("1. 조회");
+//            System.out.println("2. 등록");
+//            System.out.println("3. 수정");
+//            System.out.println("4. 삭제");
+//            System.out.println("0. 메인 화면으로");
+//
+//            int num = scv.scannInt(sc, "선택");
+//
+//            switch (num) {
+//                case 0: {
+//                    return;
+//                }
+//                case 1: {
+//                    allFields();
+//                    break;
+//                }
+//                case 2: {
+//                    insertField();
+//                    break;
+//                }
+//                case 3: {
+//                    updateField(scv, sc);
+//                    break;
+//                }
+//                case 4: {
+//                    deleteField(scv, sc);
+//                    break;
+//                }
+//                default: {
+//                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
+//                    break;
+//                }
+//            }
+//        }
+//    }
 
     public void allFields() {
         List<FieldDTO> fields = fieldController.allFields();
@@ -65,7 +65,7 @@ public class FieldView {
         System.out.println("----------------------------");
     }
 
-    public int selectFields() {
+    public int selectFields(ScannerView scannerView, Scanner scanner) {
         List<FieldDTO> fields = fieldController.allFields();
 
         allFields();
@@ -89,10 +89,10 @@ public class FieldView {
         return fields.get(choice - 1).getFieldId();
     }
 
-    public void updateField() {
+    public void updateField(ScannerView scannerView, Scanner scanner) {
         selectLoop:
         while (true) {
-            int id = selectFields();
+            int id = selectFields(scannerView, scanner);
 
             if (id == 0) return;
 
@@ -180,10 +180,10 @@ public class FieldView {
         }
     }
 
-    public void deleteField() {
+    public void deleteField(ScannerView scannerView, Scanner scanner) {
         deleteLoop:
         while (true) {
-            int id = selectFields();
+            int id = selectFields(scannerView, scanner);
             if (id == 0) return;
 
             while (true) {
