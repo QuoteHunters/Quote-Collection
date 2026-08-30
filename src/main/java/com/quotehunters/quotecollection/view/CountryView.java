@@ -18,7 +18,7 @@ public class CountryView {
     public void allCountries() {
         List<CountryDTO> countries = countryController.allCountries();
 
-        System.out.println("----------------------------");
+        System.out.println("------------------------------");
         if (countries.isEmpty()) {                        // 워크플로우 예외: 조회 결과 없으면 안내
             System.out.println("등록된 국가가 없습니다.");
             return;
@@ -27,7 +27,7 @@ public class CountryView {
         for (int i = 0; i < countries.size(); i++) {
             System.out.println((i + 1) + ". " + countries.get(i).getCountryName());
         }
-        System.out.println("----------------------------");
+        System.out.println("------------------------------");
     }
 
     // [국가 선택]

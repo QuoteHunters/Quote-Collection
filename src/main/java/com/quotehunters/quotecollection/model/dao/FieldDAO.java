@@ -41,7 +41,7 @@ public class FieldDAO {
                 fields.add(fieldDTO);
             }
         } catch (SQLException e) {
-            System.out.println("All Fields SQL Exception");
+            System.out.println("분야 목록 조회 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(rset);
             JDBC.close(stmt);
@@ -68,7 +68,7 @@ public class FieldDAO {
                 fieldDTO.setFieldName(rset.getString("field_name"));
             }
         } catch (SQLException e) {
-            System.out.println("Search Fields ID SQL Exception");
+            System.out.println("분야 조회 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -93,7 +93,7 @@ public class FieldDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Exists Field Name SQL Exception");
+            System.out.println("분야명 중복 확인 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -140,7 +140,7 @@ public class FieldDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Update Fields SQL Exception");
+            System.out.println("분야 수정 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -161,7 +161,7 @@ public class FieldDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Insert Fields SQL Exception");
+            System.out.println("분야 등록 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -180,7 +180,7 @@ public class FieldDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Fields SQL Exception");
+            System.out.println("분야 삭제 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
