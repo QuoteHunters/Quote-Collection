@@ -2,10 +2,10 @@ package com.quotehunters.quotecollection.view;
 
 import com.quotehunters.quotecollection.model.dto.CountryDTO;
 import com.quotehunters.quotecollection.model.dto.FieldDTO;
+import com.quotehunters.quotecollection.model.dto.PeriodDTO;
 import com.quotehunters.quotecollection.model.dto.PersonDTO;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 
 public class PersonView {
@@ -221,7 +221,7 @@ public class PersonView {
                 return 0;
             }
 
-            // 출력한 국가 목록의 선택 범위를 검사
+            // 출력한 국가 목록의 선택 범위인지 검사
             // 범위를 벗어날 경우 재선택 (범위: 1 ~ 국가목록 개수)
             if (choice < 1 || choice > countryList.size()) {
                 resultView.errorMessage("목록에 있는 국가 번호를 선택해주세요.");
@@ -263,49 +263,49 @@ public class PersonView {
 
     /* 2. 인물의 시대 수정 */
     // 2-1. 인물의 시대를 수정하기 위해 새로운 시대 선택
-    // Map은 나중에 PeriodList 들어오면 변경
-    public int selectPeriodForUpdate(Scanner sc, PersonDTO selectedPerson, Map<Integer, String> periodMap) {
+    public int selectPeriodForUpdate(Scanner sc, PersonDTO selectedPerson, List<PeriodDTO> periodList) {
 
         System.out.println("\n========== 인물의 시대 수정 ==========");
         System.out.println("인물 이름 : " + selectedPerson.getPersonName());
         System.out.println("현재 시대 : " + selectedPerson.getPeriodName());
 
         // 등록된 시대가 없으면 선택할 수 없음
-        if (periodMap.isEmpty()) {
+        if (periodList.isEmpty()) {
             printMessage("등록된 시대가 없습니다.");
             return 0;
         }
 
         System.out.println("\n========== 시대 목록 ==========");
 
-        // key는 실제 period_id, value는 시대명
-        for (Map.Entry<Integer, String> period : periodMap.entrySet()) {
-            System.out.println(period.getKey() + ". " + period.getValue());
+        for (int i = 0; i < periodList.size(); i++) {
+            System.out.println((i + 1) + ". " + periodList.get(i).getPeriodName());
         }
 
         while (true) {
-            int periodId = scannerView.scannInt(sc, "변경할 시대 선택 (0: 뒤로가기)");
+            int choice = scannerView.scannInt(sc, "변경할 시대 선택 (0: 뒤로가기)");
 
             // 한 단계 위인 수정할 인물 선택으로 이동
-            if (periodId == 0) {
+            if (choice == 0) {
                 return 0;
             }
 
-            // 목록에 존재하는 실제 period_id인지 확인
-            if (!periodMap.containsKey(periodId)) {
+            // 출력한 시대 목록의 선택 범위인지 검사
+            if (choice < 1 || choice > periodList.size()) {
                 resultView.errorMessage("목록에 있는 시대 번호를 선택해주세요.");
                 continue;
             }
 
+            PeriodDTO selectedPeriod = periodList.get(choice - 1);
+
             // 현재 시대와 동일한 시대인지 확인
-            if (selectedPerson.getPeriodId() == periodId) {
+            if (selectedPerson.getPeriodId() == selectedPeriod.getPeriodId()) {
                 resultView.errorMessage("현재 시대와 동일한 시대입니다.");
                 continue;
             }
 
-            System.out.println("새로 변경할 시대명 : " + periodMap.get(periodId));
+            System.out.println("새로 변경할 시대명 : " + selectedPeriod.getPeriodName());
 
-            return periodId;
+            return selectedPeriod.getPeriodId();
         }
     }
 
