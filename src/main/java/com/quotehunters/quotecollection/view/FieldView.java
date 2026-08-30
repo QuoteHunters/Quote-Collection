@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Scanner;
 
 public class FieldView {
+
+    String line = "-".repeat(30);
     private final FieldController fieldController = new FieldController();
     private final ScannerView scv = new ScannerView();
     private final Scanner sc = new Scanner(System.in);
@@ -43,7 +45,7 @@ public class FieldView {
 //                    break;
 //                }
 //                default: {
-//                    rv.errorMessage("메뉴에 있는 번호를 선택해주세요.");
+//                    rv.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
 //                    break;
 //                }
 //            }
@@ -53,7 +55,11 @@ public class FieldView {
     public void allFields() {
         List<FieldDTO> fields = fieldController.allFields();
 
-        System.out.println("----------------------------");
+
+        String header = "=".repeat(10);
+        System.out.println(header + " text " + header);
+
+        System.out.println("------------------------------");
         if (fields.isEmpty()) {
             System.out.println("조회 결과 없음");
             return;
@@ -62,7 +68,7 @@ public class FieldView {
         for (int i = 0; i < fields.size(); i++) {
             System.out.println((i + 1) + ". " + fields.get(i).getFieldName());
         }
-        System.out.println("----------------------------");
+        System.out.println("------------------------------");
     }
 
     public int selectFields(ScannerView scannerView, Scanner scanner) {
@@ -139,7 +145,7 @@ public class FieldView {
     }
 
     public void insertField() {
-        System.out.println("---------- 분야 등록 ----------");
+        System.out.println("========== 분야 등록 ==========");
 
         insertLoop:
         while (true) {

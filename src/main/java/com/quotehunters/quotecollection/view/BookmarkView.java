@@ -15,6 +15,8 @@ import java.util.Scanner;
 
 public class BookmarkView {
 
+
+
     // Favorite-001·002·003 업무 처리를 요청할 Controller다.
     private final BookmarkController bookmarkController = new BookmarkController();
 
@@ -382,7 +384,7 @@ public class BookmarkView {
             );
         }
 
-        System.out.println("==============================");
+        System.out.println("-------------------------------");
     }
 
     // Favorite-003 취소 전, 현재 선택한 즐겨찾기 명언의 상세를 출력한다.
@@ -395,7 +397,7 @@ public class BookmarkView {
         System.out.println("인물: " + selectedQuote.getPersonName());
         System.out.println("주제: " + selectedQuote.getThemeName());
         System.out.println("즐겨찾기 상태: 등록됨");
-        System.out.println("==============================");
+        System.out.println("-----------------------------");
     }
 
     // 전체 명언 목록에서 선택하기 쉽게 화면 순번과 명언 요약을 출력한다.
@@ -415,7 +417,7 @@ public class BookmarkView {
             );
         }
 
-        System.out.println("==============================");
+        System.out.println("-----------------------------");
     }
 
     // 명언 상세 내용과 현재 즐겨찾기 상태를 함께 출력한다.
@@ -430,7 +432,7 @@ public class BookmarkView {
         System.out.println(
                 "즐겨찾기 상태: " + (isBookmarked ? "등록됨" : "미등록")
         );
-        System.out.println("==============================");
+        System.out.println("-----------------------------");
     }
 
     // 로그인에 성공했으며 memberId가 있는지 확인하는 보조 메서드다.
