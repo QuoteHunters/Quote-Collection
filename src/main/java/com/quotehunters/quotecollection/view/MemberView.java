@@ -96,7 +96,7 @@ public class MemberView {
             // 1. DB 열 길이를 넘지 않는 아이디를 입력받는다.
             String userId = readTextWithinLength(
                     sc,
-                    "아이디 입력 (0: 뒤로가기)",
+                    "아이디 입력 (0: 메인화면으로)",
                     MAX_USER_ID_LENGTH,
                     "아이디"
             );
@@ -108,7 +108,7 @@ public class MemberView {
             // 2. DB 열 길이를 넘지 않는 비밀번호를 입력받는다.
             String userPw = readTextWithinLength(
                     sc,
-                    "비밀번호 입력 (0: 뒤로가기)",
+                    "비밀번호 입력 (0: 메인화면으로)",
                     MAX_USER_PW_LENGTH,
                     "비밀번호"
             );
@@ -149,7 +149,7 @@ public class MemberView {
             // 1. DB에 저장된 값과 비교할 현재 비밀번호를 받는다.
             String currentUserPw = readTextWithinLength(
                     sc,
-                    "현재 비밀번호 입력 (0: 뒤로가기)",
+                    "현재 비밀번호 입력 (0: 메인화면으로)",
                     MAX_USER_PW_LENGTH,
                     "현재 비밀번호"
             );
