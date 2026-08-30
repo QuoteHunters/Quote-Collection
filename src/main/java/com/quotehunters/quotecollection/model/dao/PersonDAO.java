@@ -447,10 +447,10 @@ public class PersonDAO {
 
     /* 인물 삭제 */
     // 1. 선택한 인물의 명언 삭제
-    public int deleteQuoteByPerson(Connection con, int personId) {
+    public void deleteQuoteByPerson(Connection con, int personId) {
+        // 삭제된 명언 개수가 최종적으로 인물의 정보를 삭제하는데에 있어 성공여부를 판단하는 기준이 아니라서
+        // 값을 반환할 필요가 없음 (SQL 오류 시에는 전체 트랜잭션-명언삭제와인물삭제을 rollback)
         PreparedStatement pstmt = null;
-
-        int result = 0;
 
         String query = prop.getProperty("deleteQuoteByPerson");
         try {
@@ -458,15 +458,13 @@ public class PersonDAO {
 
             pstmt.setInt(1, personId);
 
-            result = pstmt.executeUpdate();
+            pstmt.executeUpdate();
+
         } catch (SQLException e) {
             throw new RuntimeException(e); // Service에서 catch문이 실행하게끔
         } finally {
             JDBC.close(pstmt);
         }
-        // result가 다른 때랑 다르게 여러 개 나올 수 있음
-        // 여러 개의 명언이 삭제될 수도 있으니까
-        return result;
     }
 
     // 2. 선택한 인물 삭제
