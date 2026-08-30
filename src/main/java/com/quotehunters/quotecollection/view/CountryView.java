@@ -31,7 +31,7 @@ public class CountryView {
     }
 
     // [국가 선택]
-    public int selectCountry() {
+    public int selectCountry(ScannerView scannerView, Scanner scanner) {
         List<CountryDTO> countries = countryController.allCountries();
 
         allCountries();                                   // 화면에 목록 출력
@@ -41,7 +41,7 @@ public class CountryView {
         int choice = 0;
 
         while (true) {
-            choice = scv.scannInt(sc, "선택 (0: 뒤로가기)");
+            choice = scannerView.scannInt(scanner, "선택 (0: 뒤로가기)");
             if (choice == 0) break;
 
             if (choice < 0 || countries.size() < choice) {
@@ -90,12 +90,12 @@ public class CountryView {
     }
 
     // [국가 수정]  리스트 추출 → 선택 → 입력 → 수정 Validation → [완료 / 재수정 / 취소]
-    public void modifyCountry() {
+    public void modifyCountry(ScannerView scannerView, Scanner scanner) {
         selectLoop:
         // '재수정' 시 여기(대상 선택)로 돌아옴
         while (true) {
 
-            int id = selectCountry();
+            int id = selectCountry(scannerView, scanner);
             if (id == 0) return;
 
             while (true) {
@@ -128,11 +128,11 @@ public class CountryView {
         }
     }
     // [국가 삭제] 명세 Country-004: 목록 → 선택 → 1차 경고 → 2차 경고(연쇄 삭제) → [완료/재선택/취소]
-    public void removeCountry() {
+    public void removeCountry(ScannerView scannerView, Scanner scanner) {
         selectLoop:
         while (true) {
 
-            int id = selectCountry();
+            int id = selectCountry(scannerView, scanner);
             if (id == 0) return;                           // 뒤로가기면 이전 메뉴로
 
             // --- 1차 경고 (명세 S4~S5-1) ---
