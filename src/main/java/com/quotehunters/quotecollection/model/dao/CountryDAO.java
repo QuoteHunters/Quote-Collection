@@ -44,7 +44,7 @@ public class CountryDAO {
                 countries.add(countryDTO);
             }
         } catch (SQLException e) {
-            System.out.println("All Countries SQL Exception");
+            System.out.println("국가 목록 조회 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(rset);
             JDBC.close(stmt);
@@ -71,7 +71,7 @@ public class CountryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Exists Country Name SQL Exception");
+            System.out.println("국가명 중복 확인 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -92,7 +92,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Insert Country SQL Exception");
+            System.out.println("국가 등록 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -113,7 +113,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Update Country SQL Exception");
+            System.out.println("국가 수정 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -134,7 +134,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Country SQL Exception");
+            System.out.println("국가 삭제 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -155,7 +155,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();      // 실행, 지워진 행 수 받기
         } catch (SQLException e) {
-            System.out.println("Delete Bookmark By Country SQL Exception");
+            System.out.println("국가 관련 즐겨찾기 삭제 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -176,7 +176,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Quote By Country SQL Exception");
+            System.out.println("국가 관련 명언 삭제 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -197,7 +197,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Person By Country SQL Exception");
+            System.out.println("국가 관련 인물 삭제 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
