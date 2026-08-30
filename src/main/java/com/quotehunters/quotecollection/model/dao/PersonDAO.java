@@ -449,7 +449,7 @@ public class PersonDAO {
     // 1. 선택한 인물의 명언 삭제
     public void deleteQuoteByPerson(Connection con, int personId) {
         // 삭제된 명언 개수가 최종적으로 인물의 정보를 삭제하는데에 있어 성공여부를 판단하는 기준이 아니라서
-        // 값을 반환할 필요가 없음 (SQL 오류 시에는 전체 트랜잭션-명언삭제와인물삭제을 rollback)
+        // 값을 반환할 필요가 없음 (SQL 오류 시에는 전체 트랜잭션-명언삭제와인물삭제-를 rollback)
         PreparedStatement pstmt = null;
 
         String query = prop.getProperty("deleteQuoteByPerson");
