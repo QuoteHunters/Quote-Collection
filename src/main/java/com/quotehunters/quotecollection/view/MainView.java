@@ -7,18 +7,21 @@ import com.quotehunters.quotecollection.model.dto.MemberDTO;
 import java.util.Scanner;
 
 public class MainView {
-    private final Scanner scanner = new Scanner(System.in);
-
-    private final ScannerView scannerView = new ScannerView();
     private final MemberView memberView = new MemberView();
     private final BookmarkView bookmarkView = new BookmarkView();
+    private final CountryView countryView = new CountryView();
+    private final PeriodView periodView = new PeriodView();
+    private final FieldView fieldView = new FieldView();
+    private final ThemeView themeView = new ThemeView();
 
     private final QuoteController quoteController = new QuoteController();
     private final PersonController personController = new PersonController();
 
-    private MemberDTO member = null;
-
     public void start() {
+        Scanner scanner = new Scanner(System.in);
+        ScannerView scannerView = new ScannerView();
+        MemberDTO member = null;
+
         System.out.println("Quote Collection - 명언 도감 시스템");
         while (true) {
             System.out.println();
@@ -36,11 +39,12 @@ public class MainView {
                     member = memberView.login(scanner);
                     if (member == null) break;
                     switch (member.getUserAuth()) {
-                        case 1: {
-                            userMainMenu(member);
+                        case 0: {
+                            adminMainView(scannerView, scanner, member);
                             break;
                         }
-                        case 2: {
+                        case 1: {
+                            userMainMenu(scannerView, scanner, member);
                             break;
                         }
                         default: {
@@ -61,7 +65,7 @@ public class MainView {
         }
     }
 
-    private void userMainMenu(MemberDTO member) {
+    private void userMainMenu(ScannerView scannerView, Scanner scanner, MemberDTO member) {
         while (true) {
             System.out.println();
             System.out.println("=================================");
@@ -130,6 +134,9 @@ public class MainView {
                     quoteController.searchQuotesByKeyword(scanner, member, keyword);
                     break;
                 }
+                default: {
+                    break;
+                }
             }
         }
     }
@@ -163,6 +170,9 @@ public class MainView {
                     personController.selectPersonByField(scannerView, scanner);
                     break;
                 }
+                default: {
+                    break;
+                }
             }
         }
     }
@@ -184,6 +194,149 @@ public class MainView {
                 }
                 case 2: {
                     memberView.changePassword(scanner, member);
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+    }
+
+    private void adminMainView(ScannerView scannerView, Scanner scanner, MemberDTO member) {
+        while (true) {
+            System.out.println();
+            System.out.println("=================================");
+            System.out.println("1. 탐색");
+            System.out.println("2. 등록");
+            System.out.println("3. 수정");
+            System.out.println("4. 삭제");
+            System.out.println("0. 로그아웃");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: {
+                    searchMainView(scannerView, scanner, member);
+                    break;
+                }
+                case 2: {
+
+                    break;
+                }
+                case 3: {
+
+                    break;
+                }
+                case 4: {
+
+                    break;
+                }
+                default: {
+
+                    break;
+                }
+            }
+        }
+    }
+
+    private void searchMainView(ScannerView scannerView, Scanner scanner, MemberDTO member) {
+        while (true) {
+            System.out.println("========== 탐색 ==========");
+            System.out.println("1. 인물 탐색");
+            System.out.println("2. 명언 탐색");
+            System.out.println("3. 카테고리 탐색");
+            System.out.println("0. 뒤로가기");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: {
+                    personController.selectAllPerson();
+                    break;
+                }
+                case 2: {
+                    quoteController.selectAllQuotes(scanner, member);
+                    break;
+                }
+                case 3: {
+                    categorySearchView(scannerView, scanner);
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+    }
+
+    private void categorySearchView(ScannerView scannerView, Scanner scanner) {
+        while (true) {
+            System.out.println();
+            System.out.println("========== 카테고리 탐색 ==========");
+            System.out.println("1. 국가 조회");
+            System.out.println("2. 시대 조회");
+            System.out.println("3. 분야 조회");
+            System.out.println("4. 주제 조회");
+            System.out.println("0. 뒤로가기");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: {
+                    countryView.allCountries();
+                    break;
+                }
+                case 2: {
+                    periodView.allPeriods();
+                    break;
+                }
+                case 3: {
+                    fieldView.allFields();
+                    break;
+                }
+                case 4: {
+                    themeView.selectThemes();
+                    break;
+                }
+                default: {
+                    break;
+                }
+            }
+        }
+    }
+
+    private void insertMainView(ScannerView scannerView, Scanner scanner) {
+        while (true) {
+            System.out.println();
+            System.out.println("========== 등록 ==========");
+            System.out.println("1. 인물 등록");
+            System.out.println("2. 명언 등록");
+            System.out.println("3. 국가 등록");
+            System.out.println("4. 시대 등록");
+            System.out.println("5. 분야 등록");
+            System.out.println("6. 주제 등록");
+            System.out.println("0. 뒤로가기");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: {
+
+                    break;
+                }
+                case 2: {
+                    break;
+                }
+                case 3: {
+                    break;
+                }
+                case 4: {
+                    break;
+                }
+                case 5: {
+                    break;
+                }
+                case 6: {
+                    break;
+                }
+                default: {
                     break;
                 }
             }
