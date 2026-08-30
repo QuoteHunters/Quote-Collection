@@ -114,7 +114,6 @@ public class MemberDAO {
      *
      * 반환값 MemberDTO : 로그인에 성공한 회원의 번호, 아이디, 권한을 담은 객체다.
      * 반환값 null      : ID가 없거나 비밀번호가 다른 경우이다.
-     *
      */
     public MemberDTO selectMemberByLoginInfo(
             Connection con,
@@ -168,9 +167,6 @@ public class MemberDAO {
      *
      * 반환값 String : DB에 저장된 user_pw 문자열이다.
      * 반환값 null   : member_id와 일치하는 회원 행이 없다는 뜻이다.
-     *
-     * 이 메서드는 비밀번호를 화면에 출력하지 않는다.
-     * Service가 반환된 값과 사용자가 입력한 현재 비밀번호를 안전하게 비교한다.
      */
     public String selectMemberPasswordByMemberId(
             Connection con,
@@ -213,7 +209,7 @@ public class MemberDAO {
      * [Member-004] 로그인한 회원 한 명의 비밀번호를 새 비밀번호로 UPDATE한다.
      *
      * 반환값은 UPDATE된 행 수다.
-     * member_id가 존재하는 회원 한 명을 정상 변경하면 보통 1을 반환한다.
+     * member_id가 존재하는 회원 한 명을 정상 변경하면 1을 반환하여야 한다.
      */
     public int updateMemberPassword(
             Connection con,
@@ -244,6 +240,7 @@ public class MemberDAO {
             JDBC.close(pstmt);
         }
     }
+
 
 
     // XML key를 잘못 썼을 때 원인을 명확하게 알려 주는 보조 메서드다.
