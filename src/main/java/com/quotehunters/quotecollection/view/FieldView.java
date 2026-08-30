@@ -8,8 +8,6 @@ import java.util.Scanner;
 
 public class FieldView {
     private final FieldController fieldController = new FieldController();
-    private final ScannerView scv = new ScannerView();
-    private final Scanner sc = new Scanner(System.in);
     private final ResultView rv = new ResultView();
 
 //    public void fieldMainView() {
@@ -73,7 +71,7 @@ public class FieldView {
         int choice = 0;
 
         while (true) {
-            choice = scv.scannInt(sc, "선택 (0: 뒤로가기)");
+            choice = scannerView.scannInt(scanner, "선택 (0: 뒤로가기)");
             if (choice == 0) break;
 
             if (choice < 0 || fields.size() < choice) {
@@ -98,7 +96,7 @@ public class FieldView {
 
             modifyLoop:
             while (true) {
-                String changeName = scv.scannString(sc, "변경할 분야명 입력 (0: 뒤로가기)");
+                String changeName = scannerView.scannString(scanner, "변경할 분야명 입력 (0: 뒤로가기)");
                 if (changeName.equals("0")) {
                     continue selectLoop;
                 }
@@ -114,7 +112,7 @@ public class FieldView {
                 }
 
                 while (true) {
-                    String check = scv.scannString(sc, "정말 수정하시겠습니까? 예 / 재수정 / 아니오");
+                    String check = scannerView.scannString(scanner, "정말 수정하시겠습니까? 예 / 재수정 / 아니오");
 
                     if (check.equals("예")) {
                         int result = fieldController.updateField(id, changeName);
@@ -138,12 +136,12 @@ public class FieldView {
         }
     }
 
-    public void insertField() {
+    public void insertField(ScannerView scannerView, Scanner scanner) {
         System.out.println("---------- 분야 등록 ----------");
 
         insertLoop:
         while (true) {
-            String name = scv.scannString(sc, "입력 (0: 뒤로가기)");
+            String name = scannerView.scannString(scanner, "입력 (0: 뒤로가기)");
 
             if (name.equals("0")) return;
 
@@ -158,7 +156,7 @@ public class FieldView {
             }
 
             while (true) {
-                String check = scv.scannString(sc, "등록 / 수정 / 취소");
+                String check = scannerView.scannString(scanner, "등록 / 수정 / 취소");
 
                 if (check.equals("수정")) continue insertLoop;
                 if (check.equals("취소")) return;
@@ -187,7 +185,7 @@ public class FieldView {
             if (id == 0) return;
 
             while (true) {
-                String str = scv.scannString(sc, "정말 삭제하시겠습니까? 완료 / 재선택 / 취소");
+                String str = scannerView.scannString(scanner, "정말 삭제하시겠습니까? 완료 / 재선택 / 취소");
                 if (str.equals("취소")) return;
                 if (str.equals("재선택")) continue deleteLoop;
                 if (str.equals("완료")) {

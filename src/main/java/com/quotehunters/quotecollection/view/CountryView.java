@@ -10,9 +10,7 @@ public class CountryView {
 
 
     private final CountryController countryController = new CountryController();
-    private final ScannerView scv = new ScannerView();
     private final ResultView rv = new ResultView();
-    private final Scanner sc = new Scanner(System.in);
 
     // [국가 목록 출력]
     public void allCountries() {
@@ -58,15 +56,15 @@ public class CountryView {
     }
 
     // [국가 등록] 국가명 입력 → 등록 Validation → [등록 / 수정 / 취소]
-    public void registCountry() {
+    public void registCountry(ScannerView scannerView, Scanner scanner) {
         while (true) {
 
-            String countryName = scv.scannString(sc, "등록할 국가명 입력 (0: 뒤로가기)");
+            String countryName = scannerView.scannString(scanner, "등록할 국가명 입력 (0: 뒤로가기)");
             if (countryName.equals("0")) return;
 
 
             while (true) {
-                String check = scv.scannString(sc, "[" + countryName + "] (으)로 등록하시겠습니까? 예 / 수정 / 취소");
+                String check = scannerView.scannString(scanner, "[" + countryName + "] (으)로 등록하시겠습니까? 예 / 수정 / 취소");
 
                 if (check.equals("예")) {
                     String message = countryController.registCountry(countryName);
@@ -99,12 +97,12 @@ public class CountryView {
             if (id == 0) return;
 
             while (true) {
-                String newName = scv.scannString(sc, "변경할 국가명 입력 (0: 뒤로가기)");
+                String newName = scannerView.scannString(scanner, "변경할 국가명 입력 (0: 뒤로가기)");
                 if (newName.equals("0")) continue selectLoop;   // 0이면 대상 선택부터 다시
 
 
                 while (true) {
-                    String check = scv.scannString(sc, "[" + newName + "] (으)로 수정하시겠습니까? 예 / 재수정 / 아니오");
+                    String check = scannerView.scannString(scanner, "[" + newName + "] (으)로 수정하시겠습니까? 예 / 재수정 / 아니오");
 
                     if (check.equals("예")) {
                         String message = countryController.modifyCountry(id, newName);
@@ -137,7 +135,7 @@ public class CountryView {
 
             // --- 1차 경고 (명세 S4~S5-1) ---
             while (true) {
-                String first = scv.scannString(sc, "선택한 국가를 삭제하시겠습니까? 예 / 아니오");
+                String first = scannerView.scannString(scanner, "선택한 국가를 삭제하시겠습니까? 예 / 아니오");
 
                 if (first.equals("아니오")) return;        // DELETE 없이 이전 메뉴로
                 if (first.equals("예")) break;             // 다음 경고로 진행
@@ -149,7 +147,7 @@ public class CountryView {
             System.out.println("해당 국가를 삭제할 경우 해당 국가에 속한 모든 인물의 정보(명언 포함)가 삭제됩니다.");
 
             while (true) {
-                String second = scv.scannString(sc, "그래도 삭제하시겠습니까? 예 / 재선택 / 아니오");
+                String second = scannerView.scannString(scanner, "그래도 삭제하시겠습니까? 예 / 재선택 / 아니오");
 
                 if (second.equals("예")) {                 // [완료] 삭제 실행
                     String message = countryController.removeCountry(id);
@@ -172,4 +170,3 @@ public class CountryView {
         }
     }
 }
-

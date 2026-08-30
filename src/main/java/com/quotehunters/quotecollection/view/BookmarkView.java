@@ -64,8 +64,7 @@ public class BookmarkView {
     /*
      * [Favorite-001] 명언 탐색에서 선택한 명언 상세에 즐겨찾기 추가 상태와 메뉴를 보여 준다.
      *
-     * 추가가 성공하면 return하지 않고 while의 처음으로 돌아간다.
-     * 따라서 같은 명언 상세를 다시 출력할 때 "즐겨찾기 등록됨" 상태가 갱신되어 보인다.
+     * 추가 또는 취소가 성공하면 호출한 명언 목록/메인 화면으로 돌아간다.
      */
     public void showQuoteDetailForFavorite(
             Scanner sc,
@@ -89,7 +88,7 @@ public class BookmarkView {
                 printQuoteDetail(selectedQuote, isBookmarked);
 
                 if (isBookmarked) {
-                    System.out.println("이 명언은 이미 즐겨찾기에 등록되어 있습니다.");
+                    System.out.println("1. 즐겨찾기 취소");
                     System.out.println("0. 명언 목록으로");
 
                     int selectedMenu = scannerView.scannInt(sc, "번호 선택");
@@ -98,7 +97,27 @@ public class BookmarkView {
                         return;
                     }
 
-                    resultView.errorMessage("0을 입력해 명언 목록으로 돌아가세요.");
+                    if (selectedMenu != 1) {
+                        resultView.errorMessage("1 또는 0만 입력해주세요.");
+                        continue;
+                    }
+
+                    if (!confirmBookmarkCancellation(sc, selectedQuote)) {
+                        continue;
+                    }
+
+                    BookmarkDTO bookmark = new BookmarkDTO(
+                            loginMember.getMemberId(),
+                            selectedQuote.getQuoteId()
+                    );
+
+                    int result = bookmarkController.cancelBookmark(bookmark);
+                    if (result > 0) {
+                        resultView.successMessage("즐겨찾기가 취소되었습니다.");
+                        return;
+                    }
+
+                    resultView.errorMessage("즐겨찾기 취소 대상이 없거나 상태가 변경되었습니다.");
                     continue;
                 }
 
@@ -131,8 +150,7 @@ public class BookmarkView {
 
                 if (result > 0) {
                     resultView.successMessage("즐겨찾기에 추가되었습니다.");
-                    // 같은 명언 상세 화면을 다시 그려 "등록됨" 상태를 표시한다.
-                    continue;
+                    return;
                 }
 
                 /*

@@ -1,12 +1,12 @@
 package com.quotehunters.quotecollection.controller;
 
-import com.quotehunters.quotecollection.common.JDBC;
+import com.quotehunters.quotecollection.model.dto.CountryDTO;
+import com.quotehunters.quotecollection.model.dto.FieldDTO;
+import com.quotehunters.quotecollection.model.dto.PeriodDTO;
 import com.quotehunters.quotecollection.model.dto.PersonDTO;
 import com.quotehunters.quotecollection.model.service.PersonService;
 import com.quotehunters.quotecollection.view.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Scanner;
 
@@ -17,6 +17,10 @@ public class PersonController {
     private final CountryView countryView = new CountryView();
     private final PeriodView periodView = new PeriodView();
     private final FieldView fieldView = new FieldView();
+    private final CountryController countryController = new CountryController();
+    private final PeriodController periodController = new PeriodController();
+    private final FieldController fieldController = new FieldController();
+    private final ScannerView scannerView = new ScannerView();
 
     /* 인물 조회*/
     // 1. 전체 인물 조회
@@ -137,176 +141,269 @@ public class PersonController {
         return personService.deletePerson(personId);
     }
 
-    public void testInsertPerson(ScannerView scannerView, Scanner scanner, ResultView resultView) {
-
+    public void registerPerson(ScannerView scannerView, Scanner scanner, ResultView resultView) {
         PersonDTO newPerson = new PersonDTO();
+        int step = 1;
 
-
-        int countryId = countryView.selectCountry(scannerView, scanner);
-        newPerson.setCountryId(countryId);
-        newPerson.setCountryName("대한민국");
-
-
-        /*
-         * TODO [국가 목록 조회 연동]
-         * 국가 담당자의 전체 국가 조회 기능이 병합되면
-         * 임시값을 사용자가 선택한 CountryDTO 값으로 교체
-         */
-
-        /*
-         * TODO [시대 목록 조회 연동]
-         * 시대 담당자의 전체 시대 조회 기능이 병합되면
-         * 임시값을 사용자가 선택한 PeriodDTO 값으로 교체
-         */
-        newPerson.setPeriodId(1);
-        newPerson.setPeriodName("AD 16세기");
-
-        /*
-         * TODO [분야 목록 조회 연동]
-         * 분야 담당자의 전체 분야 조회 기능이 병합되면
-         * 임시값을 사용자가 선택한 FieldDTO 값으로 교체
-         */
-        int fieldId = fieldView.selectFields(scannerView, scanner);
-        newPerson.setFieldId(fieldId);
-        newPerson.setFieldName("철학");
-
-        // 인물 이름 입력 및 중복 검증
-        while (true) {
-            String personName = personView.inputPersonName(scannerView, scanner);
-
-            if (personName == null) {
-                /*
-                 * TODO [분야 목록 조회 연동]
-                 * 실제 등록 흐름에서는 한 단계 위인
-                 * 분야 선택 화면으로 이동
-                 *
-                 * 임시 테스트에서는 분야 선택 화면이 없으므로
-                 * 인물 기능 테스트 메뉴로 이동
-                 */
-                return;
+        while (step <= 4) {
+            switch (step) {
+                case 1:
+                    if (!selectCountryForRegistration(scannerView, scanner, newPerson)) return;
+                    step = 2;
+                    break;
+                case 2:
+                    step = selectPeriodForRegistration(scannerView, scanner, newPerson) ? 3 : 1;
+                    break;
+                case 3:
+                    step = selectFieldForRegistration(scannerView, scanner, newPerson) ? 4 : 2;
+                    break;
+                case 4:
+                    String personName = personView.inputPersonName(scannerView, scanner);
+                    if (personName == null) {
+                        step = 3;
+                    } else if (existsPersonName(personName)) {
+                        resultView.errorMessage("이미 등록된 인물 이름입니다.");
+                    } else {
+                        newPerson.setPersonName(personName);
+                        step = 5;
+                    }
+                    break;
+                default:
+                    break;
             }
-
-            if (existsPersonName(personName)) {
-                resultView.errorMessage("이미 등록된 인물 이름입니다.");
-                continue;
-            }
-            newPerson.setPersonName(personName);
-            break;
         }
 
-        // 등록 정보 확인 및 수정 반복
         registrationConfirmLoop:
         while (true) {
-
-            // INSERT 전 등록할 정보 출력
             personView.displayPersonForInsert(newPerson);
-
             String choice = personView.confirmPersonInsert(scannerView, scanner);
 
-            // 등록 선택 시 INSERT 실행
             if ("등록".equals(choice)) {
-
                 int result = insertPerson(newPerson);
-
                 if (result > 0) {
                     resultView.successMessage("인물이 등록되었습니다.");
                 } else {
                     resultView.errorMessage("인물 등록에 실패했습니다.");
                 }
-
                 return;
             }
 
-            // 취소 선택 시:
-            // 완전 취소 또는 수정 구간 선택
-            cancelActionLoop:
-            while (true) {
+            String cancelAction = personView.selectPersonInsertCancelAction(scannerView, scanner);
+            if ("완전 취소".equals(cancelAction)) {
+                personView.printMessage("인물 등록을 취소했습니다.");
+                return;
+            }
 
-                String cancelAction = personView.selectPersonInsertCancelAction(scannerView, scanner);
+            int section = personView.selectPersonInsertSection(scannerView, scanner);
+            if (section == 0) continue;
 
-                // INSERT를 실행하지 않고 등록 완전 취소
-                if ("완전 취소".equals(cancelAction)) {
-                    personView.printMessage("인물 등록을 취소했습니다.");
-                    return;
-                }
-
-                // 수정할 등록 정보 구간 선택
-                sectionSelectLoop:
-                while (true) {
-                    int section = personView.selectPersonInsertSection(scannerView, scanner);
-
-                    // 한 단계 위인 취소 후 작업 선택으로 이동
-                    if (section == 0) {
-                        continue cancelActionLoop;
+            boolean changed = false;
+            switch (section) {
+                case 1:
+                    changed = selectCountryForRegistration(scannerView, scanner, newPerson);
+                    break;
+                case 2:
+                    changed = selectPeriodForRegistration(scannerView, scanner, newPerson);
+                    break;
+                case 3:
+                    changed = selectFieldForRegistration(scannerView, scanner, newPerson);
+                    break;
+                case 4:
+                    while (true) {
+                        String changedName = personView.inputPersonName(scannerView, scanner);
+                        if (changedName == null) break;
+                        if (existsPersonName(changedName)) {
+                            resultView.errorMessage("이미 등록된 인물 이름입니다.");
+                            continue;
+                        }
+                        newPerson.setPersonName(changedName);
+                        changed = true;
+                        break;
                     }
+                    break;
+                default:
+                    break;
+            }
+            if (changed) continue registrationConfirmLoop;
+        }
+    }
 
-                    switch (section) {
-                        case 1:
-                            /*
-                             * TODO [국가 목록 조회 연동]
-                             * 국가 담당자의 전체 국가 조회 기능이 병합되면
-                             * 국가 목록을 출력하고 CountryDTO를 재선택
-                             *
-                             * 선택한 countryId와 countryName을
-                             * newPerson에 다시 저장한 뒤
-                             * registrationConfirmLoop로 이동
-                             */
-                            resultView.errorMessage("국가 목록 조회 기능 연동 후 사용할 수 있습니다.");
-                            continue sectionSelectLoop;
-
-                        case 2:
-                            /*
-                             * TODO [시대 목록 조회 연동]
-                             * 시대 담당자의 전체 시대 조회 기능이 병합되면
-                             * 시대 목록을 출력하고 PeriodDTO를 재선택
-                             *
-                             * 선택한 periodId와 periodName을
-                             * newPerson에 다시 저장한 뒤
-                             * registrationConfirmLoop로 이동
-                             */
-                            resultView.errorMessage("시대 목록 조회 기능 연동 후 사용할 수 있습니다.");
-                            continue sectionSelectLoop;
-
-                        case 3:
-                            /*
-                             * TODO [분야 목록 조회 연동]
-                             * 분야 담당자의 전체 분야 조회 기능이 병합되면
-                             * 분야 목록을 출력하고 FieldDTO를 재선택
-                             *
-                             * 선택한 fieldId와 fieldName을
-                             * newPerson에 다시 저장한 뒤
-                             * registrationConfirmLoop로 이동
-                             */
-                            resultView.errorMessage("분야 목록 조회 기능 연동 후 사용할 수 있습니다.");
-                            continue sectionSelectLoop;
-
-                        case 4:
-                            // 인물 이름 재입력 및 검증
-                            while (true) {
-                                String changedName =
-                                        personView.inputPersonName(scannerView, scanner);
-
-                                // 이름 재입력에서 뒤로가기
-                                if (changedName == null) {
-                                    continue sectionSelectLoop;
-                                }
-
-                                if (existsPersonName(changedName)) {
-                                    resultView.errorMessage(
-                                            "이미 등록된 인물 이름입니다."
-                                    );
-                                    continue;
-                                }
-
-                                newPerson.setPersonName(changedName);
-
-                                // 수정된 전체 등록 정보를 다시 확인
-                                continue registrationConfirmLoop;
-                            }
-                    }
-                }
+    private boolean selectCountryForRegistration(ScannerView scannerView, Scanner scanner, PersonDTO person) {
+        int countryId = countryView.selectCountry(scannerView, scanner);
+        if (countryId == 0) return false;
+        for (CountryDTO country : countryController.allCountries()) {
+            if (country.getCountryId() == countryId) {
+                person.setCountryId(countryId);
+                person.setCountryName(country.getCountryName());
+                return true;
             }
         }
+        return false;
+    }
 
-    } //testInsertPerson()
+    private boolean selectPeriodForRegistration(ScannerView scannerView, Scanner scanner, PersonDTO person) {
+        int periodId = periodView.selectPeriod(scannerView, scanner);
+        if (periodId == 0) return false;
+        for (PeriodDTO period : periodController.allPeriods()) {
+            if (period.getPeriodId() == periodId) {
+                person.setPeriodId(periodId);
+                person.setPeriodName(period.getPeriodName());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean selectFieldForRegistration(ScannerView scannerView, Scanner scanner, PersonDTO person) {
+        int fieldId = fieldView.selectFields(scannerView, scanner);
+        if (fieldId == 0) return false;
+        for (FieldDTO field : fieldController.allFields()) {
+            if (field.getFieldId() == fieldId) {
+                person.setFieldId(fieldId);
+                person.setFieldName(field.getFieldName());
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void updatePerson(Scanner scanner) {
+        while (true) {
+            int searchType = personView.selectPersonUpdateSearchType(scanner);
+            if (searchType == 0) return;
+
+            List<PersonDTO> personList = searchPersonsByCondition(scanner, searchType);
+            if (personList == null) continue;
+
+            if (personList.isEmpty()) {
+                personView.printMessage("조회된 인물이 없습니다. 검색 방식을 다시 선택해주세요.");
+                continue;
+            }
+
+            personView.displayAllPerson(personList);
+            PersonDTO selectedPerson = personView.selectPerson(scanner, personList);
+            if (selectedPerson == null) continue;
+
+            int target = personView.selectPersonUpdateSection(scanner);
+            if (target == 0) continue;
+
+            switch (target) {
+                case 1:
+                    updatePersonCountryFlow(scanner, selectedPerson);
+                    return;
+                case 2:
+                    updatePersonPeriodFlow(scanner, selectedPerson);
+                    return;
+                case 3:
+                    updatePersonFieldFlow(scanner, selectedPerson);
+                    return;
+                case 4:
+                    updatePersonNameFlow(scanner, selectedPerson);
+                    return;
+                default:
+                    break;
+            }
+        }
+    }
+
+    private void updatePersonCountryFlow(Scanner scanner, PersonDTO person) {
+        while (true) {
+            int countryId = personView.selectCountryForUpdate(scanner, person, countryController.allCountries());
+            if (countryId == 0) return;
+            String decision = personView.confirmCountryUpdate(scanner);
+            if ("취소".equals(decision)) return;
+            if ("재수정".equals(decision)) continue;
+            printUpdateResult(updatePersonCountry(person.getPersonId(), countryId));
+            return;
+        }
+    }
+
+    private void updatePersonPeriodFlow(Scanner scanner, PersonDTO person) {
+        while (true) {
+            int periodId = personView.selectPeriodForUpdate(scanner, person, periodController.allPeriods());
+            if (periodId == 0) return;
+            String decision = personView.confirmPeriodUpdate(scanner);
+            if ("취소".equals(decision)) return;
+            if ("재수정".equals(decision)) continue;
+            printUpdateResult(updatePersonPeriod(person.getPersonId(), periodId));
+            return;
+        }
+    }
+
+    private void updatePersonFieldFlow(Scanner scanner, PersonDTO person) {
+        while (true) {
+            int fieldId = personView.selectFieldForUpdate(scanner, person, fieldController.allFields());
+            if (fieldId == 0) return;
+            String decision = personView.confirmFieldUpdate(scanner);
+            if ("취소".equals(decision)) return;
+            if ("재수정".equals(decision)) continue;
+            printUpdateResult(updatePersonField(person.getPersonId(), fieldId));
+            return;
+        }
+    }
+
+    private void updatePersonNameFlow(Scanner scanner, PersonDTO person) {
+        while (true) {
+            String personName = personView.inputPersonNameForUpdate(scanner, person);
+            if (personName == null) return;
+            if (existsPersonName(personName)) {
+                personView.printMessage("이미 등록된 인물 이름입니다.");
+                continue;
+            }
+            String decision = personView.confirmPersonNameUpdate(scanner);
+            if ("취소".equals(decision)) return;
+            if ("재수정".equals(decision)) continue;
+            printUpdateResult(updatePersonName(person.getPersonId(), personName));
+            return;
+        }
+    }
+
+    private void printUpdateResult(int result) {
+        personView.printMessage(result > 0 ? "인물 정보가 수정되었습니다." : "인물 정보 수정에 실패했습니다.");
+    }
+
+    public void deletePerson(Scanner scanner) {
+        while (true) {
+            int searchType = personView.selectPersonDeleteSearchType(scanner);
+            if (searchType == 0) return;
+
+            List<PersonDTO> personList = searchPersonsByCondition(scanner, searchType);
+            if (personList == null) continue;
+
+            if (personList.isEmpty()) {
+                personView.printMessage("조회된 인물이 없습니다. 검색 방식을 다시 선택해주세요.");
+                continue;
+            }
+
+            personView.displayAllPerson(personList);
+            PersonDTO selectedPerson = personView.selectPersonForDelete(scanner, personList);
+            if (selectedPerson == null) continue;
+
+            personView.displayPersonForDelete(selectedPerson);
+            if ("취소".equals(personView.confirmPersonForDelete(scanner))) return;
+
+            int result = deletePerson(selectedPerson.getPersonId());
+            personView.printMessage(result > 0 ? "인물이 삭제되었습니다." : "인물 삭제에 실패했습니다.");
+            return;
+        }
+    }
+
+    private List<PersonDTO> searchPersonsByCondition(Scanner scanner, int searchType) {
+        switch (searchType) {
+            case 1:
+                int countryId = countryView.selectCountry(scannerView, scanner);
+                return countryId == 0 ? null : personService.selectPersonByCountry(countryId);
+            case 2:
+                int periodId = periodView.selectPeriod(scannerView, scanner);
+                return periodId == 0 ? null : personService.selectPersonByPeriod(periodId);
+            case 3:
+                int fieldId = fieldView.selectFields(scannerView, scanner);
+                return fieldId == 0 ? null : personService.selectPersonByField(fieldId);
+            case 4:
+                String personName = personView.inputPersonNameForSearch(scanner);
+                return personName == null ? null : personService.selectPersonByName(personName);
+            default:
+                return null;
+        }
+    }
 }

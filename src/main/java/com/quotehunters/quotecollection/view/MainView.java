@@ -83,7 +83,7 @@ public class MainView {
                     return;
                 }
                 case 1: {
-                    quoteController.selectTodayQuote();
+                    quoteController.selectTodayQuote(scanner, member);
                     break;
                 }
                 case 2: {
@@ -148,9 +148,9 @@ public class MainView {
             System.out.println();
             System.out.println("========== 인물 탐색 ==========");
             System.out.println("1. 전체 인물 조회");
-            System.out.println("2. 국가별 명언 조회");
-            System.out.println("3. 시대별 명언 조회");
-            System.out.println("4. 분야별 명언 조회");
+            System.out.println("2. 국가별 인물 조회");
+            System.out.println("3. 시대별 인물 조회");
+            System.out.println("4. 분야별 인물 조회");
             System.out.println("0. 뒤로가기");
             System.out.println("===============================");
 
@@ -226,11 +226,11 @@ public class MainView {
                     break;
                 }
                 case 3: {
-
+                    updateMainView(scannerView, scanner);
                     break;
                 }
                 case 4: {
-
+                    deleteMainView(scannerView, scanner);
                     break;
                 }
                 default: {
@@ -252,11 +252,11 @@ public class MainView {
             switch (scannerView.scannInt(scanner, "선택")) {
                 case 0: return;
                 case 1: {
-                    personController.selectAllPerson();
+                    personSearchView(scannerView, scanner);
                     break;
                 }
                 case 2: {
-                    quoteController.selectAllQuotes(scanner, member);
+                    quoteSearchView(scannerView, scanner, member);
                     break;
                 }
                 case 3: {
@@ -320,27 +320,114 @@ public class MainView {
             switch (scannerView.scannInt(scanner, "선택")) {
                 case 0: return;
                 case 1: {
-                    personController.testInsertPerson(scannerView, scanner, resultView);
+                    personController.registerPerson(scannerView, scanner, resultView);
                     break;
                 }
                 case 2: {
+                    quoteController.registerQuote(scanner);
                     break;
                 }
                 case 3: {
+                    countryView.registCountry(scannerView, scanner);
                     break;
                 }
                 case 4: {
+                    periodView.registPeriod(scannerView, scanner);
                     break;
                 }
                 case 5: {
+                    fieldView.insertField(scannerView, scanner);
                     break;
                 }
                 case 6: {
+                    themeView.insertTheme(scannerView, scanner);
                     break;
                 }
                 default: {
                     break;
                 }
+            }
+        }
+    }
+
+    private void updateMainView(ScannerView scannerView, Scanner scanner) {
+        while (true) {
+            System.out.println();
+            System.out.println("========== 수정 ==========");
+            System.out.println("1. 인물 수정");
+            System.out.println("2. 명언 수정");
+            System.out.println("3. 카테고리 수정");
+            System.out.println("0. 뒤로가기");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: personController.updatePerson(scanner); break;
+                case 2: quoteUpdateView(scannerView, scanner); break;
+                case 3: categoryUpdateView(scannerView, scanner); break;
+                default: System.out.println("잘못 입력하셨습니다."); break;
+            }
+        }
+    }
+
+    private void quoteUpdateView(ScannerView scannerView, Scanner scanner) {
+        while (true) {
+            System.out.println();
+            System.out.println("========== 명언 수정 ==========");
+            System.out.println("1. 명언 내용 수정");
+            System.out.println("2. 명언 주제 수정");
+            System.out.println("0. 뒤로가기");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: quoteController.updateQuote(scanner); break;
+                case 2: quoteController.updateQuoteTheme(scanner); break;
+                default: System.out.println("잘못 입력하셨습니다."); break;
+            }
+        }
+    }
+
+    private void categoryUpdateView(ScannerView scannerView, Scanner scanner) {
+        while (true) {
+            System.out.println();
+            System.out.println("========== 카테고리 수정 ==========");
+            System.out.println("1. 국가 수정");
+            System.out.println("2. 시대 수정");
+            System.out.println("3. 분야 수정");
+            System.out.println("4. 주제 수정");
+            System.out.println("0. 뒤로가기");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: countryView.modifyCountry(scannerView, scanner); break;
+                case 2: periodView.modifyPeriod(scannerView, scanner); break;
+                case 3: fieldView.updateField(scannerView, scanner); break;
+                case 4: themeView.updateTheme(scannerView, scanner); break;
+                default: System.out.println("잘못 입력하셨습니다."); break;
+            }
+        }
+    }
+
+    private void deleteMainView(ScannerView scannerView, Scanner scanner) {
+        while (true) {
+            System.out.println();
+            System.out.println("========== 삭제 ==========");
+            System.out.println("1. 인물 삭제");
+            System.out.println("2. 명언 삭제");
+            System.out.println("3. 국가 삭제");
+            System.out.println("4. 시대 삭제");
+            System.out.println("5. 분야 삭제");
+            System.out.println("6. 주제 삭제");
+            System.out.println("0. 뒤로가기");
+
+            switch (scannerView.scannInt(scanner, "선택")) {
+                case 0: return;
+                case 1: personController.deletePerson(scanner); break;
+                case 2: quoteController.deleteQuote(scanner); break;
+                case 3: countryView.removeCountry(scannerView, scanner); break;
+                case 4: periodView.removePeriod(scannerView, scanner); break;
+                case 5: fieldView.deleteField(scannerView, scanner); break;
+                case 6: themeView.deleteTheme(scannerView, scanner); break;
+                default: System.out.println("잘못 입력하셨습니다."); break;
             }
         }
     }

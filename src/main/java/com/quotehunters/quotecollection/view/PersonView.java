@@ -168,6 +168,10 @@ public class PersonView {
     }
 
     /* 인물 수정 */
+    public int selectPersonUpdateSearchType(Scanner sc) {
+        return selectPersonSearchType(sc, "인물 수정 검색");
+    }
+
     // 0. 수정할 인물 선택
     public PersonDTO selectPerson(Scanner sc, List<PersonDTO> personList) {
         // 1차 조회 결과에서 수정할 인물 선택
@@ -186,6 +190,24 @@ public class PersonView {
             }
 
             resultView.errorMessage("조회된 목록에 있는 인물 번호를 선택해주세요.");
+        }
+    }
+
+    public int selectPersonUpdateSection(Scanner sc) {
+        System.out.println();
+        System.out.println("========== 인물 수정 항목 ==========");
+        System.out.println("1. 국가");
+        System.out.println("2. 시대");
+        System.out.println("3. 분야");
+        System.out.println("4. 이름");
+        System.out.println("0. 인물 재선택");
+
+        while (true) {
+            int choice = scannerView.scannInt(sc, "수정할 항목 선택");
+            if (choice >= 0 && choice <= 4) {
+                return choice;
+            }
+            resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
         }
     }
 
@@ -513,6 +535,28 @@ public class PersonView {
     }
 
     /* 인물 삭제 */
+    public int selectPersonDeleteSearchType(Scanner sc) {
+        return selectPersonSearchType(sc, "인물 삭제 검색");
+    }
+
+    private int selectPersonSearchType(Scanner sc, String title) {
+        System.out.println();
+        System.out.println("========== " + title + " ==========");
+        System.out.println("1. 국가 검색");
+        System.out.println("2. 시대 검색");
+        System.out.println("3. 분야 검색");
+        System.out.println("4. 이름 검색");
+        System.out.println("0. 뒤로가기");
+
+        while (true) {
+            int choice = scannerView.scannInt(sc, "검색 방식 선택");
+            if (choice >= 0 && choice <= 4) {
+                return choice;
+            }
+            resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+        }
+    }
+
     // 1. 삭제할 인물 선택
     public PersonDTO selectPersonForDelete(Scanner sc, List<PersonDTO> personList) {
 
