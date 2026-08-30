@@ -52,7 +52,7 @@ public class BookmarkView {
             }
 
             if (selectedNumber < 1 || selectedNumber > quoteList.size()) {
-                resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -89,7 +89,7 @@ public class BookmarkView {
                 printQuoteDetail(selectedQuote, isBookmarked);
 
                 if (isBookmarked) {
-                    System.out.println("이 명언은 이미 즐겨찾기에 등록되어 있습니다.");
+                    System.out.println("이미 즐겨찾기에 등록된 명언입니다.");
                     System.out.println("0. 명언 목록으로");
 
                     int selectedMenu = scannerView.scannInt(sc, "번호 선택");
@@ -153,7 +153,7 @@ public class BookmarkView {
                  * DB 연결 자체가 끊긴 경우에는 상태 SELECT를 다시 실행할 수 없으므로
                  * 무한히 오류만 반복하지 않고 사용자가 재시도 또는 목록 복귀를 선택하게 한다.
                  */
-                resultView.errorMessage("즐겨찾기 처리 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 처리 중 오류가 발생했습니다.");
                 System.out.println("1. 다시 시도");
                 System.out.println("0. 명언 목록으로");
 
@@ -198,7 +198,7 @@ public class BookmarkView {
 
             } catch (RuntimeException e) {
                 // 빈 목록과 DB 오류를 같은 메시지로 처리하지 않는다.
-                resultView.errorMessage("즐겨찾기 목록을 불러오는 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 목록 조회 중 오류가 발생했습니다.");
                 return;
             }
 
@@ -218,7 +218,7 @@ public class BookmarkView {
             }
 
             if (selectedNumber < 1 || selectedNumber > favoriteQuoteList.size()) {
-                resultView.errorMessage("목록에 있는 번호 또는 0을 입력해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -236,7 +236,7 @@ public class BookmarkView {
                 );
 
             } catch (RuntimeException e) {
-                resultView.errorMessage("즐겨찾기 명언 상세를 불러오는 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 명언 상세 조회 중 DB 오류가 발생했습니다.");
                 return;
             }
 
@@ -276,7 +276,7 @@ public class BookmarkView {
                 );
 
                 if (!isBookmarked) {
-                    resultView.errorMessage("이미 취소되었거나 즐겨찾기 대상이 없습니다. 목록을 다시 조회합니다.");
+                    resultView.errorMessage("선택한 즐겨찾기가 없거나 이미 취소되었습니다. 목록을 다시 조회합니다.");
                     return;
                 }
 
@@ -317,7 +317,7 @@ public class BookmarkView {
                     resultView.successMessage("즐겨찾기가 취소되었습니다.");
                 } else {
                     // 영향 행이 0이면 성공 메시지를 출력하지 않고 최신 목록으로 돌아간다.
-                    resultView.errorMessage("즐겨찾기 취소 대상이 없거나 상태가 변경되었습니다. 목록을 다시 조회합니다.");
+                    resultView.errorMessage("선택한 즐겨찾기가 없거나 이미 취소되었습니다. 목록을 다시 조회합니다.");
                 }
 
                 // Favorite-003 S4: 성공·0건 결과 모두 부모 목록 화면으로 돌아가 SELECT를 다시 실행한다.
@@ -328,7 +328,7 @@ public class BookmarkView {
                  * Service는 예외가 나면 rollback을 처리한다.
                  * View는 DB 오류를 안내하고 부모 목록 화면으로 돌아가 빈 목록과 구분한다.
                  */
-                resultView.errorMessage("즐겨찾기 취소 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 취소 중 오류가 발생했습니다.");
                 return;
             }
         }
@@ -346,7 +346,7 @@ public class BookmarkView {
 
         while (true) {
             System.out.println();
-            System.out.println("정말 이 명언의 즐겨찾기를 취소할까요?");
+            System.out.println("즐겨찾기를 취소하시겠습니까? (예 / 아니오)");
             System.out.println("명언: " + selectedQuote.getQuoteContent());
             System.out.println("1. 취소 실행");
             System.out.println("0. 상세로 돌아가기");
@@ -361,7 +361,7 @@ public class BookmarkView {
                 return false;
             }
 
-            resultView.errorMessage("1 또는 0만 입력해주세요.");
+            resultView.errorMessage("예, 아니오 중 하나를 입력해주세요.");
         }
     }
 
@@ -369,7 +369,7 @@ public class BookmarkView {
     private void printFavoriteQuoteList(List<QuoteDTO> favoriteQuoteList) {
 
         System.out.println();
-        System.out.println("======= 내 즐겨찾기 명언 =======");
+        System.out.println("========== 내 즐겨찾기 명언 ==========");
 
         for (int i = 0; i < favoriteQuoteList.size(); i++) {
             QuoteDTO quote = favoriteQuoteList.get(i);
@@ -389,20 +389,20 @@ public class BookmarkView {
     private void printFavoriteQuoteDetail(QuoteDTO selectedQuote) {
 
         System.out.println();
-        System.out.println("======= 즐겨찾기 명언 상세 =======");
+        System.out.println("========== 즐겨찾기 명언 상세 ==========");
         System.out.println("명언 번호: " + selectedQuote.getQuoteId());
         System.out.println("명언: " + selectedQuote.getQuoteContent());
         System.out.println("인물: " + selectedQuote.getPersonName());
         System.out.println("주제: " + selectedQuote.getThemeName());
         System.out.println("즐겨찾기 상태: 등록됨");
-        System.out.println("=================================");
+        System.out.println("==============================");
     }
 
     // 전체 명언 목록에서 선택하기 쉽게 화면 순번과 명언 요약을 출력한다.
     private void printQuoteListForFavorite(List<QuoteDTO> quoteList) {
 
         System.out.println();
-        System.out.println("======= 명언 탐색 / 전체 목록 =======");
+        System.out.println("========== 명언 탐색 / 전체 목록 ==========");
 
         for (int i = 0; i < quoteList.size(); i++) {
             QuoteDTO quote = quoteList.get(i);
@@ -415,14 +415,14 @@ public class BookmarkView {
             );
         }
 
-        System.out.println("===================================");
+        System.out.println("==============================");
     }
 
     // 명언 상세 내용과 현재 즐겨찾기 상태를 함께 출력한다.
     private void printQuoteDetail(QuoteDTO selectedQuote, boolean isBookmarked) {
 
         System.out.println();
-        System.out.println("=========== 명언 상세 ===========");
+        System.out.println("========== 명언 상세 ==========");
         System.out.println("명언 번호: " + selectedQuote.getQuoteId());
         System.out.println("명언: " + selectedQuote.getQuoteContent());
         System.out.println("인물: " + selectedQuote.getPersonName());
@@ -430,7 +430,7 @@ public class BookmarkView {
         System.out.println(
                 "즐겨찾기 상태: " + (isBookmarked ? "등록됨" : "미등록")
         );
-        System.out.println("===============================");
+        System.out.println("==============================");
     }
 
     // 로그인에 성공했으며 memberId가 있는지 확인하는 보조 메서드다.
