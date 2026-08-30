@@ -3,16 +3,20 @@ package com.quotehunters.quotecollection.controller;
 import com.quotehunters.quotecollection.common.JDBC;
 import com.quotehunters.quotecollection.model.dto.PersonDTO;
 import com.quotehunters.quotecollection.model.service.PersonService;
-import com.quotehunters.quotecollection.view.PersonView;
+import com.quotehunters.quotecollection.view.*;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.util.List;
+import java.util.Scanner;
 
 public class PersonController {
 
     private PersonService personService = new PersonService();
     private PersonView personView = new PersonView();
+    private final CountryView countryView = new CountryView();
+    private final PeriodView periodView = new PeriodView();
+    private final FieldView fieldView = new FieldView();
 
     /* 인물 조회*/
     // 1. 전체 인물 조회
@@ -33,8 +37,9 @@ public class PersonController {
     }
 
     // 2. 국가별 인물 조회
-    public void selectPersonByCountry(int countryId) {
-
+    public void selectPersonByCountry(ScannerView scannerView, Scanner scanner) {
+        int countryId = countryView.selectCountry(scannerView, scanner);
+        if (countryId == 0) return;
         List<PersonDTO> personList = personService.selectPersonByCountry(countryId);
 
         if (personList.isEmpty()) {
@@ -45,7 +50,9 @@ public class PersonController {
     }
 
     // 3. 시대별 인물 조회
-    public void selectPersonByPeriod(int periodId) {
+    public void selectPersonByPeriod(ScannerView scannerView, Scanner scanner) {
+        int periodId = periodView.selectPeriod(scannerView, scanner);
+        if (periodId == 0) return;
         List<PersonDTO> personList = personService.selectPersonByPeriod(periodId);
 
         if (personList.isEmpty()) {
@@ -57,7 +64,10 @@ public class PersonController {
     }
 
     // 4. 분야별 인물 조회
-    public void selectPersonByField(int fieldId) {
+    public void selectPersonByField(ScannerView scannerView, Scanner scanner) {
+        int fieldId = fieldView.selectFields(scannerView, scanner);
+        if (fieldId == 0) return;
+
         List<PersonDTO> personList = personService.selectPersonByField(fieldId);
 
         if (personList.isEmpty()) {
