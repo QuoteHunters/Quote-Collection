@@ -218,4 +218,20 @@
             ?
         )
     </entry>
+
+    <!-- Person-012: 선택한 인물이 보유한 명언 삭제 -->
+    <entry key="deleteQuoteByPerson">
+        DELETE FROM
+         quote
+        WHERE
+         person_id = ?
+    </entry>
+
+    <!-- Person-012: 선택한 인물 삭제 -->
+    <entry key="deletePerson">
+        DELETE FROM
+         person
+        WHERE
+         person_id = ?
+    </entry>
 </properties>
