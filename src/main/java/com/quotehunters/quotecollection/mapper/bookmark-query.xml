@@ -1,4 +1,43 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<!--
+    의도1: Favorite-001(즐겨찾기 추가)에 필요한 SQL을 Java 코드 밖에 이름표와 함께 보관한다.
+    의도2: 실제 DB 테이블 이름은 bookmark이므로 XML 파일과 SQL도 bookmark라는 이름을 사용한다.
+-->
 <properties>
+
+    <!--
+        [Favorite-001 / 현재 상태 확인]
+        로그인한 회원이 선택한 명언을 이미 즐겨찾기에 저장했는지 확인한다.
+
+        첫 번째 ? : 로그인 성공 때 받은 member_id
+        두 번째 ? : 명언 상세에서 선택한 quote_id
+    -->
+    <entry key="existsBookmark">
+        SELECT COUNT(*)
+        FROM bookmark
+        WHERE member_id = ?
+        AND quote_id = ?
+    </entry>
+
+    <!--
+        [Favorite-001 / 즐겨찾기 추가]
+        회원과 명언의 연결 한 건을 bookmark 테이블에 저장한다.
+
+        bookmark_id는 AUTO_INCREMENT,
+        create_date는 DEFAULT CURRENT_TIMESTAMP이므로 Java가 INSERT 값으로 넣지 않는다.
+        UNIQUE(member_id, quote_id)는 같은 회원이 같은 명언을 두 번 저장하지 못하게 하는 DB 최종 안전장치다.
+    -->
+    <entry key="insertBookmark">
+        INSERT INTO bookmark (
+        member_id,
+        quote_id
+        )
+        VALUES (
+        ?,
+        ?
+        )
+    </entry>
+
 </properties>
