@@ -25,7 +25,7 @@ public class CountryController {
 
         // 검증 2: 글자 수 30자 제한
         if (countryName.length() > 30) {
-            return "국가명은 30자를 초과할 수 없습니다.";
+            return "국가명은 30자 이하로 입력해주세요.";
         }
 
         // 검증 3: 중복
@@ -38,9 +38,9 @@ public class CountryController {
 
 
         if (result > 0) {
-            return "등록되었습니다.";
+            return "국가가 등록되었습니다.";
         } else {
-            return "등록에 실패했습니다.";
+            return "국가 등록에 실패했습니다. 다시 시도해주세요.";
         }
     }
 
@@ -54,7 +54,7 @@ public class CountryController {
 
         // 검증 2: 글자 수 (30자)
         if (countryName.length() > 30) {
-            return "국가명은 30자를 초과할 수 없습니다.";
+            return "국가명은 30자 이하로 입력해주세요.";
         }
 
         // 검증 3: 중복
@@ -66,9 +66,9 @@ public class CountryController {
         int result = countryService.updateCountry(countryId, countryName);
 
         if (result > 0) {
-            return "수정되었습니다.";
+            return "국가가 수정되었습니다.";
         } else {
-            return "수정에 실패했습니다.";
+            return "국가 수정에 실패했습니다. 다시 시도해주세요.";
         }
     }
     // [삭제] 연쇄 삭제 실행
@@ -76,9 +76,9 @@ public class CountryController {
         int result = countryService.deleteCountry(countryId);   // 트랜잭션 삭제 실행
 
         if (result > 0) {
-            return "삭제 되었습니다.";      // 명세 S8-1의 완료 메시지
+            return "국가가 삭제 되었습니다.";      // 명세 S8-1의 완료 메시지
         } else {
-            return "삭제에 실패했습니다.";
+            return "국가 삭제에 실패했습니다. 다시 시도해주세요.";
         }
     }
 }
