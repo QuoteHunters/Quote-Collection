@@ -32,7 +32,9 @@ public class QuoteController {
             resultView.printMessage("등록된 명언이 없습니다.");
         } else {
             resultView.printQuoteList(quoteList);
-            bookmarkQuote(scanner, member, quoteList);
+            if (member.getUserAuth() == 1) {
+                bookmarkQuote(scanner, member, quoteList);
+            }
         }
     }
 
