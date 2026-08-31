@@ -1,4 +1,61 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+
+
+    <entry key="selectAllCountry">
+        SELECT country_id, country_name
+        FROM country
+        ORDER BY country_id
+    </entry>
+
+
+    <entry key="selectCountryByName">
+        SELECT COUNT(*)
+        FROM country
+        WHERE country_name = ?
+    </entry>
+
+
+    <entry key="insertCountry">
+        INSERT INTO country (country_name)
+        VALUES (?)
+    </entry>
+
+    <entry key="updateCountry">
+        UPDATE country
+        SET country_name = ?
+        WHERE country_id = ?
+    </entry>
+
+    <!-- 연쇄 삭제 1단계: 해당 국가 소속 인물들의 명언에 달린 즐겨찾기 삭제 -->
+    <entry key="deleteBookmarkByCountry">
+        DELETE FROM bookmark
+        WHERE quote_id IN (
+        SELECT quote_id FROM quote
+        WHERE person_id IN (
+        SELECT person_id FROM person WHERE country_id = ?
+        )
+        )
+    </entry>
+
+
+    <!-- 연쇄 삭제 2단계: 해당 국가 소속 인물들의 명언 삭제 -->
+    <entry key="deleteQuoteByCountry">
+        DELETE FROM quote
+        WHERE person_id IN (
+        SELECT person_id FROM person WHERE country_id = ?
+        )
+    </entry>
+
+    <!-- 연쇄 삭제 3단계: 해당 국가 소속 인물 삭제 -->
+    <entry key="deletePersonByCountry">
+        DELETE FROM person
+        WHERE country_id = ?
+    </entry>
+
+    <entry key="deleteCountry">
+        DELETE FROM country
+        WHERE country_id = ?
+    </entry>
 </properties>

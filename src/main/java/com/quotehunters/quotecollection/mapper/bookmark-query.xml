@@ -1,4 +1,104 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+
+<!--
+    의도1: Favorite-001(즐겨찾기 추가), Favorite-002(즐겨찾기 목록 조회), Favorite-003(즐겨찾기 취소)에 필요한 SQL을 Java 코드 밖에 이름표와 함께 보관한다.
+    의도2: 실제 DB 테이블 이름은 bookmark이므로 XML 파일과 SQL도 bookmark라는 이름을 사용한다.
+-->
 <properties>
+
+    <!--
+        [Favorite-001·003 / 현재 상태 확인]
+        로그인한 회원이 선택한 명언을 이미 즐겨찾기에 저장했는지 확인한다.
+
+        첫 번째 ? : 로그인 성공 때 받은 member_id
+        두 번째 ? : 명언 상세에서 선택한 quote_id
+    -->
+    <entry key="existsBookmark">
+        SELECT COUNT(*)
+        FROM bookmark
+        WHERE member_id = ?
+        AND quote_id = ?
+    </entry>
+
+    <!--
+        [Favorite-001 / 즐겨찾기 추가]
+        회원과 명언의 연결 한 건을 bookmark 테이블에 저장한다.
+
+        bookmark_id는 AUTO_INCREMENT,
+        create_date는 DEFAULT CURRENT_TIMESTAMP이므로 Java가 INSERT 값으로 넣지 않는다.
+        UNIQUE(member_id, quote_id)는 같은 회원이 같은 명언을 두 번 저장하지 못하게 하는 DB 최종 안전장치다.
+    -->
+    <entry key="insertBookmark">
+        INSERT INTO bookmark (
+        member_id,
+        quote_id
+        )
+        VALUES (
+        ?,
+        ?
+        )
+    </entry>
+
+    <!--
+        [Favorite-002 / 내 즐겨찾기 목록 조회]
+        로그인한 회원이 저장한 명언만 bookmark, quote, person, theme 테이블을 JOIN하여 조회한다.
+
+        첫 번째 ? : 로그인 성공 때 받은 member_id
+    -->
+    <entry key="selectFavoriteQuotesByMemberId">
+        SELECT
+        q.quote_id,
+        q.quote_content,
+        p.person_name,
+        t.theme_name
+        FROM bookmark b
+        JOIN quote q
+        ON b.quote_id = q.quote_id
+        JOIN person p
+        ON q.person_id = p.person_id
+        JOIN theme t
+        ON q.theme_id = t.theme_id
+        WHERE b.member_id = ?
+        ORDER BY b.create_date DESC, b.bookmark_id DESC
+    </entry>
+
+    <!--
+        [Favorite-002 / 선택한 즐겨찾기 명언 상세 조회]
+        목록에서 선택한 화면 번호를 실제 quote_id로 바꾼 뒤,
+        로그인 회원의 즐겨찾기 안에 그 명언이 아직 있는지 함께 확인하며 상세 정보를 조회한다.
+
+        첫 번째 ? : 로그인 성공 때 받은 member_id
+        두 번째 ? : 목록에서 선택한 QuoteDTO의 quote_id
+    -->
+    <entry key="selectFavoriteQuoteDetail">
+        SELECT
+        q.quote_id,
+        q.quote_content,
+        p.person_name,
+        t.theme_name
+        FROM bookmark b
+        JOIN quote q
+        ON b.quote_id = q.quote_id
+        JOIN person p
+        ON q.person_id = p.person_id
+        JOIN theme t
+        ON q.theme_id = t.theme_id
+        WHERE b.member_id = ?
+        AND b.quote_id = ?
+    </entry>
+
+    <!--
+        [Favorite-003 / 즐겨찾기 취소]
+        Favorite-002 목록에서 선택한 명언의 즐겨찾기 연결 한 건만 삭제한다.
+
+        첫 번째 ? : 로그인 성공 때 받은 member_id
+        두 번째 ? : 명언 상세에서 선택한 quote_id
+    -->
+    <entry key="deleteBookmark">
+        DELETE FROM bookmark
+        WHERE member_id = ?
+        AND quote_id = ?
+    </entry>
+
 </properties>

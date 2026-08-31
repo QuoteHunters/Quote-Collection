@@ -1,4 +1,237 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+
+    <!-- Person-002: 전체 인물과 국가·시대·분야 정보를 JOIN하여 조회 -->
+    <entry key="selectAllPerson">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        ORDER BY
+            p.person_id
+    </entry>
+
+    <!-- Person-003: 선택한 국가의 인물 조회 -->
+    <entry key="selectPersonByCountry">
+
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.country_id = ?
+        ORDER BY
+            p.person_id
+    </entry>
+
+    <!-- Person-004: 선택한 시대의 인물 조회 -->
+    <entry key="selectPersonByPeriod">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.period_id = ?
+        ORDER BY
+            p.person_id
+    </entry>
+
+    <!-- Person-005: 선택한 분야의 인물 조회 -->
+    <entry key="selectPersonByField">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.field_id= ?
+        ORDER BY
+            p.person_id
+    </entry>
+
+    <!-- Person-006: 인물의 이름으로 인물 조회 -->
+    <entry key="selectPersonByName">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        WHERE
+            p.person_name LIKE ?
+        ORDER BY
+            p.person_name
+    </entry>
+
+    <!-- Person-007: 입력한 명언의 키워드가 포함된 인물 조회 -->
+    <entry key="selectPersonByQuoteKeyword">
+        SELECT DISTINCT
+            p.person_id,
+            p.person_name,
+            c.country_id,
+            c.country_name,
+            pe.period_id,
+            pe.period_name,
+            f.field_id,
+            f.field_name
+        FROM
+            person p
+        JOIN
+            country c ON c.country_id = p.country_id
+        JOIN
+            period pe ON pe.period_id = p.period_id
+        JOIN
+            field f ON f.field_id = p.field_id
+        JOIN
+            quote q ON q.person_id = p.person_id
+        WHERE
+            q.quote_content Like ?
+        ORDER BY
+            p.person_name
+    </entry>
+
+    <!-- Person-008: 선택한 인물의 국가 수정 -->
+    <entry key="updatePersonCountry">
+        UPDATE
+            person
+        SET
+          country_id = ?
+        WHERE
+          person_id = ?
+    </entry>
+
+    <!-- Person-010: 선택한 인물의 시대 수정 -->
+    <entry key="updatePersonPeriod">
+        UPDATE
+           person
+        SET
+           period_id = ?
+        WHERE
+          person_id = ?
+    </entry>
+
+    <!-- Person-009: 선택한 인물의 분야 수정 -->
+    <entry key="updatePersonField">
+        UPDATE
+           person
+        SET
+           field_id = ?
+        WHERE
+           person_id = ?
+    </entry>
+
+    <!-- Person-011: 선택한 인물의 이름 수정 -->
+    <entry key="updatePersonName">
+        UPDATE
+            person
+        SET
+            person_name = ?
+        WHERE
+            person_id = ?
+    </entry>
+
+    <!-- Person-001: 인물 이름 중복 확인 -->
+    <entry key="existsPersonName">
+        SELECT
+            COUNT(*)
+        FROM
+            person
+        WHERE
+            person_name = ?
+    </entry>
+
+    <!-- Person-001: 인물 등록 -->
+    <entry key="insertPerson">
+        INSERT INTO person (
+            country_id,
+            period_id,
+            field_id,
+            person_name
+        )
+        VALUES (
+            ?,
+            ?,
+            ?,
+            ?
+        )
+    </entry>
+
+    <!-- Person-012: 선택한 인물이 보유한 명언 삭제 -->
+    <entry key="deleteQuoteByPerson">
+        DELETE FROM
+         quote
+        WHERE
+         person_id = ?
+    </entry>
+
+    <!-- Person-012: 선택한 인물 삭제 -->
+    <entry key="deletePerson">
+        DELETE FROM
+         person
+        WHERE
+         person_id = ?
+    </entry>
 </properties>

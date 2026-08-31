@@ -1,4 +1,143 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no" ?>
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 <properties>
+    <entry key="selectAllQuotes">
+        SELECT
+            q.quote_id,
+            q.quote_content,
+            p.person_name,
+            t.theme_name
+        FROM quote q
+        JOIN person p
+            ON q.person_id = p.person_id
+        JOIN theme t
+            ON q.theme_id = t.theme_id
+        ORDER BY q.quote_id;
+
+    </entry>
+
+    <entry key="selectQuoteCount">
+        SELECT COUNT(*)
+        FROM quote
+    </entry>
+
+    <entry key="selectTodayQuote">
+    SELECT
+        q.quote_id,
+        q.quote_content,
+        p.person_name,
+        t.theme_name
+    FROM quote q
+    JOIN person p
+        ON q.person_id = p.person_id
+    JOIN theme t
+        ON q.theme_id = t.theme_id
+    ORDER BY q.quote_id
+    LIMIT 1 OFFSET ?
+    </entry>
+
+    <entry key="searchQuotesByKeyword">
+        SELECT
+            q.quote_id,
+            q.quote_content,
+            p.person_name,
+            t.theme_name
+        FROM quote q
+        JOIN person p
+            ON q.person_id = p.person_id
+        JOIN theme t
+            ON q.theme_id = t.theme_id
+        WHERE q.quote_content LIKE CONCAT('%', ?, '%')
+        ORDER BY q.quote_id
+    </entry>
+
+    <!-- 명언 등록 시 인물 이름으로 인물 후보를 검색한다. -->
+    <entry key="searchPersonsForQuoteRegistration">
+        SELECT
+            p.person_id,
+            p.person_name,
+            c.country_name,
+            pe.period_name,
+            f.field_name
+        FROM person p
+        JOIN country c
+            ON c.country_id = p.country_id
+        JOIN period pe
+            ON pe.period_id = p.period_id
+        JOIN field f
+            ON f.field_id = p.field_id
+        WHERE p.person_name LIKE CONCAT('%', ?, '%')
+        ORDER BY p.person_name ASC, p.person_id ASC
+    </entry>
+
+    <!-- 명언 등록 시 선택할 전체 주제 목록을 조회한다. -->
+    <entry key="selectThemesForQuoteRegistration">
+        SELECT
+            theme_id,
+            theme_name
+        FROM theme
+        ORDER BY theme_id ASC
+    </entry>
+
+    <!-- 선택한 인물, 주제와 입력한 내용으로 명언을 등록한다. -->
+    <entry key="insertQuote">
+        INSERT INTO quote (
+            theme_id,
+            person_id,
+            quote_content
+        )
+        VALUES (?, ?, ?)
+    </entry>
+
+    <!-- 선택한 인물의 명언을 명언 번호 오름차순으로 조회한다. -->
+    <entry key="selectQuotesByPersonIdForUpdate">
+        SELECT
+            q.quote_id,
+            q.quote_content,
+            p.person_name,
+            t.theme_name
+        FROM quote q
+        JOIN person p
+            ON p.person_id = q.person_id
+        JOIN theme t
+            ON t.theme_id = q.theme_id
+        WHERE q.person_id = ?
+        ORDER BY q.quote_id ASC
+    </entry>
+
+    <!-- 선택한 명언의 내용만 수정한다. -->
+    <entry key="updateQuoteContent">
+        UPDATE quote
+        SET quote_content = ?
+        WHERE quote_id = ?
+    </entry>
+
+    <!-- 선택한 명언의 주제만 수정한다. -->
+    <entry key="updateQuoteTheme">
+        UPDATE quote
+        SET theme_id = ?
+        WHERE quote_id = ?
+    </entry>
+
+    <!-- 선택한 명언을 삭제한다. -->
+    <entry key="deleteQuote">
+        DELETE FROM quote
+        WHERE quote_id = ?
+    </entry>
+
+    <!-- 선택한 주제 ID에 해당하는 명언을 조회한다. -->
+    <entry key="selectQuotesByThemeId">
+        SELECT
+        q.quote_id,
+        q.quote_content,
+        p.person_name,
+        t.theme_name
+        FROM quote q
+        JOIN person p
+        ON p.person_id = q.person_id
+        JOIN theme t
+        ON t.theme_id = q.theme_id
+        WHERE q.theme_id = ?
+        ORDER BY q.quote_id ASC
+    </entry>
 </properties>
