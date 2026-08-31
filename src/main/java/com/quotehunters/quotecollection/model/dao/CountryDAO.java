@@ -21,7 +21,7 @@ public class CountryDAO {
         try {
             prop.loadFromXML(new FileInputStream("src/main/java/com/quotehunters/quotecollection/mapper/country-query.xml"));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("국가 SQL을 불러오지 못했습니다.", e);
         }
     }
 
@@ -44,7 +44,7 @@ public class CountryDAO {
                 countries.add(countryDTO);
             }
         } catch (SQLException e) {
-            System.out.println("All Countries SQL Exception");
+            throw new IllegalStateException("국가 목록 조회 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(stmt);
@@ -71,7 +71,7 @@ public class CountryDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Exists Country Name SQL Exception");
+            throw new IllegalStateException("국가명 확인 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -92,7 +92,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Insert Country SQL Exception");
+            throw new IllegalStateException("국가 등록 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -113,7 +113,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Update Country SQL Exception");
+            throw new IllegalStateException("국가 수정 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -134,7 +134,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Country SQL Exception");
+            throw new IllegalStateException("국가 연쇄 삭제 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -155,7 +155,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();      // 실행, 지워진 행 수 받기
         } catch (SQLException e) {
-            System.out.println("Delete Bookmark By Country SQL Exception");
+            throw new IllegalStateException("국가 연쇄 삭제 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -176,7 +176,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Quote By Country SQL Exception");
+            throw new IllegalStateException("국가 연쇄 삭제 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -197,7 +197,7 @@ public class CountryDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Person By Country SQL Exception");
+            throw new IllegalStateException("국가 연쇄 삭제 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }

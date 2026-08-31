@@ -18,7 +18,7 @@ public class CountryView {
 
         System.out.println("----------------------------");
         if (countries.isEmpty()) {                        // 워크플로우 예외: 조회 결과 없으면 안내
-            System.out.println("조회 결과 없음");
+            System.out.println("등록된 국가가 없습니다.");
             return;
         }
 
@@ -43,7 +43,7 @@ public class CountryView {
             if (choice == 0) break;
 
             if (choice < 0 || countries.size() < choice) {
-                rv.errorMessage("메뉴에 있는 번호를 선택해주세요");
+                rv.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -64,12 +64,12 @@ public class CountryView {
 
 
             while (true) {
-                String check = scannerView.scannString(scanner, "[" + countryName + "] (으)로 등록하시겠습니까? 예 / 수정 / 취소");
+                String check = scannerView.scannString(scanner, "[" + countryName + "] (으)로 등록하시겠습니까? (등록 / 수정 / 취소)");
 
-                if (check.equals("예")) {
+                if (check.equals("등록")) {
                     String message = countryController.registCountry(countryName);
 
-                    if (message.equals("등록되었습니다.")) {
+                    if (message.equals("국가가 등록되었습니다.")) {
                         rv.successMessage(message);
                         return;
                     }
@@ -82,7 +82,7 @@ public class CountryView {
 
                 if (check.equals("취소")) return;
 
-                rv.errorMessage("예, 수정, 취소 중 하나를 입력해주세요.");
+                rv.errorMessage("등록, 수정, 취소 중 하나를 입력해주세요.");
             }
         }
     }
@@ -102,12 +102,12 @@ public class CountryView {
 
 
                 while (true) {
-                    String check = scannerView.scannString(scanner, "[" + newName + "] (으)로 수정하시겠습니까? 예 / 재수정 / 아니오");
+                    String check = scannerView.scannString(scanner, "[" + newName + "] (으)로 수정하시겠습니까? (완료 / 재수정 / 취소)");
 
-                    if (check.equals("예")) {
+                    if (check.equals("완료")) {
                         String message = countryController.modifyCountry(id, newName);
 
-                        if (message.equals("수정되었습니다.")) {
+                        if (message.equals("국가가 수정되었습니다.")) {
                             rv.successMessage(message);
                             return;
                         }
@@ -118,9 +118,9 @@ public class CountryView {
 
                     if (check.equals("재수정")) continue selectLoop;
 
-                    if (check.equals("아니오")) return;
+                    if (check.equals("취소")) return;
 
-                    rv.errorMessage("예, 재수정, 아니오 중 하나를 입력해주세요.");
+                    rv.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
                 }
             }
         }
@@ -135,7 +135,7 @@ public class CountryView {
 
             // --- 1차 경고 (명세 S4~S5-1) ---
             while (true) {
-                String first = scannerView.scannString(scanner, "선택한 국가를 삭제하시겠습니까? 예 / 아니오");
+                String first = scannerView.scannString(scanner, "선택한 국가를 삭제하시겠습니까? (예 / 아니오)");
 
                 if (first.equals("아니오")) return;        // DELETE 없이 이전 메뉴로
                 if (first.equals("예")) break;             // 다음 경고로 진행
@@ -147,12 +147,12 @@ public class CountryView {
             System.out.println("해당 국가를 삭제할 경우 해당 국가에 속한 모든 인물의 정보(명언 포함)가 삭제됩니다.");
 
             while (true) {
-                String second = scannerView.scannString(scanner, "그래도 삭제하시겠습니까? 예 / 재선택 / 아니오");
+                String second = scannerView.scannString(scanner, "그래도 삭제하시겠습니까? (완료 / 재선택 / 취소)");
 
-                if (second.equals("예")) {                 // [완료] 삭제 실행
+                if (second.equals("완료")) {                 // [완료] 삭제 실행
                     String message = countryController.removeCountry(id);
 
-                    if (message.equals("삭제 되었습니다.")) {
+                    if (message.equals("국가가 삭제되었습니다.")) {
                         rv.successMessage(message);        // 명세 S8-1: 완료 메시지 출력
                         return;                            // 메뉴로 복귀
                     }
@@ -163,9 +163,9 @@ public class CountryView {
 
                 if (second.equals("재선택")) continue selectLoop;   // [재선택] 대상 선택부터 다시
 
-                if (second.equals("아니오")) return;       // [취소] DELETE 없이 이전 메뉴로
+                if (second.equals("취소")) return;       // [취소] DELETE 없이 이전 메뉴로
 
-                rv.errorMessage("예, 재선택, 아니오 중 하나를 입력해주세요.");
+                rv.errorMessage("완료, 재선택, 취소 중 하나를 입력해주세요.");
             }
         }
     }

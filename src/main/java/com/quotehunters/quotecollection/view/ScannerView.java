@@ -11,7 +11,7 @@ public class ScannerView {
             try {
                 return Integer.parseInt(answer);
             } catch (NumberFormatException e) {
-                System.out.println("숫자를 입력해주세요");
+                System.out.println("[오류] 숫자를 입력해주세요.");
             }
         }
     }
@@ -22,7 +22,7 @@ public class ScannerView {
             String answer = sc.nextLine().trim();
 
             if (answer.isEmpty() || answer.equals("")) {
-                System.out.println("한 글자 이상 입력해주세요");
+                System.out.println("[오류] 한 글자 이상 입력해주세요.");
                 continue;
             }
 

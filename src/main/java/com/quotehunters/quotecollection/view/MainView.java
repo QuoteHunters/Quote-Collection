@@ -17,11 +17,11 @@ public class MainView {
 
     private final QuoteController quoteController = new QuoteController();
     private final PersonController personController = new PersonController();
+    private final ResultView resultView = new ResultView();
 
     public void start() {
         Scanner scanner = new Scanner(System.in);
         ScannerView scannerView = new ScannerView();
-        ResultView resultView = new ResultView();
         MemberDTO member = null;
 
         System.out.println("Quote Collection - 명언 도감 시스템");
@@ -60,7 +60,7 @@ public class MainView {
                     break;
                 }
                 default: {
-                    System.out.println("잘못 입력하셨습니다.");
+                            resultView.errorMessage("메뉴에 있는 번호를 선택해주세요.");
                     break;
                 }
             }
@@ -364,7 +364,7 @@ public class MainView {
                 case 1: personController.updatePerson(scanner); break;
                 case 2: quoteUpdateView(scannerView, scanner); break;
                 case 3: categoryUpdateView(scannerView, scanner); break;
-                default: System.out.println("잘못 입력하셨습니다."); break;
+                default: resultView.errorMessage("메뉴에 있는 번호를 선택해주세요."); break;
             }
         }
     }
@@ -381,7 +381,7 @@ public class MainView {
                 case 0: return;
                 case 1: quoteController.updateQuote(scanner); break;
                 case 2: quoteController.updateQuoteTheme(scanner); break;
-                default: System.out.println("잘못 입력하셨습니다."); break;
+                default: resultView.errorMessage("메뉴에 있는 번호를 선택해주세요."); break;
             }
         }
     }
@@ -402,7 +402,7 @@ public class MainView {
                 case 2: periodView.modifyPeriod(scannerView, scanner); break;
                 case 3: fieldView.updateField(scannerView, scanner); break;
                 case 4: themeView.updateTheme(scannerView, scanner); break;
-                default: System.out.println("잘못 입력하셨습니다."); break;
+                default: resultView.errorMessage("메뉴에 있는 번호를 선택해주세요."); break;
             }
         }
     }
@@ -427,7 +427,7 @@ public class MainView {
                 case 4: periodView.removePeriod(scannerView, scanner); break;
                 case 5: fieldView.deleteField(scannerView, scanner); break;
                 case 6: themeView.deleteTheme(scannerView, scanner); break;
-                default: System.out.println("잘못 입력하셨습니다."); break;
+                default: resultView.errorMessage("메뉴에 있는 번호를 선택해주세요."); break;
             }
         }
     }

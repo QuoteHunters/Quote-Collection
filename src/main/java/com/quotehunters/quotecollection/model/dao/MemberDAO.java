@@ -68,7 +68,7 @@ public class MemberDAO {
 
         } catch (SQLException e) {
             // View가 "아이디 중복"과 "DB 오류"를 구분할 수 있도록 예외를 위로 보낸다.
-            throw new RuntimeException("회원 아이디 중복 조회 중 DB 오류가 발생했습니다.", e);
+            throw new RuntimeException("회원 아이디 중복 조회 중 오류가 발생했습니다.", e);
 
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
@@ -101,7 +101,7 @@ public class MemberDAO {
             return pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("회원가입 DB 저장 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("회원가입 처리 중 오류가 발생했습니다.", e);
 
         } finally {
             // INSERT에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
@@ -155,7 +155,7 @@ public class MemberDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new RuntimeException("회원 로그인 조회 중 DB 오류가 발생했습니다.", e);
+            throw new RuntimeException("로그인 조회 중 오류가 발생했습니다.", e);
 
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
@@ -201,7 +201,7 @@ public class MemberDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new RuntimeException("현재 비밀번호 조회 중 DB 오류가 발생했습니다.", e);
+            throw new RuntimeException("현재 비밀번호 조회 중 오류가 발생했습니다.", e);
 
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
@@ -238,7 +238,7 @@ public class MemberDAO {
             return pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("비밀번호 변경 DB 처리 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("비밀번호 변경 중 오류가 발생했습니다.", e);
 
         } finally {
             // UPDATE에는 ResultSet이 없으므로 PreparedStatement만 닫는다.

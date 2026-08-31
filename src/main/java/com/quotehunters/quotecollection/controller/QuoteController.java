@@ -146,7 +146,7 @@ public class QuoteController {
             resultView.printQuoteRegistrationSummary(quote);
             String decision = resultView.inputRegistrationDecision(scanner);
 
-            if ("N".equals(decision)) {
+            if ("취소".equals(decision)) {
                 resultView.printMessage("명언 등록을 취소했습니다.");
                 return;
             }
@@ -340,7 +340,7 @@ public class QuoteController {
             boolean success = quoteService.insertQuote(quote);
 
             if (success) {
-                resultView.printMessage("명언 등록이 완료되었습니다.");
+                resultView.printMessage("명언이 등록되었습니다.");
             } else {
                 resultView.printMessage(
                         "명언 등록에 실패했습니다. 다시 시도해주세요."
@@ -421,7 +421,7 @@ public class QuoteController {
                 String decision =
                         resultView.inputUpdateDecision(scanner);
 
-                if (decision.equals("N")) {
+                if (decision.equals("취소")) {
                     return;
                 }
 
@@ -434,7 +434,7 @@ public class QuoteController {
                  * 불필요한 UPDATE를 실행하지 않고 정상 수정으로 처리한다.
                  */
                 if (originalContent.equals(newContent)) {
-                    resultView.printMessage("수정되었습니다.");
+                    resultView.printMessage("명언이 수정되었습니다.");
                     return;
                 }
 
@@ -447,7 +447,7 @@ public class QuoteController {
                             );
 
                     if (success) {
-                        resultView.printMessage("수정되었습니다.");
+                        resultView.printMessage("명언이 수정되었습니다.");
                         return;
                     }
 
@@ -608,7 +608,7 @@ public class QuoteController {
                     String decision =
                             resultView.inputUpdateDecision(scanner);
 
-                    if (decision.equals("N")) {
+                    if (decision.equals("취소")) {
                         return;
                     }
 
@@ -625,7 +625,7 @@ public class QuoteController {
 
                         if (success) {
                             resultView.printMessage(
-                                    "수정되었습니다."
+                                    "명언이 수정되었습니다."
                             );
                             return;
                         }
@@ -751,7 +751,7 @@ public class QuoteController {
             String decision =
                     resultView.inputDeleteDecision(scanner);
 
-            if (decision.equals("N")) {
+            if (decision.equals("아니오")) {
                 return;
             }
 

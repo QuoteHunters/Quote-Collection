@@ -74,7 +74,7 @@ public class BookmarkDAO {
             return false;
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 상태 조회 중 DB 오류가 발생했습니다.", e);
+            throw new RuntimeException("즐겨찾기 상태 조회 중 오류가 발생했습니다.", e);
 
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
@@ -118,7 +118,7 @@ public class BookmarkDAO {
             return favoriteQuoteList;
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 목록 조회 중 DB 오류가 발생했습니다.", e);
+            throw new RuntimeException("즐겨찾기 목록 조회 중 오류가 발생했습니다.", e);
 
         } finally {
             JDBC.close(rset);
@@ -163,7 +163,7 @@ public class BookmarkDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 명언 상세 조회 중 DB 오류가 발생했습니다.", e);
+            throw new RuntimeException("즐겨찾기 명언 상세 조회 중 오류가 발생했습니다.", e);
 
         } finally {
             JDBC.close(rset);
@@ -195,7 +195,7 @@ public class BookmarkDAO {
             return pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 DB 저장 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("즐겨찾기 저장 중 오류가 발생했습니다.", e);
 
         } finally {
             // INSERT에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
@@ -230,7 +230,7 @@ public class BookmarkDAO {
             return pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 DB 취소 중 오류가 발생했습니다.", e);
+            throw new RuntimeException("즐겨찾기 취소 중 오류가 발생했습니다.", e);
 
         } finally {
             // DELETE에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
