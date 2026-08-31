@@ -22,7 +22,7 @@ public class ThemeDAO {
         try {
             prop.loadFromXML(new FileInputStream("src/main/java/com/quotehunters/quotecollection/mapper/theme-query.xml"));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("주제 쿼리 설정을 불러오는 중 오류가 발생했습니다.", e);
         }
     }
 
@@ -36,7 +36,7 @@ public class ThemeDAO {
             pstmt.setString(1, themeName);
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Insert theme failed " + e.getMessage());
+            System.out.println("주제 등록 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }
@@ -61,7 +61,7 @@ public class ThemeDAO {
 
             return false;
         } catch (SQLException e) {
-            System.out.println("Exists theme name failed " + e.getMessage());
+            System.out.println("주제명 중복 확인 중 오류가 발생했습니다.");
             return false;
         } finally {
             JDBC.close(rs);
@@ -86,7 +86,7 @@ public class ThemeDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Exists Theme Name faild " + e.getMessage());
+            System.out.println("주제명 중복 확인 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -113,7 +113,7 @@ public class ThemeDAO {
                 themes.add(theme);
             }
         } catch (SQLException e) {
-            System.out.println("Select themes failed " + e.getMessage());
+            System.out.println("주제 목록 조회 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(rs);
             JDBC.close(pstmt);
@@ -134,7 +134,7 @@ public class ThemeDAO {
             result = pstmt.executeUpdate();
             return result;
         } catch (SQLException e) {
-            System.out.println("Update theme failed " + e.getMessage());
+            System.out.println("주제 수정 중 오류가 발생했습니다.");
             return result;
         } finally {
             JDBC.close(pstmt);
@@ -151,7 +151,7 @@ public class ThemeDAO {
             pstmt.setInt(1, id);
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete theme failed " + e.getMessage());
+            System.out.println("주제 삭제 중 오류가 발생했습니다.");
         } finally {
             JDBC.close(pstmt);
         }

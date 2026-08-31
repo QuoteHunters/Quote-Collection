@@ -35,9 +35,9 @@ public class PeriodController {
         int result = periodService.insertPeriod(periodName);   // 검증 통과 → 등록 실행
 
         if (result > 0) {
-            return "등록되었습니다.";
+            return "시대가 등록되었습니다.";
         } else {
-            return "등록에 실패했습니다.";
+            return "시대 등록에 실패했습니다.";
         }
     }
 
@@ -62,9 +62,9 @@ public class PeriodController {
         int result = periodService.updatePeriod(periodId, periodName);   // 검증 통과 → 수정 실행
 
         if (result > 0) {
-            return "수정되었습니다.";
+            return "시대가 수정되었습니다.";
         } else {
-            return "수정에 실패했습니다.";
+            return "시대 수정에 실패했습니다.";
         }
     }
 
@@ -73,9 +73,9 @@ public class PeriodController {
         int result = periodService.deletePeriod(periodId);   // 트랜잭션 삭제 실행
 
         if (result > 0) {
-            return "삭제 되었습니다.";      // 명세 S8-1의 완료 메시지
+            return "시대가 삭제되었습니다.";      // 명세 S8-1의 완료 메시지
         } else {
-            return "삭제에 실패했습니다.";
+            return "시대 삭제에 실패했습니다.";
         }
     }
 }

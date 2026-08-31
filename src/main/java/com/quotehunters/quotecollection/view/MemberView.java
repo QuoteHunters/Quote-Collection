@@ -36,7 +36,7 @@ public class MemberView {
 
         System.out.println();
         System.out.println("========== 회원가입 ==========");
-        System.out.println("각 입력 단계에서 0을 입력하면 회원 관리 메뉴로 돌아갑니다.");
+        System.out.println("각 입력 단계에서 0을 입력하면 이전 화면으로 돌아갑니다.");
 
         // 1. ID 길이와 DB 중복 검사를 통과한 아이디를 받는다.
         String userId = readAvailableUserId(sc);
@@ -63,7 +63,7 @@ public class MemberView {
         printSignUpSummary(userId);
 
         if (!askSignUpConfirmation(sc)) {
-            System.out.println("회원가입을 취소했습니다. DB에는 아무것도 저장하지 않았습니다.");
+            System.out.println("회원가입을 취소했습니다. 변경사항이 저장되지 않았습니다.");
             return;
         }
 
@@ -79,7 +79,7 @@ public class MemberView {
 
         } catch (RuntimeException e) {
             // ID 중복과 구분되는 DB 오류를 화면에 안내한다.
-            resultView.errorMessage("회원가입 중 DB 오류가 발생했습니다. 다시 시도해주세요.");
+            resultView.errorMessage("회원가입 중 오류가 발생했습니다. 다시 시도해주세요.");
         }
     }
 
@@ -90,7 +90,7 @@ public class MemberView {
 
         System.out.println();
         System.out.println("=========== 로그인 ===========");
-        System.out.println("각 입력 단계에서 0을 입력하면 회원 관리 메뉴로 돌아갑니다.");
+        System.out.println("각 입력 단계에서 0을 입력하면 이전 화면으로 돌아갑니다.");
 
         while (true) {
             // 1. DB 열 길이를 넘지 않는 아이디를 입력받는다.
@@ -131,7 +131,7 @@ public class MemberView {
                 resultView.errorMessage("아이디 또는 비밀번호가 올바르지 않습니다. 다시 입력해주세요.");
 
             } catch (RuntimeException e) {
-                resultView.errorMessage("로그인 중 DB 오류가 발생했습니다. 다시 시도해주세요.");
+                resultView.errorMessage("로그인 중 오류가 발생했습니다. 다시 시도해주세요.");
             }
         }
     }
@@ -143,7 +143,7 @@ public class MemberView {
 
         System.out.println();
         System.out.println("======== 비밀번호 변경 ========");
-        System.out.println("각 입력 단계에서 0을 입력하면 계정 관리 메뉴로 돌아갑니다.");
+        System.out.println("각 입력 단계에서 0을 입력하면 이전 화면으로 돌아갑니다.");
 
         while (true) {
             // 1. DB에 저장된 값과 비교할 현재 비밀번호를 받는다.
@@ -179,7 +179,7 @@ public class MemberView {
 
                 // 4. 사용자가 명시적으로 변경을 선택했을 때만 UPDATE를 요청한다.
                 if (!askPasswordChangeConfirmation(sc)) {
-                    System.out.println("비밀번호 변경을 취소했습니다. DB에는 아무것도 변경하지 않았습니다.");
+                    System.out.println("비밀번호 변경을 취소했습니다. 변경사항이 저장되지 않았습니다.");
                     return;
                 }
 
@@ -199,7 +199,7 @@ public class MemberView {
 
             } catch (RuntimeException e) {
                 // Service가 rollback한 DB 오류는 화면에서 안내한 뒤 현재 비밀번호 입력부터 다시 받는다.
-                resultView.errorMessage("비밀번호 변경 중 DB 오류가 발생했습니다. 다시 시도해주세요.");
+                resultView.errorMessage("비밀번호 변경 중 오류가 발생했습니다. 다시 시도해주세요.");
             }
         }
     }
@@ -232,7 +232,7 @@ public class MemberView {
                 return userId;
 
             } catch (RuntimeException e) {
-                resultView.errorMessage("아이디 중복 확인 중 DB 오류가 발생했습니다. 다시 시도해주세요.");
+                resultView.errorMessage("아이디 중복 확인 중 오류가 발생했습니다. 다시 시도해주세요.");
             }
         }
     }
@@ -266,7 +266,7 @@ public class MemberView {
             }
 
             if (!userPw.equals(confirmUserPw)) {
-                resultView.errorMessage("비밀번호와 비밀번호 확인값이 다릅니다. 비밀번호부터 다시 입력해주세요.");
+                resultView.errorMessage("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
                 continue;
             }
 
@@ -309,7 +309,7 @@ public class MemberView {
             }
 
             if (!newUserPw.equals(confirmNewUserPw)) {
-                resultView.errorMessage("새 비밀번호와 확인값이 다릅니다. 새 비밀번호부터 다시 입력해주세요.");
+                resultView.errorMessage("비밀번호가 일치하지 않습니다. 다시 입력해주세요.");
                 continue;
             }
 

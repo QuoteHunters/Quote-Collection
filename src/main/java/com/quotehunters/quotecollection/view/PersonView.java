@@ -189,7 +189,7 @@ public class PersonView {
                 }
             }
 
-            resultView.errorMessage("조회된 목록에 있는 인물 번호를 선택해주세요.");
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
     }
 
@@ -207,7 +207,7 @@ public class PersonView {
             if (choice >= 0 && choice <= 4) {
                 return choice;
             }
-            resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
     }
 
@@ -246,7 +246,7 @@ public class PersonView {
             // 출력한 국가 목록의 선택 범위인지 검사
             // 범위를 벗어날 경우 재선택 (범위: 1 ~ 국가목록 개수)
             if (choice < 1 || choice > countryList.size()) {
-                resultView.errorMessage("목록에 있는 국가 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -313,7 +313,7 @@ public class PersonView {
 
             // 출력한 시대 목록의 선택 범위인지 검사
             if (choice < 1 || choice > periodList.size()) {
-                resultView.errorMessage("목록에 있는 시대 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -375,7 +375,7 @@ public class PersonView {
 
             // 출력한 목록의 선택 범위 확인
             if (choice < 1 || choice > fieldList.size()) {
-                resultView.errorMessage("목록에 있는 분야 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -530,7 +530,7 @@ public class PersonView {
 
             if (choice >= 0 && choice <= 4) { return choice; }
 
-            resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
     }
 
@@ -553,7 +553,7 @@ public class PersonView {
             if (choice >= 0 && choice <= 4) {
                 return choice;
             }
-            resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
     }
 
@@ -583,7 +583,7 @@ public class PersonView {
                 }
             }
 
-            resultView.errorMessage("조회된 목록에 있는 인물 번호를 선택해주세요.");
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
     }
 

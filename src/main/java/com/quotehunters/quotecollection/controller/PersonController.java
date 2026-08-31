@@ -86,7 +86,7 @@ public class PersonController {
         List<PersonDTO> personList = personService.selectPersonByName(personName);
 
         if (personList.isEmpty()) {
-            personView.printMessage("'" + personName + "'에 해당하는 인물이 존재하지 않습니다.");
+            personView.printMessage("'" + personName + "'(으)로 조회된 인물이 없습니다.");
         } else {
             personView.selectPersonByName(personList);
         }

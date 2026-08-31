@@ -190,23 +190,17 @@ public class QuoteView {
     public String inputRegistrationDecision(Scanner scanner) {
 
         while (true) {
-            System.out.print("등록하시겠습니까? [Y/N/수정] : ");
+            System.out.print("작업 선택 (등록 / 수정 / 취소) : ");
 
             String decision = scanner.nextLine().trim();
 
-            if (decision.equalsIgnoreCase("Y")) {
-                return "Y";
+            if (decision.equals("등록") ||
+                    decision.equals("수정") ||
+                    decision.equals("취소")) {
+                return decision;
             }
 
-            if (decision.equalsIgnoreCase("N")) {
-                return "N";
-            }
-
-            if (decision.equals("수정")) {
-                return "수정";
-            }
-
-            printMessage("Y, N, 수정 중 하나를 입력해주세요.");
+            printMessage("등록, 수정, 취소 중 하나를 입력해주세요.");
         }
     }
 
@@ -259,23 +253,17 @@ public class QuoteView {
     public String inputUpdateDecision(Scanner scanner) {
 
         while (true) {
-            System.out.print("수정하시겠습니까? [Y/N/재수정] : ");
+            System.out.print("작업 선택 (완료 / 재수정 / 취소) : ");
 
             String decision = scanner.nextLine().trim();
 
-            if (decision.equalsIgnoreCase("Y")) {
-                return "Y";
+            if (decision.equals("완료") ||
+                    decision.equals("재수정") ||
+                    decision.equals("취소")) {
+                return decision;
             }
 
-            if (decision.equalsIgnoreCase("N")) {
-                return "N";
-            }
-
-            if (decision.equals("재수정")) {
-                return "재수정";
-            }
-
-            printMessage("Y, N, 재수정 중 하나를 입력해주세요.");
+            printMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
         }
     }
 
@@ -379,19 +367,15 @@ public class QuoteView {
     public String inputDeleteDecision(Scanner scanner) {
 
         while (true) {
-            System.out.print("삭제하시겠습니까? [Y/N] : ");
+            System.out.print("삭제 여부 (예 / 아니오) : ");
 
             String decision = scanner.nextLine().trim();
 
-            if (decision.equalsIgnoreCase("Y")) {
-                return "Y";
+            if (decision.equals("예") || decision.equals("아니오")) {
+                return decision;
             }
 
-            if (decision.equalsIgnoreCase("N")) {
-                return "N";
-            }
-
-            printMessage("Y 또는 N을 입력해주세요.");
+            printMessage("예 또는 아니오를 입력해주세요.");
         }
     }
 

@@ -43,7 +43,7 @@ public class BookmarkView {
 
         while (true) {
             printQuoteListForFavorite(quoteList);
-            System.out.println("0. 사용자 메인으로");
+            System.out.println("0. 이전 메뉴로");
 
             int selectedNumber = scannerView.scannInt(sc, "상세로 볼 명언 번호 선택");
 
@@ -52,7 +52,7 @@ public class BookmarkView {
             }
 
             if (selectedNumber < 1 || selectedNumber > quoteList.size()) {
-                resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -171,7 +171,7 @@ public class BookmarkView {
                  * DB 연결 자체가 끊긴 경우에는 상태 SELECT를 다시 실행할 수 없으므로
                  * 무한히 오류만 반복하지 않고 사용자가 재시도 또는 목록 복귀를 선택하게 한다.
                  */
-                resultView.errorMessage("즐겨찾기 처리 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 처리 중 오류가 발생했습니다.");
                 System.out.println("1. 다시 시도");
                 System.out.println("0. 명언 목록으로");
 
@@ -216,7 +216,7 @@ public class BookmarkView {
 
             } catch (RuntimeException e) {
                 // 빈 목록과 DB 오류를 같은 메시지로 처리하지 않는다.
-                resultView.errorMessage("즐겨찾기 목록을 불러오는 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 목록 조회 중 오류가 발생했습니다.");
                 return;
             }
 
@@ -236,7 +236,7 @@ public class BookmarkView {
             }
 
             if (selectedNumber < 1 || selectedNumber > favoriteQuoteList.size()) {
-                resultView.errorMessage("목록에 있는 번호 또는 0을 입력해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -254,7 +254,7 @@ public class BookmarkView {
                 );
 
             } catch (RuntimeException e) {
-                resultView.errorMessage("즐겨찾기 명언 상세를 불러오는 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 명언 상세 조회 중 오류가 발생했습니다.");
                 return;
             }
 
@@ -346,7 +346,7 @@ public class BookmarkView {
                  * Service는 예외가 나면 rollback을 처리한다.
                  * View는 DB 오류를 안내하고 부모 목록 화면으로 돌아가 빈 목록과 구분한다.
                  */
-                resultView.errorMessage("즐겨찾기 취소 중 DB 오류가 발생했습니다.");
+                resultView.errorMessage("즐겨찾기 취소 중 오류가 발생했습니다.");
                 return;
             }
         }

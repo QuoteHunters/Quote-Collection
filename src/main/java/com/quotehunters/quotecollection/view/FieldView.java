@@ -53,7 +53,7 @@ public class FieldView {
 
         System.out.println("----------------------------");
         if (fields.isEmpty()) {
-            System.out.println("조회 결과 없음");
+            System.out.println("조회된 분야가 없습니다.");
             return;
         }
 
@@ -75,7 +75,7 @@ public class FieldView {
             if (choice == 0) break;
 
             if (choice < 0 || fields.size() < choice) {
-                rv.errorMessage("메뉴에 있는 번호를 선택해주세요");
+                rv.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -107,29 +107,29 @@ public class FieldView {
                 }
 
                 if (fieldController.existsField(id, changeName)) {
-                    rv.errorMessage("중복되는 분야가 존재합니다.");
+                    rv.errorMessage("이미 등록된 분야명입니다.");
                     continue;
                 }
 
                 while (true) {
-                    String check = scannerView.scannString(scanner, "정말 수정하시겠습니까? 예 / 재수정 / 아니오");
+                    String check = scannerView.scannString(scanner, "수정하시겠습니까? (완료 / 재수정 / 취소)");
 
-                    if (check.equals("예")) {
+                    if (check.equals("완료")) {
                         int result = fieldController.updateField(id, changeName);
                         if (result > 0) {
-                            rv.successMessage("수정이 완료되었습니다.");
+                            rv.successMessage("분야가 수정되었습니다.");
                             return;
                         }
 
-                        rv.errorMessage("수정에 실패하였습니다. 다시 시도해주세요");
+                        rv.errorMessage("분야 수정에 실패했습니다.");
                         return;
                     }
 
                     if (check.equals("재수정")) continue modifyLoop;
 
-                    if (check.equals("아니오")) return;
+                    if (check.equals("취소")) return;
 
-                    rv.errorMessage("예, 재수정, 아니오 중 하나를 입력해주세요.");
+                    rv.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
                 }
             }
 
@@ -151,7 +151,7 @@ public class FieldView {
             }
 
             if (fieldController.existsField(name)) {
-                rv.errorMessage("중복되는 분야가 존재합니다.");
+                rv.errorMessage("이미 등록된 분야명입니다.");
                 continue;
             }
 
@@ -164,15 +164,15 @@ public class FieldView {
                     int result = fieldController.insertField(name);
 
                     if (result > 0) {
-                        rv.successMessage("등록이 완료되었습니다.");
+                        rv.successMessage("분야가 등록되었습니다.");
                         return;
                     }
 
-                    rv.errorMessage("등록에 실패하였습니다.");
+                    rv.errorMessage("분야 등록에 실패했습니다.");
                     return;
                 }
 
-                rv.errorMessage("등록, 수정, 취소 중 하나를 입력해주세요");
+                rv.errorMessage("등록, 수정, 취소 중 하나를 입력해주세요.");
                 continue;
             }
         }
@@ -185,18 +185,18 @@ public class FieldView {
             if (id == 0) return;
 
             while (true) {
-                String str = scannerView.scannString(scanner, "정말 삭제하시겠습니까? 완료 / 재선택 / 취소");
+                String str = scannerView.scannString(scanner, "삭제하시겠습니까? (완료 / 재선택 / 취소)");
                 if (str.equals("취소")) return;
                 if (str.equals("재선택")) continue deleteLoop;
                 if (str.equals("완료")) {
                     int result = fieldController.deleteField(id);
                     if (result > 0) {
-                        rv.successMessage("삭제가 완료되었습니다.");
+                        rv.successMessage("분야가 삭제되었습니다.");
                         return;
                     }
                 }
 
-                rv.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요");
+                rv.errorMessage("완료, 재선택, 취소 중 하나를 입력해주세요.");
             }
         }
     }
