@@ -1,6 +1,6 @@
 /*
- * 의도1: Member-001 회원가입의 업무 규칙을 적용하고 DB Connection의 시작과 끝을 관리한다.
- * 의도2: Service는 USER 권한을 정하고 commit / rollback을 담당하며, SQL 실행은 MemberDAO에서 담당한다.
+ * 의도1: Member-001~005 회원 업무 규칙을 적용하고 DB Connection의 시작과 끝을 관리한다.
+ * 의도2: Service는 권한·비밀번호 확인 규칙을 적용하고 commit / rollback을 담당하며, SQL 실행은 MemberDAO에서 담당한다.
  */
 
 package com.quotehunters.quotecollection.model.service;
@@ -19,14 +19,12 @@ public class MemberService {
     // 실제 SQL 실행은 MemberDAO에 맡긴다.
     private final MemberDAO memberDAO = new MemberDAO();
 
-    //[Member-001] 입력한 아이디가 이미 사용 중인지 확인한다.
+    // [Member-001] 입력한 아이디가 이미 사용 중인지 확인한다.
     public boolean isUserIdDuplicated(String userId) {
-
         Connection con = getOpenConnection();
 
         try {
             return memberDAO.existsMemberByUserId(con, userId);
-
         } finally {
             // Connection을 만든 Service가 작업이 끝난 뒤 닫는다.
             JDBC.close(con);
@@ -40,7 +38,6 @@ public class MemberService {
      * Service가 무조건 1(USER)을 넣고 INSERT한 뒤 결과에 따라 commit 또는 rollback한다.
      */
     public int signUp(MemberDTO member) {
-
         Connection con = getOpenConnection();
 
         try {
@@ -57,14 +54,10 @@ public class MemberService {
                 // 저장된 행이 없으면 DB 변경을 확정하지 않는다.
                 JDBC.rollback(con);
             }
-
             return result;
-
         } catch (RuntimeException e) {
-            // SQL 오류가 발생했을 때 열려 있는 트랜잭션을 되돌린다.
-            JDBC.rollback(con);
-            throw e;
-
+            // SQL 오류가 발생하면 트랜잭션을 되돌리고 원래 오류를 View까지 전달한다.
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
@@ -74,29 +67,25 @@ public class MemberService {
      * [Member-002 + Member-003] 로그인 정보를 조회한다.
      */
     public MemberDTO login(String userId, String userPw) {
-
         Connection con = getOpenConnection();
 
         try {
             // DAO의 조회 결과 MemberDTO 또는 null을 View 쪽으로 그대로 돌려준다.
             return memberDAO.selectMemberByLoginInfo(con, userId, userPw);
-
         } finally {
             // SELECT만 했어도 DB 연결 자원은 사용했으므로 닫는다.
             JDBC.close(con);
         }
     }
 
-
     /*
-     * [Member-004] 사용자가 입력한 현재 비밀번호가 로그인한 회원의 DB 비밀번호와 같은지 확인한다.
+     * [Member-004 + Member-005] 사용자가 입력한 현재 비밀번호가 로그인한 회원의 DB 비밀번호와 같은지 확인한다.
      *
      * DB에서 비밀번호 문자열을 조회하는 일은 DAO가 한다.
      * 두 String이 같은지 판단하는 업무 규칙은 Service가 담당한다.
      * SELECT만 하므로 commit / rollback은 필요 없지만 Connection은 반드시 닫는다.
      */
     public boolean isCurrentPasswordCorrect(int memberId, String currentUserPw) {
-
         Connection con = getOpenConnection();
 
         try {
@@ -106,7 +95,6 @@ public class MemberService {
             // null이면 해당 회원이 없다는 뜻이므로 비밀번호 확인에 실패한다.
             // savedUserPw.equals(...)로 비교해 null일 때 NullPointerException이 나지 않게 한다.
             return savedUserPw != null && savedUserPw.equals(currentUserPw);
-
         } finally {
             JDBC.close(con);
         }
@@ -119,7 +107,6 @@ public class MemberService {
      * result == 0: 변경된 행이 없으므로 rollback하고 View에 0을 반환한다.
      */
     public int changePassword(int memberId, String newUserPw) {
-
         Connection con = getOpenConnection();
 
         try {
@@ -133,20 +120,39 @@ public class MemberService {
                 // 변경된 행이 없으면 기존 상태를 유지한다.
                 JDBC.rollback(con);
             }
-
             return result;
-
         } catch (RuntimeException e) {
-            // SQL 오류가 발생하면 열린 트랜잭션을 되돌리고 View까지 오류를 전달한다.
-            JDBC.rollback(con);
-            throw e;
-
+            // SQL 오류가 발생하면 트랜잭션을 되돌리고 원래 오류를 View까지 전달한다.
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
     }
 
+    // Member-005 일반회원 본인 계정 삭제
+    public boolean withdraw(MemberDTO member) {
+        if (member == null || member.getUserAuth() != USER_AUTH) {
+            return false;
+        }
 
+        Connection con = getOpenConnection();
+
+        try {
+            int result = memberDAO.deleteMemberByMemberId(con, member.getMemberId());
+
+            if (result > 0) {
+                JDBC.commit(con);
+                return true;
+            }
+
+            JDBC.rollback(con);
+            return false;
+        } catch (RuntimeException e) {
+            throw rollbackFailure(con, e);
+        } finally {
+            JDBC.close(con);
+        }
+    }
 
     /*
      * JDBC.getConnection()이 DB 연결 실패 시 null을 반환할 수 있다.
@@ -155,9 +161,19 @@ public class MemberService {
         Connection con = JDBC.getConnection();
 
         if (con == null) {
-            throw new IllegalStateException("DB 연결을 만들지 못했습니다.");
+            throw new IllegalStateException("데이터 연결을 만들지 못했습니다.");
+        }
+        return con;
+    }
+
+    // rollback 실패는 원래 예외의 보조 정보로 남겨 최초 오류를 보존한다.
+    private RuntimeException rollbackFailure(Connection con, RuntimeException original) {
+        try {
+            JDBC.rollback(con);
+        } catch (RuntimeException rollbackFailure) {
+            original.addSuppressed(rollbackFailure);
         }
 
-        return con;
+        return original;
     }
 }

@@ -85,6 +85,39 @@ public class QuoteDAO {
         return selectQuoteList(con, query, keyword);
     }
 
+    // 명언을 한 건 이상 보유한 인물 목록을 조회한다.
+    public List<QuoteDTO> selectPersonsWithQuotes(Connection con) {
+
+        PreparedStatement pstmt = null;
+        ResultSet rset = null;
+
+        List<QuoteDTO> personList = new ArrayList<>();
+        String query = prop.getProperty("selectPersonsWithQuotes");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            rset = pstmt.executeQuery();
+
+            while (rset.next()) {
+                QuoteDTO person = new QuoteDTO();
+
+                person.setPersonId(rset.getInt("person_id"));
+                person.setPersonName(rset.getString("person_name"));
+
+                personList.add(person);
+            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException("명언 보유 인물 조회 중 오류가 발생했습니다.", e);
+
+        } finally {
+            JDBC.close(rset);
+            JDBC.close(pstmt);
+        }
+
+        return personList;
+    }
+
     // 명언 등록에 사용할 인물 후보를 이름 일부로 검색한다.
     public List<QuoteDTO> searchPersonsForQuoteRegistration(
             Connection con,
@@ -326,6 +359,8 @@ public class QuoteDAO {
 
         quote.setQuoteId(rset.getInt("quote_id"));
         quote.setQuoteContent(rset.getString("quote_content"));
+        quote.setThemeId(rset.getInt("theme_id"));
+        quote.setPersonId(rset.getInt("person_id"));
         quote.setPersonName(rset.getString("person_name"));
         quote.setThemeName(rset.getString("theme_name"));
 
@@ -354,6 +389,33 @@ public class QuoteDAO {
         } catch (SQLException e) {
             throw new RuntimeException(
                     "명언 주제 수정 중 오류가 발생했습니다.",
+                    e
+            );
+
+        } finally {
+            JDBC.close(pstmt);
+        }
+    }
+
+    // 선택한 명언에 연결된 즐겨찾기를 먼저 삭제한다.
+    public int deleteBookmarksByQuote(
+            Connection con,
+            int quoteId
+    ) {
+
+        PreparedStatement pstmt = null;
+
+        String query = prop.getProperty("deleteBookmarksByQuote");
+
+        try {
+            pstmt = con.prepareStatement(query);
+            pstmt.setInt(1, quoteId);
+
+            return pstmt.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new RuntimeException(
+                    "명언 즐겨찾기 삭제 중 오류가 발생했습니다.",
                     e
             );
 

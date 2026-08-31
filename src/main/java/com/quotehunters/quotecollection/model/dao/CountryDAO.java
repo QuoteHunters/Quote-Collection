@@ -15,13 +15,15 @@ import java.util.List;
 import java.util.Properties;
 
 public class CountryDAO {
-    private Properties prop = new Properties();
+
+    private final Properties prop = new Properties();
 
     public CountryDAO() {
         try {
-            prop.loadFromXML(new FileInputStream("src/main/java/com/quotehunters/quotecollection/mapper/country-query.xml"));
+            prop.loadFromXML(new FileInputStream(
+                    "src/main/java/com/quotehunters/quotecollection/mapper/country-query.xml"));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("국가 SQL을 불러오지 못했습니다.", e);
         }
     }
 
@@ -30,179 +32,103 @@ public class CountryDAO {
         ResultSet rset = null;
         List<CountryDTO> countries = new ArrayList<>();
 
-        String query = prop.getProperty("selectAllCountry");
-
         try {
             stmt = connection.createStatement();
-            rset = stmt.executeQuery(query);
+            rset = stmt.executeQuery(prop.getProperty("selectAllCountry"));
 
             while (rset.next()) {
-                CountryDTO countryDTO = new CountryDTO();
-                countryDTO.setCountryId(rset.getInt("country_id"));
-                countryDTO.setCountryName(rset.getString("country_name"));
-
-                countries.add(countryDTO);
+                CountryDTO country = new CountryDTO();
+                country.setCountryId(rset.getInt("country_id"));
+                country.setCountryName(rset.getString("country_name"));
+                countries.add(country);
             }
+
+            return countries;
         } catch (SQLException e) {
-            System.out.println("All Countries SQL Exception");
+            throw new IllegalStateException("국가 목록 조회 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(stmt);
         }
-
-        return countries;
     }
 
     public boolean existsCountryName(Connection connection, String countryName) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
 
-        String query = prop.getProperty("selectCountryByName");
-
         try {
-            pstmt = connection.prepareStatement(query);
+            pstmt = connection.prepareStatement(prop.getProperty("selectCountryByName"));
             pstmt.setString(1, countryName);
-
             rset = pstmt.executeQuery();
 
-            if (rset.next()) {
-                if (rset.getInt(1) > 0) {
-                    return true;
-                }
-            }
+            return rset.next() && rset.getInt(1) > 0;
         } catch (SQLException e) {
-            System.out.println("Exists Country Name SQL Exception");
+            throw new IllegalStateException("국가명 확인 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
         }
-
-        return false;
     }
 
     public int insertCountry(Connection connection, String countryName) {
         PreparedStatement pstmt = null;
-        int result = 0;
-
-        String query = prop.getProperty("insertCountry");
 
         try {
-            pstmt = connection.prepareStatement(query);
+            pstmt = connection.prepareStatement(prop.getProperty("insertCountry"));
             pstmt.setString(1, countryName);
-
-            result = pstmt.executeUpdate();
+            return pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Insert Country SQL Exception");
+            throw new IllegalStateException("국가 등록 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
-
-        return result;
     }
 
     public int updateCountry(Connection connection, int countryId, String countryName) {
         PreparedStatement pstmt = null;
-        int result = 0;
-
-        String query = prop.getProperty("updateCountry");
 
         try {
-            pstmt = connection.prepareStatement(query);
+            pstmt = connection.prepareStatement(prop.getProperty("updateCountry"));
             pstmt.setString(1, countryName);
             pstmt.setInt(2, countryId);
-
-            result = pstmt.executeUpdate();
+            return pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Update Country SQL Exception");
+            throw new IllegalStateException("국가 수정 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
-
-        return result;
-    }
-
-
-    public int deleteCountry(Connection connection, int countryId) {
-        PreparedStatement pstmt = null;
-        int result = 0;
-
-        String query = prop.getProperty("deleteCountry");
-
-        try {
-            pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, countryId);
-
-            result = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Delete Country SQL Exception");
-        } finally {
-            JDBC.close(pstmt);
-        }
-
-        return result;
     }
 
     // 연쇄 삭제 1단계: 해당 국가 소속 인물들의 명언에 달린 즐겨찾기 삭제 (처리 행 수 반환, 0도 정상)
     public int deleteBookmarkByCountry(Connection connection, int countryId) {
-        PreparedStatement pstmt = null;
-        int result = 0;
-
-        String query = prop.getProperty("deleteBookmarkByCountry");   // XML에서 SQL 꺼내기
-
-        try {
-            pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, countryId);          // ? 에 국가 번호 채우기
-
-            result = pstmt.executeUpdate();      // 실행, 지워진 행 수 받기
-        } catch (SQLException e) {
-            System.out.println("Delete Bookmark By Country SQL Exception");
-        } finally {
-            JDBC.close(pstmt);
-        }
-
-        return result;
+        return executeDelete(connection, "deleteBookmarkByCountry", countryId);
     }
 
     // 연쇄 삭제 2단계: 해당 국가 소속 인물들의 명언 삭제
     public int deleteQuoteByCountry(Connection connection, int countryId) {
-        PreparedStatement pstmt = null;
-        int result = 0;
-
-        String query = prop.getProperty("deleteQuoteByCountry");
-
-        try {
-            pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, countryId);
-
-            result = pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println("Delete Quote By Country SQL Exception");
-        } finally {
-            JDBC.close(pstmt);
-        }
-
-        return result;
+        return executeDelete(connection, "deleteQuoteByCountry", countryId);
     }
 
     // 연쇄 삭제 3단계: 해당 국가 소속 인물 삭제
     public int deletePersonByCountry(Connection connection, int countryId) {
-        PreparedStatement pstmt = null;
-        int result = 0;
+        return executeDelete(connection, "deletePersonByCountry", countryId);
+    }
 
-        String query = prop.getProperty("deletePersonByCountry");
+    public int deleteCountry(Connection connection, int countryId) {
+        return executeDelete(connection, "deleteCountry", countryId);
+    }
+
+    private int executeDelete(Connection connection, String queryKey, int countryId) {
+        PreparedStatement pstmt = null;
 
         try {
-            pstmt = connection.prepareStatement(query);
-            pstmt.setInt(1, countryId);
-
-            result = pstmt.executeUpdate();
+            pstmt = connection.prepareStatement(prop.getProperty(queryKey));   // XML에서 SQL 꺼내기
+            pstmt.setInt(1, countryId);          // ? 에 국가 번호 채우기
+            return pstmt.executeUpdate();        // 실행, 지워진 행 수 받기
         } catch (SQLException e) {
-            System.out.println("Delete Person By Country SQL Exception");
+            throw new IllegalStateException("국가 연쇄 삭제 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
-
-        return result;
     }
-
 }

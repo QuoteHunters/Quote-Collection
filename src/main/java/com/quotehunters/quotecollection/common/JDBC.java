@@ -22,7 +22,7 @@ public class JDBC {
             connection.setAutoCommit(false);
 
         } catch (IOException | ClassNotFoundException | SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("데이터베이스 연결 중 오류가 발생했습니다.", e);
         }
 
         return connection;
@@ -34,7 +34,7 @@ public class JDBC {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[오류] 데이터베이스 자원 정리 중 오류가 발생했습니다.");
         }
     }
 
@@ -44,7 +44,7 @@ public class JDBC {
                 statement.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[오류] 데이터베이스 자원 정리 중 오류가 발생했습니다.");
         }
     }
 
@@ -54,7 +54,7 @@ public class JDBC {
                 preparedStatement.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[오류] 데이터베이스 자원 정리 중 오류가 발생했습니다.");
         }
     }
 
@@ -64,27 +64,39 @@ public class JDBC {
                 resultSet.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            System.err.println("[오류] 데이터베이스 자원 정리 중 오류가 발생했습니다.");
         }
     }
 
     public static void commit(Connection connection) {
+        if (connection == null) {
+            throw new IllegalStateException("데이터 저장을 확정할 연결이 없습니다.");
+        }
+
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.commit();
+            if (connection.isClosed()) {
+                throw new IllegalStateException("닫힌 연결로 데이터 저장을 확정할 수 없습니다.");
             }
+
+            connection.commit();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("데이터 저장 확정 중 오류가 발생했습니다.", e);
         }
     }
 
     public static void rollback(Connection connection) {
+        if (connection == null) {
+            throw new IllegalStateException("데이터를 복구할 연결이 없습니다.");
+        }
+
         try {
-            if (connection != null && !connection.isClosed()) {
-                connection.rollback();
+            if (connection.isClosed()) {
+                throw new IllegalStateException("닫힌 연결로 데이터를 복구할 수 없습니다.");
             }
+
+            connection.rollback();
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("데이터 복구 중 오류가 발생했습니다.", e);
         }
     }
 }

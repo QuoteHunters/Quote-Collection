@@ -44,20 +44,13 @@ public class BookmarkDAO {
      * true  : 같은 member_id + quote_id 조합이 이미 있음 → Favorite-003 취소 대상일 수 있다.
      * false : 같은 조합이 없음 → Favorite-001 추가 대상일 수 있다.
      */
-    public boolean existsBookmark(
-            Connection con,
-            int memberId,
-            int quoteId
-    ) {
-
+    public boolean existsBookmark(Connection con, int memberId, int quoteId) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
 
-        String query = getQuery("existsBookmark");
-
         try {
             // XML에서 읽어 온 SELECT문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("existsBookmark"));
 
             // SQL의 첫 번째 ?는 로그인 회원 번호, 두 번째 ?는 선택 명언 번호다.
             pstmt.setInt(1, memberId);
@@ -67,15 +60,10 @@ public class BookmarkDAO {
             rset = pstmt.executeQuery();
 
             // COUNT(*) 결과는 정확히 한 행이다.
-            if (rset.next()) {
-                return rset.getInt(1) > 0;
-            }
-
-            return false;
+            return rset.next() && rset.getInt(1) > 0;
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 상태 조회 중 DB 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("즐겨찾기 상태 조회 중 오류가 발생했습니다.", e);
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
             JDBC.close(rset);
@@ -90,20 +78,14 @@ public class BookmarkDAO {
      * 화면에 필요한 명언 내용·인물명·주제명은 quote, person, theme 테이블과 JOIN해서 가져온다.
      * 그 조회 결과의 중심은 명언이므로 List<QuoteDTO>로 반환한다.
      */
-    public List<QuoteDTO> selectFavoriteQuotesByMemberId(
-            Connection con,
-            int memberId
-    ) {
-
+    public List<QuoteDTO> selectFavoriteQuotesByMemberId(Connection con, int memberId) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
         List<QuoteDTO> favoriteQuoteList = new ArrayList<>();
 
-        String query = getQuery("selectFavoriteQuotesByMemberId");
-
         try {
             // XML에서 읽어 온 JOIN SELECT문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("selectFavoriteQuotesByMemberId"));
 
             // 목록의 첫 번째 ?에는 로그인한 회원 번호만 넣는다.
             pstmt.setInt(1, memberId);
@@ -118,8 +100,7 @@ public class BookmarkDAO {
             return favoriteQuoteList;
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 목록 조회 중 DB 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("즐겨찾기 목록 조회 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -136,19 +117,12 @@ public class BookmarkDAO {
      * - QuoteDTO : 현재 로그인 회원의 즐겨찾기 안에 선택 명언이 있음
      * - null     : 명언이 삭제됐거나 즐겨찾기가 이미 취소됨
      */
-    public QuoteDTO selectFavoriteQuoteDetail(
-            Connection con,
-            int memberId,
-            int quoteId
-    ) {
-
+    public QuoteDTO selectFavoriteQuoteDetail(Connection con, int memberId, int quoteId) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
 
-        String query = getQuery("selectFavoriteQuoteDetail");
-
         try {
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("selectFavoriteQuoteDetail"));
 
             // 첫 번째 ?는 로그인 회원 번호, 두 번째 ?는 목록에서 선택한 실제 명언 번호다.
             pstmt.setInt(1, memberId);
@@ -163,8 +137,7 @@ public class BookmarkDAO {
             return null;
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 명언 상세 조회 중 DB 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("즐겨찾기 명언 상세 조회 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -178,14 +151,11 @@ public class BookmarkDAO {
      * 즐겨찾기 한 건이 정상 저장되면 보통 1을 반환한다.
      */
     public int insertBookmark(Connection con, BookmarkDTO bookmark) {
-
         PreparedStatement pstmt = null;
-
-        String query = getQuery("insertBookmark");
 
         try {
             // XML에서 읽어 온 INSERT문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("insertBookmark"));
 
             // INSERT문의 첫 번째 ?에는 회원 번호, 두 번째 ?에는 명언 번호를 순서대로 넣는다.
             pstmt.setInt(1, bookmark.getMemberId());
@@ -195,8 +165,7 @@ public class BookmarkDAO {
             return pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 DB 저장 중 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("즐겨찾기 저장 중 오류가 발생했습니다.", e);
         } finally {
             // INSERT에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
             JDBC.close(pstmt);
@@ -213,14 +182,11 @@ public class BookmarkDAO {
      * 정상적으로 취소한 한 건이면 보통 1을 반환한다.
      */
     public int deleteBookmark(Connection con, BookmarkDTO bookmark) {
-
         PreparedStatement pstmt = null;
-
-        String query = getQuery("deleteBookmark");
 
         try {
             // XML에서 읽어 온 DELETE문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("deleteBookmark"));
 
             // 첫 번째 ?는 로그인 회원 번호, 두 번째 ?는 현재 명언 번호다.
             pstmt.setInt(1, bookmark.getMemberId());
@@ -230,8 +196,7 @@ public class BookmarkDAO {
             return pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            throw new RuntimeException("즐겨찾기 DB 취소 중 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("즐겨찾기 취소 중 오류가 발생했습니다.", e);
         } finally {
             // DELETE에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
             JDBC.close(pstmt);
@@ -240,7 +205,6 @@ public class BookmarkDAO {
 
     // Favorite-002의 JOIN SELECT 행을 화면용 QuoteDTO로 바꾼다.
     private QuoteDTO convertToQuote(ResultSet rset) throws SQLException {
-
         QuoteDTO quote = new QuoteDTO();
 
         quote.setQuoteId(rset.getInt("quote_id"));

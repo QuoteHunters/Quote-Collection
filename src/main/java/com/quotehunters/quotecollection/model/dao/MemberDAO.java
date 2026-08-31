@@ -1,5 +1,5 @@
 /*
- * 의도1: Member-001 회원가입, Member-002~003 로그인, Member-004 비밀번호 변경에 필요한 SQL을 quote_user에 실행한다.
+ * 의도1: Member-001 회원가입, Member-002~003 로그인, Member-004 비밀번호 변경, Member-005 회원탈퇴에 필요한 SQL을 quote_user에 실행한다.
  * 의도2: DAO는 DB 작업만 담당하며, 화면 입력은 MemberView에서, 업무 규칙과 트랜잭션은 MemberService에서 담당한다.
  */
 
@@ -42,15 +42,12 @@ public class MemberDAO {
      * false : 같은 user_id가 없음 → 다음 가입 단계로 진행한다.
      */
     public boolean existsMemberByUserId(Connection con, String userId) {
-
         PreparedStatement pstmt = null;
         ResultSet rset = null;
 
-        String query = getQuery("existsMemberByUserId");
-
         try {
             // XML에서 읽어 온 SELECT문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("existsMemberByUserId"));
 
             // SQL의 첫 번째 ? 자리에 입력한 아이디를 넣는다.
             pstmt.setString(1, userId);
@@ -58,18 +55,11 @@ public class MemberDAO {
             // SELECT 실행 결과를 ResultSet으로 받는다.
             rset = pstmt.executeQuery();
 
-            // COUNT(*) 결과는 정확히 한 행이다.
-            if (rset.next()) {
-                // COUNT가 1 이상이면 이미 같은 아이디가 있다.
-                return rset.getInt(1) > 0;
-            }
-
-            return false;
-
+            // COUNT(*) 결과는 정확히 한 행이며, COUNT가 1 이상이면 같은 아이디가 있다.
+            return rset.next() && rset.getInt(1) > 0;
         } catch (SQLException e) {
             // View가 "아이디 중복"과 "DB 오류"를 구분할 수 있도록 예외를 위로 보낸다.
-            throw new RuntimeException("회원 아이디 중복 조회 중 DB 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("회원 아이디 중복 조회 중 오류가 발생했습니다.", e);
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
             JDBC.close(rset);
@@ -84,13 +74,10 @@ public class MemberDAO {
      * 회원 한 명이 정상 저장되면 보통 1을 반환한다.
      */
     public int insertMember(Connection con, MemberDTO member) {
-
         PreparedStatement pstmt = null;
 
-        String query = getQuery("insertMember");
-
         try {
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("insertMember"));
 
             // INSERT문의 첫 번째 ?부터 MemberDTO 값을 순서대로 넣는다.
             pstmt.setString(1, member.getUserId());
@@ -99,10 +86,8 @@ public class MemberDAO {
 
             // executeUpdate()는 INSERT에 성공한 행 수를 int로 반환한다.
             return pstmt.executeUpdate();
-
         } catch (SQLException e) {
-            throw new RuntimeException("회원가입 DB 저장 중 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("회원가입 처리 중 오류가 발생했습니다.", e);
         } finally {
             // INSERT에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
             JDBC.close(pstmt);
@@ -118,20 +103,13 @@ public class MemberDAO {
      * user_pw는 WHERE 조건으로만 사용한다.
      * 로그인 뒤 화면 분기에 필요한 member_id, user_id, user_auth만 DTO에 담는다.
      */
-    public MemberDTO selectMemberByLoginInfo(
-            Connection con,
-            String userId,
-            String userPw
-    ) {
-
+    public MemberDTO selectMemberByLoginInfo(Connection con, String userId, String userPw) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
 
-        String query = getQuery("selectMemberByLoginInfo");
-
         try {
             // XML에서 읽어 온 로그인 SELECT문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("selectMemberByLoginInfo"));
 
             // SQL의 첫 번째 ?에는 ID, 두 번째 ?에는 비밀번호를 순서대로 넣는다.
             pstmt.setString(1, userId);
@@ -147,16 +125,13 @@ public class MemberDAO {
                 member.setMemberId(rset.getInt("member_id"));
                 member.setUserId(rset.getString("user_id"));
                 member.setUserAuth(rset.getInt("user_auth"));
-
                 return member;
             }
 
             // ID 또는 비밀번호가 맞지 않으면 SQL 결과 행이 없으므로 null을 반환한다.
             return null;
-
         } catch (SQLException e) {
-            throw new RuntimeException("회원 로그인 조회 중 DB 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("로그인 조회 중 오류가 발생했습니다.", e);
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
             JDBC.close(rset);
@@ -165,7 +140,7 @@ public class MemberDAO {
     }
 
     /*
-     * [Member-004] 로그인한 회원 번호로 DB에 저장된 현재 비밀번호를 한 개 조회한다.
+     * [Member-004 + Member-005] 로그인한 회원 번호로 DB에 저장된 현재 비밀번호를 한 개 조회한다.
      *
      * 반환값 String : DB에 저장된 user_pw 문자열이다.
      * 반환값 null   : member_id와 일치하는 회원 행이 없다는 뜻이다.
@@ -173,19 +148,13 @@ public class MemberDAO {
      * 이 메서드는 비밀번호를 화면에 출력하지 않는다.
      * Service가 반환된 값과 사용자가 입력한 현재 비밀번호를 안전하게 비교한다.
      */
-    public String selectMemberPasswordByMemberId(
-            Connection con,
-            int memberId
-    ) {
-
+    public String selectMemberPasswordByMemberId(Connection con, int memberId) {
         PreparedStatement pstmt = null;
         ResultSet rset = null;
 
-        String query = getQuery("selectMemberPasswordByMemberId");
-
         try {
             // XML에서 읽어 온 현재 비밀번호 조회 SELECT문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("selectMemberPasswordByMemberId"));
 
             // SQL의 첫 번째 ? 자리에 로그인 성공 때 받은 회원 번호를 넣는다.
             pstmt.setInt(1, memberId);
@@ -197,12 +166,9 @@ public class MemberDAO {
             if (rset.next()) {
                 return rset.getString("user_pw");
             }
-
             return null;
-
         } catch (SQLException e) {
-            throw new RuntimeException("현재 비밀번호 조회 중 DB 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("현재 비밀번호 조회 중 오류가 발생했습니다.", e);
         } finally {
             // DAO가 직접 만든 ResultSet과 PreparedStatement만 DAO가 닫는다.
             JDBC.close(rset);
@@ -216,19 +182,12 @@ public class MemberDAO {
      * 반환값은 UPDATE된 행 수다.
      * member_id가 존재하는 회원 한 명을 정상 변경하면 보통 1을 반환한다.
      */
-    public int updateMemberPassword(
-            Connection con,
-            int memberId,
-            String newUserPw
-    ) {
-
+    public int updateMemberPassword(Connection con, int memberId, String newUserPw) {
         PreparedStatement pstmt = null;
-
-        String query = getQuery("updateMemberPassword");
 
         try {
             // XML에서 읽어 온 UPDATE문을 실행할 준비를 한다.
-            pstmt = con.prepareStatement(query);
+            pstmt = con.prepareStatement(getQuery("updateMemberPassword"));
 
             // 첫 번째 ?에는 새 비밀번호, 두 번째 ?에는 로그인 회원 번호를 순서대로 넣는다.
             pstmt.setString(1, newUserPw);
@@ -236,12 +195,25 @@ public class MemberDAO {
 
             // executeUpdate()는 실제로 변경된 행 수를 int로 반환한다.
             return pstmt.executeUpdate();
-
         } catch (SQLException e) {
-            throw new RuntimeException("비밀번호 변경 DB 처리 중 오류가 발생했습니다.", e);
-
+            throw new RuntimeException("비밀번호 변경 중 오류가 발생했습니다.", e);
         } finally {
             // UPDATE에는 ResultSet이 없으므로 PreparedStatement만 닫는다.
+            JDBC.close(pstmt);
+        }
+    }
+
+    // Member-005 일반회원 본인 계정 삭제
+    public int deleteMemberByMemberId(Connection con, int memberId) {
+        PreparedStatement pstmt = null;
+
+        try {
+            pstmt = con.prepareStatement(getQuery("deleteMemberByMemberId"));
+            pstmt.setInt(1, memberId);
+            return pstmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("회원탈퇴 처리 중 오류가 발생했습니다.", e);
+        } finally {
             JDBC.close(pstmt);
         }
     }
@@ -251,11 +223,8 @@ public class MemberDAO {
         String query = prop.getProperty(key);
 
         if (query == null) {
-            throw new IllegalStateException(
-                    "member-query.xml에 '" + key + "' SQL이 없습니다."
-            );
+            throw new IllegalStateException("member-query.xml에 '" + key + "' SQL이 없습니다.");
         }
-
         return query;
     }
 }

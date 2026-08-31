@@ -10,7 +10,7 @@
     </entry>
 
     <entry key="existsThemeNameExceptId">
-        select COUNT(*) FROM theme WHERE theme_name = ? AND theme_id != ?
+        SELECT COUNT(*) FROM theme WHERE theme_name = ? AND theme_id != ?
     </entry>
 
     <entry key="selectThemes">

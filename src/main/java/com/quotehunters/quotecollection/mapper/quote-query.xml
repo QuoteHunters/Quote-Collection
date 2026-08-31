@@ -5,6 +5,8 @@
         SELECT
             q.quote_id,
             q.quote_content,
+            q.theme_id,
+            q.person_id,
             p.person_name,
             t.theme_name
         FROM quote q
@@ -25,6 +27,8 @@
     SELECT
         q.quote_id,
         q.quote_content,
+        q.theme_id,
+        q.person_id,
         p.person_name,
         t.theme_name
     FROM quote q
@@ -40,6 +44,8 @@
         SELECT
             q.quote_id,
             q.quote_content,
+            q.theme_id,
+            q.person_id,
             p.person_name,
             t.theme_name
         FROM quote q
@@ -49,6 +55,17 @@
             ON q.theme_id = t.theme_id
         WHERE q.quote_content LIKE CONCAT('%', ?, '%')
         ORDER BY q.quote_id
+    </entry>
+
+    <!-- 명언을 한 건 이상 보유한 인물만 조회한다. -->
+    <entry key="selectPersonsWithQuotes">
+        SELECT DISTINCT
+            p.person_id,
+            p.person_name
+        FROM person p
+        JOIN quote q
+            ON q.person_id = p.person_id
+        ORDER BY p.person_name ASC, p.person_id ASC
     </entry>
 
     <!-- 명언 등록 시 인물 이름으로 인물 후보를 검색한다. -->
@@ -94,6 +111,8 @@
         SELECT
             q.quote_id,
             q.quote_content,
+            q.theme_id,
+            q.person_id,
             p.person_name,
             t.theme_name
         FROM quote q
@@ -119,6 +138,12 @@
         WHERE quote_id = ?
     </entry>
 
+    <!-- 선택한 명언에 연결된 즐겨찾기를 먼저 삭제한다. -->
+    <entry key="deleteBookmarksByQuote">
+        DELETE FROM bookmark
+        WHERE quote_id = ?
+    </entry>
+
     <!-- 선택한 명언을 삭제한다. -->
     <entry key="deleteQuote">
         DELETE FROM quote
@@ -130,6 +155,8 @@
         SELECT
         q.quote_id,
         q.quote_content,
+        q.theme_id,
+        q.person_id,
         p.person_name,
         t.theme_name
         FROM quote q

@@ -19,31 +19,36 @@ public class QuoteService {
         // DB와 연결
         Connection con = JDBC.getConnection();
 
-        // 생성한 Connection을 DAO에 전달하여 전체 명언 조회
-        // DAO에서 조회 결과를 List<QuoteDTO> 형태로 반환한다.
-        List<QuoteDTO> quoteList = quoteDAO.selectAllQuotes(con);
-
-        // DB 연결 사용이 끝났으므로 Connection 종료
-        JDBC.close(con);
-
-        // 조회된 명언 목록을 Controller에 반환
-        return quoteList;
-    }
-    public QuoteDTO selectTodayQuote(){
-        Connection con = JDBC.getConnection();
-        int quoteCount = quoteDAO.selectQuoteCount(con);
-        if(quoteCount == 0){
+        try {
+            // 생성한 Connection을 DAO에 전달하여 전체 명언 조회
+            // DAO에서 조회 결과를 List<QuoteDTO> 형태로 반환한다.
+            // 조회된 명언 목록을 Controller에 반환
+            return quoteDAO.selectAllQuotes(con);
+        } finally {
+            // DB 연결 사용이 끝났으므로 Connection 종료
             JDBC.close(con);
-            return null;
         }
-        int dayOfYear = LocalDate.now().getDayOfYear();
-        int offset = (dayOfYear - 1) % quoteCount;
+    }
 
-        QuoteDTO quote = quoteDAO.selectTodayQuote(con, offset);
+    public QuoteDTO selectTodayQuote() {
 
-        JDBC.close(con);
+        Connection con = JDBC.getConnection();
 
-        return quote;
+        try {
+            int quoteCount = quoteDAO.selectQuoteCount(con);
+
+            if (quoteCount == 0) {
+                return null;
+            }
+
+            int dayOfYear = LocalDate.now().getDayOfYear();
+            int offset = (dayOfYear - 1) % quoteCount;
+
+            return quoteDAO.selectTodayQuote(con, offset);
+
+        } finally {
+            JDBC.close(con);
+        }
     }
     // 키워드 검색에 필요한 Connection을 관리하고 검색 결과를 반환한다.
     public List<QuoteDTO> searchQuotesByKeyword(String keyword) {
@@ -56,6 +61,19 @@ public class QuoteService {
             JDBC.close(con);
         }
     }
+
+    // 명언을 한 건 이상 보유한 인물 목록을 반환한다.
+    public List<QuoteDTO> selectPersonsWithQuotes() {
+
+        Connection con = JDBC.getConnection();
+
+        try {
+            return quoteDAO.selectPersonsWithQuotes(con);
+        } finally {
+            JDBC.close(con);
+        }
+    }
+
     // 인물 이름의 앞뒤 공백을 제거한 후 등록 대상 인물을 검색한다.
     public List<QuoteDTO> searchPersonsForQuoteRegistration(String personName) {
 
@@ -100,8 +118,7 @@ public class QuoteService {
             return false;
 
         } catch (RuntimeException e) {
-            JDBC.rollback(con);
-            throw e;
+            throw rollbackFailure(con, e);
 
         } finally {
             JDBC.close(con);
@@ -143,8 +160,7 @@ public class QuoteService {
             return false;
 
         } catch (RuntimeException e) {
-            JDBC.rollback(con);
-            throw e;
+            throw rollbackFailure(con, e);
 
         } finally {
             JDBC.close(con);
@@ -175,20 +191,21 @@ public class QuoteService {
             return false;
 
         } catch (RuntimeException e) {
-            JDBC.rollback(con);
-            throw e;
+            throw rollbackFailure(con, e);
 
         } finally {
             JDBC.close(con);
         }
     }
 
+    // 관련 즐겨찾기와 명언을 하나의 트랜잭션으로 삭제한다.
     // 명언을 삭제하고 결과에 따라 commit 또는 rollback한다.
     public boolean deleteQuote(int quoteId) {
 
         Connection con = JDBC.getConnection();
 
         try {
+            quoteDAO.deleteBookmarksByQuote(con, quoteId);
             int result = quoteDAO.deleteQuote(con, quoteId);
 
             if (result > 0) {
@@ -200,8 +217,7 @@ public class QuoteService {
             return false;
 
         } catch (RuntimeException e) {
-            JDBC.rollback(con);
-            throw e;
+            throw rollbackFailure(con, e);
 
         } finally {
             JDBC.close(con);
@@ -222,6 +238,16 @@ public class QuoteService {
         } finally {
             JDBC.close(con);
         }
+    }
+
+    private RuntimeException rollbackFailure(Connection con, RuntimeException original) {
+        try {
+            JDBC.rollback(con);
+        } catch (RuntimeException rollbackFailure) {
+            original.addSuppressed(rollbackFailure);
+        }
+
+        return original;
     }
 
 

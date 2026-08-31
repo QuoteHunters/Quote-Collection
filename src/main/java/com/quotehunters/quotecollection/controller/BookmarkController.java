@@ -27,10 +27,7 @@ public class BookmarkController {
     }
 
     // Favorite-002: 목록에서 선택한 명언의 최신 상세 정보를 Service에 요청한다.
-    public QuoteDTO selectFavoriteQuoteDetail(
-            int memberId,
-            int quoteId
-    ) {
+    public QuoteDTO selectFavoriteQuoteDetail(int memberId, int quoteId) {
         return bookmarkService.selectFavoriteQuoteDetail(memberId, quoteId);
     }
 

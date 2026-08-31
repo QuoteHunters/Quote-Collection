@@ -2,7 +2,7 @@
 <!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
 
 <!--
-    의도1: Member-001 회원가입에 필요한 SQL을 Java 코드 밖에 이름표와 함께 보관한다.
+    의도1: Member-001~005 회원 기능에 필요한 SQL을 Java 코드 밖에 이름표와 함께 보관한다.
     의도2: 실제 실행은 MemberDAO에서, commit / rollback은 MemberService에서 담당한다.
 -->
 
@@ -46,9 +46,8 @@
         AND user_pw = ?
     </entry>
 
-
     <!--
-        [Member-004 / 현재 비밀번호 확인]
+        [Member-004 + Member-005 / 현재 비밀번호 확인]
         로그인에 성공한 회원 번호(member_id)로 DB에 저장된 현재 비밀번호 하나를 조회한다.
 
         이 SQL은 현재 비밀번호를 화면에 출력하지 않는다.
@@ -73,5 +72,11 @@
         WHERE member_id = ?
     </entry>
 
+    <!-- Member-005 일반회원 본인 계정 삭제 -->
+    <entry key="deleteMemberByMemberId">
+        DELETE FROM quote_user
+        WHERE member_id = ?
+        AND user_auth = 1
+    </entry>
 
 </properties>

@@ -10,6 +10,8 @@ import java.util.Scanner;
 
 public class PersonView {
 
+    private static final String HEADER = "=".repeat(10);
+    private static final String LINE = "-".repeat(30);
     private final ScannerView scannerView = new ScannerView();
     private final ResultView resultView = new ResultView();
 
@@ -17,20 +19,19 @@ public class PersonView {
     // 전체 인물 목록 출력
     public void displayAllPerson(List<PersonDTO> personList) {
 
-        System.out.println("\n========== 전체 인물 목록 ==========");
+        printHeader("전체 인물 목록");
 
-        // 인물 식별 번호는 출력하되 국가·시대·분야 ID는 사용자에게 노출하지 않음
-        for (PersonDTO person : personList) {
-            System.out.println("----------------------------------");
-            System.out.print("인물 번호 : " + person.getPersonId());
-            System.out.print(" | 인물 이름 : " + person.getPersonName());
+        // 인물 목록 번호는 출력하되 국가·시대·분야 ID는 사용자에게 노출하지 않음
+        for (int i = 0; i < personList.size(); i++) {
+            PersonDTO person = personList.get(i);
+            System.out.print((i + 1) + ". " + person.getPersonName());
             System.out.print(" | 국가 : " + person.getCountryName());
             System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
         }
 
-        System.out.println("----------------------------------");
+        System.out.println(LINE);
     }
 
     // 국가별 인물 목록 출력
@@ -38,17 +39,17 @@ public class PersonView {
 
         // 국가별 조회는 모두 같은 국가에 속한 인물들이므로 제목에 한 번만 출력
         String countryName = personList.get(0).getCountryName();
-        System.out.println("\n========== " + countryName + "의 인물 목록 ==========");
+        printHeader(countryName + "의 인물 목록");
 
-        for (PersonDTO person : personList) {
-            System.out.print("인물 번호 : " + person.getPersonId());
-            System.out.print(" | 인물 이름 : " + person.getPersonName());
+        for (int i = 0; i < personList.size(); i++) {
+            PersonDTO person = personList.get(i);
+            System.out.print((i + 1) + ". " + person.getPersonName());
             System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
         }
 
-        System.out.println("----------------------------------");
+        System.out.println(LINE);
     }
 
     // 시대별 인물 목록
@@ -56,17 +57,17 @@ public class PersonView {
 
         // 시대별 조회 또한 모두 같은 시대에 속한 인물들이므로 제목에 한 번만 출력
         String periodName = personList.get(0).getPeriodName();
-        System.out.println("\n========== " + periodName + "의 인물 목록 ==========");
+        printHeader(periodName + "의 인물 목록");
 
-        for (PersonDTO person : personList) {
-            System.out.print("인물 번호 : " + person.getPersonId());
-            System.out.print(" | 인물 이름 : " + person.getPersonName());
+        for (int i = 0; i < personList.size(); i++) {
+            PersonDTO person = personList.get(i);
+            System.out.print((i + 1) + ". " + person.getPersonName());
             System.out.print(" | 국가 : " + person.getCountryName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
         }
 
-        System.out.println("----------------------------------");
+        System.out.println(LINE);
     }
 
     // 분야별 인물 조회
@@ -75,53 +76,53 @@ public class PersonView {
         // 분야별 조회 또한 모두 같은 시대에 속한 인물들이므로 제목에 한 번만 출력
         String fieldName = personList.get(0).getFieldName();
 
-        System.out.println("\n========== " + fieldName + "분야의 인물 목록 ==========");
+        printHeader(fieldName + " 분야의 인물 목록");
 
-        for (PersonDTO person : personList) {
-            System.out.print("인물 번호 : " + person.getPersonId());
-            System.out.print(" | 인물 이름 : " + person.getPersonName());
+        for (int i = 0; i < personList.size(); i++) {
+            PersonDTO person = personList.get(i);
+            System.out.print((i + 1) + ". " + person.getPersonName());
             System.out.print(" | 국가 : " + person.getCountryName());
             System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.println();
         }
 
-        System.out.println("----------------------------------");
+        System.out.println(LINE);
     }
 
     // 인물 이름 검색 결과 출력
     public void selectPersonByName(List<PersonDTO> personList) {
 
-        System.out.println("\n========== 인물 이름 검색 결과 ==========");
+        printHeader("인물 이름 검색 결과");
 
-        for (PersonDTO person : personList) {
-            System.out.print("인물 번호 : " + person.getPersonId());
-            System.out.print(" | 인물 이름 : " + person.getPersonName());
+        for (int i = 0; i < personList.size(); i++) {
+            PersonDTO person = personList.get(i);
+            System.out.print((i + 1) + ". " + person.getPersonName());
             System.out.print(" | 국가 : " + person.getCountryName());
             System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
         }
 
-        System.out.println("----------------------------------");
+        System.out.println(LINE);
     }
 
     public void selectPersonByQuoteKeyword(List<PersonDTO> personList, String quoteKeyword) {
 
-        System.out.println("\n========== 명언 키워드에 따른 검색 결과 ==========");
+        printHeader("명언 키워드 인물 검색 결과");
 
         System.out.println("입력한 키워드 : " + quoteKeyword);
-        System.out.println("----------------------------------");
+        System.out.println(LINE);
 
-        for (PersonDTO person : personList) {
-            System.out.print("인물 번호 : " + person.getPersonId());
-            System.out.print(" | 인물 이름 : " + person.getPersonName());
+        for (int i = 0; i < personList.size(); i++) {
+            PersonDTO person = personList.get(i);
+            System.out.print((i + 1) + ". " + person.getPersonName());
             System.out.print(" | 국가 : " + person.getCountryName());
             System.out.print(" | 시대 : " + person.getPeriodName());
             System.out.print(" | 분야 : " + person.getFieldName());
             System.out.println();
         }
 
-        System.out.println("----------------------------------");
+        System.out.println(LINE);
     }
 
     // 인물 이름 검색어 입력 및 Validation
@@ -168,24 +169,35 @@ public class PersonView {
     }
 
     /* 인물 수정 */
+    public int selectPersonUpdateSearchType(Scanner sc) {
+        return selectPersonSearchType(sc, "인물 수정 검색");
+    }
+
     // 0. 수정할 인물 선택
     public PersonDTO selectPerson(Scanner sc, List<PersonDTO> personList) {
         // 1차 조회 결과에서 수정할 인물 선택
+        return selectPersonFromList(sc, personList, "수정할 인물 번호 선택 (0: 뒤로가기)");
+    }
 
-        if (personList.isEmpty()) { return null; }
+    public PersonDTO selectPersonForQuoteBrowse(Scanner sc, List<PersonDTO> personList) {
+        return selectPersonFromList(sc, personList, "명언을 조회할 인물 번호 선택 (0: 뒤로가기)");
+    }
+
+    public int selectPersonUpdateSection(Scanner sc) {
+        printHeader("인물 수정 항목");
+        System.out.println("1. 국가");
+        System.out.println("2. 시대");
+        System.out.println("3. 분야");
+        System.out.println("4. 이름");
+        System.out.println("0. 인물 재선택");
+        System.out.println(LINE);
 
         while (true) {
-            int personId = scannerView.scannInt(sc, "수정할 인물 번호 선택 (0: 뒤로가기)");
-
-            if (personId == 0) { return null; }
-
-            for (PersonDTO person : personList) {
-                if (person.getPersonId() == personId) {
-                    return person;
-                }
+            int choice = scannerView.scannInt(sc, "수정할 항목 선택");
+            if (choice >= 0 && choice <= 4) {
+                return choice;
             }
-
-            resultView.errorMessage("조회된 목록에 있는 인물 번호를 선택해주세요.");
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
     }
 
@@ -194,7 +206,7 @@ public class PersonView {
     public int selectCountryForUpdate(Scanner sc, PersonDTO selectedPerson, List<CountryDTO> countryList) {
 
         // 1차 조회에서 전달받은 인물의 이름과 현재 국가를 출력
-        System.out.println("\n========== 인물의 국가 수정 ==========");
+        printHeader("인물의 국가 수정");
         System.out.println("인물 이름 : " + selectedPerson.getPersonName());
         System.out.println("현재 국가 : " + selectedPerson.getCountryName());
 
@@ -206,10 +218,11 @@ public class PersonView {
 
         // 존재하는 국가를 선택할 수 있도록 목록을 보여줌
         // 사용자가 보는 목록 번호는 1번부터 시작 (i + 1)
-        System.out.println("\n========== 국가 목록 ==========");
+        printHeader("국가 목록");
         for (int i = 0; i < countryList.size(); i++) {
             System.out.println((i + 1) + ". " + countryList.get(i).getCountryName());
         }
+        System.out.println(LINE);
 
         // 변경할 국가의 목록 번호를 입력 받음
         while (true) {
@@ -224,7 +237,7 @@ public class PersonView {
             // 출력한 국가 목록의 선택 범위인지 검사
             // 범위를 벗어날 경우 재선택 (범위: 1 ~ 국가목록 개수)
             if (choice < 1 || choice > countryList.size()) {
-                resultView.errorMessage("목록에 있는 국가 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -249,23 +262,14 @@ public class PersonView {
 
     // 1-2. 인물 국가 수정 최종 확인
     public String confirmCountryUpdate(Scanner sc) {
-
-        while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (완료 / 재수정 / 취소)");
-
-            // 셋 중 일치하는 값을 입력하면 호출한 곳에 반환
-            if ("완료".equals(choice) || "재수정".equals(choice) || "취소".equals(choice)) {
-                return choice;
-            }
-            resultView.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
-        }
+        return confirmPersonUpdate(sc);
     }
 
     /* 2. 인물의 시대 수정 */
     // 2-1. 인물의 시대를 수정하기 위해 새로운 시대 선택
     public int selectPeriodForUpdate(Scanner sc, PersonDTO selectedPerson, List<PeriodDTO> periodList) {
 
-        System.out.println("\n========== 인물의 시대 수정 ==========");
+        printHeader("인물의 시대 수정");
         System.out.println("인물 이름 : " + selectedPerson.getPersonName());
         System.out.println("현재 시대 : " + selectedPerson.getPeriodName());
 
@@ -275,23 +279,24 @@ public class PersonView {
             return 0;
         }
 
-        System.out.println("\n========== 시대 목록 ==========");
+        printHeader("시대 목록");
 
         for (int i = 0; i < periodList.size(); i++) {
             System.out.println((i + 1) + ". " + periodList.get(i).getPeriodName());
         }
+        System.out.println(LINE);
 
         while (true) {
             int choice = scannerView.scannInt(sc, "변경할 시대 선택 (0: 뒤로가기)");
 
-            // 한 단계 위인 수정할 인물 선택으로 이동
+            // 한 단계 위인 수정 항목 선택으로 이동
             if (choice == 0) {
                 return 0;
             }
 
             // 출력한 시대 목록의 선택 범위인지 검사
             if (choice < 1 || choice > periodList.size()) {
-                resultView.errorMessage("목록에 있는 시대 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -311,23 +316,14 @@ public class PersonView {
 
     // 2-2. 인물 시대 수정 최종 확인
     public String confirmPeriodUpdate(Scanner sc) {
-
-        while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (완료 / 재수정 / 취소)");
-
-            if ("완료".equals(choice) || "재수정".equals(choice) || "취소".equals(choice)) {
-                return choice;
-            }
-
-            resultView.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
-        }
+        return confirmPersonUpdate(sc);
     }
 
     /* 3. 인물의 분야 수정 */
     // 3-1. 인물의 분야를 수정하기 위해 새로운 분야 선택
     public int selectFieldForUpdate(Scanner sc, PersonDTO selectedPerson, List<FieldDTO> fieldList) {
 
-        System.out.println("\n========== 인물의 분야 수정 ==========");
+        printHeader("인물의 분야 수정");
         System.out.println("인물 이름 : " + selectedPerson.getPersonName());
         System.out.println("현재 분야 : " + selectedPerson.getFieldName());
 
@@ -337,23 +333,24 @@ public class PersonView {
             return 0;
         }
 
-        System.out.println("\n========== 분야 목록 ==========");
+        printHeader("분야 목록");
 
         for (int i = 0; i < fieldList.size(); i++) {
             System.out.println((i + 1) + ". " + fieldList.get(i).getFieldName());
         }
+        System.out.println(LINE);
 
         while (true) {
             int choice = scannerView.scannInt(sc, "변경할 분야 선택 (0: 뒤로가기)");
 
-            // 정확히 한 단계 위인 인물 선택으로 이동
+            // 정확히 한 단계 위인 수정 항목 선택으로 이동
             if (choice == 0) {
                 return 0;
             }
 
             // 출력한 목록의 선택 범위 확인
             if (choice < 1 || choice > fieldList.size()) {
-                resultView.errorMessage("목록에 있는 분야 번호를 선택해주세요.");
+                resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
                 continue;
             }
 
@@ -375,29 +372,20 @@ public class PersonView {
 
     // 3-2. 인물 분야 수정 최종 확인
     public String confirmFieldUpdate(Scanner sc) {
-
-        while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (완료 / 재수정 / 취소)");
-
-            if ("완료".equals(choice) || "재수정".equals(choice) || "취소".equals(choice)) {
-                return choice;
-            }
-
-            resultView.errorMessage("완료, 재수정, 취소 중 하나를 입력해주세요.");
-        }
+        return confirmPersonUpdate(sc);
     }
 
     /* 4. 인물의 이름 수정 */
     // 4-1. 변경할 인물 이름 입력 및 Validation
     public String inputPersonNameForUpdate(Scanner sc, PersonDTO selectedPerson) {
 
-        System.out.println("\n========== 인물의 이름 수정 ==========");
+        printHeader("인물의 이름 수정");
         System.out.println("현재 이름 : " + selectedPerson.getPersonName());
 
         while (true) {
             String newPersonName = scannerView.scannString(sc, "변경할 인물 이름 입력 (0: 뒤로가기)");
 
-            // 정확히 한 단계 위인 인물 선택으로 이동
+            // 정확히 한 단계 위인 수정 항목 선택으로 이동
             if ("0".equals(newPersonName)) {
                 return null;
             }
@@ -422,10 +410,14 @@ public class PersonView {
 
     // 4-2. 인물 이름 수정 최종 확인
     public String confirmPersonNameUpdate(Scanner sc) {
+        return confirmPersonUpdate(sc);
+    }
 
+    private String confirmPersonUpdate(Scanner sc) {
         while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (완료 / 재수정 / 취소)");
+            String choice = scannerView.scannString(sc, "수정하시겠습니까? (완료 / 재수정 / 취소)");
 
+            // 셋 중 일치하는 값을 입력하면 호출한 곳에 반환
             if ("완료".equals(choice) || "재수정".equals(choice) || "취소".equals(choice)) {
                 return choice;
             }
@@ -437,10 +429,10 @@ public class PersonView {
 
     /* 인물 등록 */
     // 1. 등록할 인물 이름 입력 및 길이 검증
-    public String inputPersonName(Scanner sc) {
+    public String inputPersonName(ScannerView scannerView, Scanner scanner) {
 
         while (true) {
-            String personName = scannerView.scannString(sc, "등록할 인물 이름 입력 (0: 뒤로가기)");
+            String personName = scannerView.scannString(scanner, "등록할 인물 이름 입력 (0: 뒤로가기)");
 
             // 이름 입력 단계에서 뒤로가기
             if ("0".equals(personName)) { return null;}
@@ -458,112 +450,122 @@ public class PersonView {
     // 2. 등록할 인물의 정보 미리보기
     public void displayPersonForInsert(PersonDTO person) {
 
-        System.out.println("\n========== 인물 등록 정보 ==========");
+        printHeader("인물 등록 정보");
         System.out.println("인물 이름 : " + person.getPersonName());
         System.out.println("국가 : " + person.getCountryName());
         System.out.println("시대 : " + person.getPeriodName());
         System.out.println("분야 : " + person.getFieldName());
-        System.out.println("==================================");
+        System.out.println(LINE);
     }
 
     // 3. 인물 등록 여부 확인
-    public String confirmPersonInsert(Scanner sc) {
+    public String confirmPersonInsert(ScannerView scannerView, Scanner sc) {
 
         while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (등록 / 취소)");
+            String choice = scannerView.scannString(sc, "등록하시겠습니까? (등록 / 수정 / 취소)");
 
-            if ("등록".equals(choice) || "취소".equals(choice)) {
+            if ("등록".equals(choice) || "수정".equals(choice) || "취소".equals(choice)) {
                 return choice;
             }
 
-            resultView.errorMessage("등록 또는 취소를 입력해주세요.");
+            resultView.errorMessage("등록, 수정, 취소 중 하나를 입력해주세요.");
         }
     }
 
-    // 4. 등록 취소 선택 시 완전 취소 또는 수정 구간 선택
-    public String selectPersonInsertCancelAction(Scanner sc) {
-        while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (완전 취소 / 수정 구간 선택)");
-
-            if ("완전 취소".equals(choice) || "수정 구간 선택".equals(choice)) {
-                return choice;
-            }
-
-            resultView.errorMessage("완전 취소 또는 수정 구간 선택을 입력해주세요.");
-        }
-    }
-
+    // 4. 등록 수정 선택 시 수정 구간 선택
     // 5. 다시 입력할 등록 정보 구간 선택
     public int selectPersonInsertSection(Scanner sc) {
-
-        System.out.println("\n========== 수정 구간 선택 ==========");
+        printHeader("인물 등록 수정 구간");
         System.out.println("1. 국가");
         System.out.println("2. 시대");
         System.out.println("3. 분야");
-        System.out.println("4. 인물 이름");
-        System.out.println("0. 뒤로가기"); // 취소 or 완전취소 선택 구간으로 돌아감
+        System.out.println("4. 이름");
+        System.out.println("0. 등록 확인으로"); // 수정하지 않고 등록 확인 화면으로 돌아감
+        System.out.println(LINE);
 
         while (true) {
             int choice = scannerView.scannInt(sc, "수정할 구간 선택");
-
-            if (choice >= 0 && choice <= 4) { return choice; }
-
-            resultView.errorMessage("목록에 있는 번호를 선택해주세요.");
+            if (choice >= 0 && choice <= 4) return choice;
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
     }
 
     /* 인물 삭제 */
-    // 1. 삭제할 인물 선택
-    public PersonDTO selectPersonForDelete(Scanner sc, List<PersonDTO> personList) {
+    public int selectPersonDeleteSearchType(Scanner sc) {
+        return selectPersonSearchType(sc, "인물 삭제 검색");
+    }
 
-        // 삭제할 인물이 아예 없다면(empty) 화면 진행x
-        // 아예 인물 리스트가 비어있는 경우 while문 내 두번째 if문이 실행되지 않음
-        // 그러면 바로 errmessage로 넘어가고 다시 while문 처음으로 돌아와서 삭제할 인물 물어보게됨 (반복)
-        // 그래서 들어가기 전에 한 번 검사
-        if (personList.isEmpty()) {
-            return null;
-        }
+    private int selectPersonSearchType(Scanner sc, String title) {
+        printHeader(title);
+        System.out.println("1. 국가 검색");
+        System.out.println("2. 시대 검색");
+        System.out.println("3. 분야 검색");
+        System.out.println("4. 이름 검색");
+        System.out.println("5. 명언 키워드 검색");
+        System.out.println("0. 뒤로가기");
+        System.out.println(LINE);
 
         while (true) {
-            int personId = scannerView.scannInt(sc, "삭제할 인물 번호 선택 (0: 뒤로가기)");
-
-            // 정확히 한 단계 위로 이동
-            if (personId == 0) {
-                return null;
+            int choice = scannerView.scannInt(sc, "검색 방식 선택");
+            if (choice >= 0 && choice <= 5) {
+                return choice;
             }
-
-            // 조회된 인물 중 입력한 번호와 일치하는 인물 반환
-            for (PersonDTO person : personList) {
-                if (person.getPersonId() == personId) {
-                    return person;
-                }
-            }
-
-            resultView.errorMessage("조회된 목록에 있는 인물 번호를 선택해주세요.");
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
         }
+    }
+
+    public boolean retryCategoryList(Scanner sc, String categoryName) {
+        while (true) {
+            String choice = scannerView.scannString(sc,
+                    categoryName + " 목록을 다시 조회하시겠습니까? (재시도 / 취소)");
+
+            if ("재시도".equals(choice)) return true;
+            if ("취소".equals(choice)) return false;
+            resultView.errorMessage("재시도 또는 취소를 입력해주세요.");
+        }
+    }
+
+    public boolean retryPersonBrowse(Scanner sc) {
+        while (true) {
+            String choice = scannerView.scannString(sc,
+                    "인물 목록을 다시 조회하시겠습니까? (재시도 / 이전 화면)");
+
+            if ("재시도".equals(choice)) return true;
+            if ("이전 화면".equals(choice)) return false;
+            resultView.errorMessage("재시도 또는 이전 화면을 입력해주세요.");
+        }
+    }
+
+    // 1. 삭제할 인물 선택
+    public PersonDTO selectPersonForDelete(Scanner sc, List<PersonDTO> personList) {
+        // 삭제할 인물이 아예 없다면(empty) 화면 진행x
+        // 아예 인물 리스트가 비어있는 경우 공통 선택 메소드의 while문이 실행되지 않음
+        // 빈 목록에서 삭제할 인물을 계속 묻는 입력 반복을 막음
+        // 그래서 공통 선택 메소드에서 while문에 들어가기 전에 한 번 검사
+        return selectPersonFromList(sc, personList, "삭제할 인물 번호 선택 (0: 뒤로가기)");
     }
 
     // 2. 삭제할 인물 정보 출력
     public void displayPersonForDelete(PersonDTO person) {
-        System.out.println("\n========== 삭제할 인물 정보 ==========");
-        System.out.println("인물 번호 : " + person.getPersonId());
+        printHeader("삭제할 인물 정보");
         System.out.println("인물 이름 : " + person.getPersonName());
         System.out.println("국가 : " + person.getCountryName());
         System.out.println("시대 : " + person.getPeriodName());
         System.out.println("분야 : " + person.getFieldName());
-        System.out.println("====================================");
+        System.out.println(LINE);
+        System.out.println("연결된 명언과 해당 명언의 즐겨찾기도 함께 삭제됩니다.");
     }
 
     // 최종 삭제 여부
     public String confirmPersonForDelete(Scanner sc) {
         while (true) {
-            String choice = scannerView.scannString(sc, "작업 선택 (삭제 / 취소)");
+            String choice = scannerView.scannString(sc, "삭제하시겠습니까? (예 / 아니오)");
 
-            if ("삭제".equals(choice) || "취소".equals(choice)) {
+            if ("예".equals(choice) || "아니오".equals(choice)) {
                 return choice;
             }
 
-            resultView.errorMessage("삭제 또는 취소를 입력해주세요.");
+            resultView.errorMessage("예 또는 아니오를 입력해주세요.");
         }
     }
 
@@ -573,5 +575,26 @@ public class PersonView {
         // Controller : 실행 결과에 따라 어떤 문장을 보여줄지 결정
         System.out.println();
         System.out.println(message);
+    }
+
+    private PersonDTO selectPersonFromList(Scanner sc, List<PersonDTO> personList, String prompt) {
+        if (personList.isEmpty()) return null;
+
+        while (true) {
+            int choice = scannerView.scannInt(sc, prompt);
+            // 정확히 한 단계 위로 이동
+            if (choice == 0) return null;
+
+            // 조회된 인물 중 입력한 목록 번호와 일치하는 인물 반환
+            if (choice >= 1 && choice <= personList.size()) {
+                return personList.get(choice - 1);
+            }
+            resultView.errorMessage("리스트에 존재하는 번호를 입력해주세요.");
+        }
+    }
+
+    private void printHeader(String title) {
+        System.out.println();
+        System.out.println(HEADER + " " + title + " " + HEADER);
     }
 }

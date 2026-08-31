@@ -14,78 +14,62 @@ public class PersonService {
     /* 인물 조회*/
     // 1. 전체 인물 조회
     public List<PersonDTO> selectAllPerson() {
-
         Connection con = JDBC.getConnection();
-
-        List<PersonDTO> personList = personDAO.selectAllPerson(con);
-
-        JDBC.close(con);
-
-        return personList;
+        try {
+            return personDAO.selectAllPerson(con);
+        } finally {
+            JDBC.close(con);
+        }
     }
 
     // 2. 국가별 인물 조회
     public List<PersonDTO> selectPersonByCountry(int countryId) {
-
         Connection con = JDBC.getConnection();
-
-        List<PersonDTO> personList = personDAO.selectPersonByCountry(con, countryId);
-
-        JDBC.close(con);
-
-        return personList;
-
+        try {
+            return personDAO.selectPersonByCountry(con, countryId);
+        } finally {
+            JDBC.close(con);
+        }
     }
 
     // 3. 시대별 인물 조회
     public List<PersonDTO> selectPersonByPeriod(int periodId) {
-
         Connection con = JDBC.getConnection();
-
-        List<PersonDTO> personList = personDAO.selectPersonByPeriod(con, periodId);
-
-        JDBC.close(con);
-
-        return personList;
-
+        try {
+            return personDAO.selectPersonByPeriod(con, periodId);
+        } finally {
+            JDBC.close(con);
+        }
     }
 
     // 4. 분야별 인물 조회
     public List<PersonDTO> selectPersonByField(int fieldId) {
-
         Connection con = JDBC.getConnection();
-
-        List<PersonDTO> personList = personDAO.selectPersonByField(con, fieldId);
-
-        JDBC.close(con);
-
-        return personList;
-
+        try {
+            return personDAO.selectPersonByField(con, fieldId);
+        } finally {
+            JDBC.close(con);
+        }
     }
 
     // 5. 인물 이름 조회
     public List<PersonDTO> selectPersonByName(String personName) {
-
         Connection con = JDBC.getConnection();
-
-        List<PersonDTO> personList = personDAO.selectPersonByName(con, personName);
-
-        JDBC.close(con);
-
-        return personList;
-
+        try {
+            return personDAO.selectPersonByName(con, personName);
+        } finally {
+            JDBC.close(con);
+        }
     }
 
     // 6. 명언 키워드 검색에 따른 인물 조회
     public List<PersonDTO> selectPersonByQuoteKeyword(String quoteKeyword) {
-
         Connection con = JDBC.getConnection();
-
-        List<PersonDTO> personList = personDAO.selectPersonByQuoteKeyword(con, quoteKeyword);
-
-        JDBC.close(con);
-
-        return personList;
+        try {
+            return personDAO.selectPersonByQuoteKeyword(con, quoteKeyword);
+        } finally {
+            JDBC.close(con);
+        }
     }
 
     /* 인물 정보 수정*/
@@ -104,6 +88,8 @@ public class PersonService {
             } else {
                 JDBC.rollback(con);
             }
+        } catch (RuntimeException e) {
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
@@ -125,6 +111,8 @@ public class PersonService {
             } else {
                 JDBC.rollback(con);
             }
+        } catch (RuntimeException e) {
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
@@ -146,6 +134,8 @@ public class PersonService {
             } else {
                 JDBC.rollback(con);
             }
+        } catch (RuntimeException e) {
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
@@ -166,9 +156,11 @@ public class PersonService {
             } else {
                 JDBC.rollback(con);
             }
+        } catch (RuntimeException e) {
+            throw rollbackFailure(con, e);
         } finally{
-                JDBC.close(con);
-            }
+            JDBC.close(con);
+        }
 
         return result;
     }
@@ -204,7 +196,8 @@ public class PersonService {
             } else {
                 JDBC.rollback(con);
             }
-
+        } catch (RuntimeException e) {
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
@@ -237,14 +230,21 @@ public class PersonService {
         catch (RuntimeException e) {
             // 두 DELETE 중 SQL 오류가 발생하면 전체 취소
             // ex. 인물 A의 명언은 삭제했는데 인물 정보는 삭제를 실패했을 경우 rollback으로 명언도 복구
-            JDBC.rollback(con);
-            e.printStackTrace();
-            result = 0;
-
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
 
         return result;
+    }
+
+    private RuntimeException rollbackFailure(Connection con, RuntimeException original) {
+        try {
+            JDBC.rollback(con);
+        } catch (RuntimeException rollbackFailure) {
+            original.addSuppressed(rollbackFailure);
+        }
+
+        return original;
     }
 }

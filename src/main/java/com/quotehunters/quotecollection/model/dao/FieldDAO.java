@@ -18,7 +18,7 @@ public class FieldDAO {
         try {
             prop.loadFromXML(new FileInputStream("src/main/java/com/quotehunters/quotecollection/mapper/field-query.xml"));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("분야 SQL 매퍼 파일을 불러오지 못했습니다.", e);
         }
     }
 
@@ -41,7 +41,7 @@ public class FieldDAO {
                 fields.add(fieldDTO);
             }
         } catch (SQLException e) {
-            System.out.println("All Fields SQL Exception");
+            throw new IllegalStateException("분야 목록 조회 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(stmt);
@@ -68,7 +68,7 @@ public class FieldDAO {
                 fieldDTO.setFieldName(rset.getString("field_name"));
             }
         } catch (SQLException e) {
-            System.out.println("Search Fields ID SQL Exception");
+            throw new IllegalStateException("분야 조회 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -93,7 +93,7 @@ public class FieldDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Exists Field Name SQL Exception");
+            throw new IllegalStateException("분야명 중복 확인 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -119,7 +119,7 @@ public class FieldDAO {
                 }
             }
         } catch (SQLException e) {
-            System.out.println("Exists Field Name SQL Exception");
+            throw new IllegalStateException("분야명 중복 확인 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -140,7 +140,7 @@ public class FieldDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Update Fields SQL Exception");
+            throw new IllegalStateException("분야 수정 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -161,7 +161,7 @@ public class FieldDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Insert Fields SQL Exception");
+            throw new IllegalStateException("분야 등록 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -180,7 +180,7 @@ public class FieldDAO {
 
             result = pstmt.executeUpdate();
         } catch (SQLException e) {
-            System.out.println("Delete Fields SQL Exception");
+            throw new IllegalStateException("분야 삭제 중 오류가 발생했습니다.", e);
         } finally {
             JDBC.close(pstmt);
         }

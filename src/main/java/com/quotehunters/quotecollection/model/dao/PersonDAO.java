@@ -21,7 +21,7 @@ public class PersonDAO {
         try {
             prop.loadFromXML(new FileInputStream("src/main/java/com/quotehunters/quotecollection/mapper/person-query.xml"));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new IllegalStateException("인물 SQL 매퍼 파일을 불러오지 못했습니다.", e);
         }
 
     }
@@ -58,7 +58,7 @@ public class PersonDAO {
 
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -96,7 +96,7 @@ public class PersonDAO {
                 personList.add(person);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -134,7 +134,7 @@ public class PersonDAO {
                 personList.add(person);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -173,7 +173,7 @@ public class PersonDAO {
                 personList.add(person);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -214,7 +214,7 @@ public class PersonDAO {
                 personList.add(person);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -257,7 +257,7 @@ public class PersonDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -286,7 +286,7 @@ public class PersonDAO {
             result = pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -313,7 +313,7 @@ public class PersonDAO {
             result = pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -341,7 +341,7 @@ public class PersonDAO {
             result = pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -370,7 +370,7 @@ public class PersonDAO {
             result = pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(pstmt);
         }
@@ -405,7 +405,7 @@ public class PersonDAO {
             }
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(rset);
             JDBC.close(pstmt);
@@ -437,7 +437,7 @@ public class PersonDAO {
             result = pstmt.executeUpdate();
 
         } catch (SQLException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         } finally {
             JDBC.close(pstmt);
         }

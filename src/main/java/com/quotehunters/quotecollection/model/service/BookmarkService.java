@@ -22,12 +22,10 @@ public class BookmarkService {
      * SELECT만 하므로 commit / rollback은 필요 없지만 Connection은 닫는다.
      */
     public boolean isBookmarked(int memberId, int quoteId) {
-
         Connection con = getOpenConnection();
 
         try {
             return bookmarkDAO.existsBookmark(con, memberId, quoteId);
-
         } finally {
             // Connection을 만든 Service가 조회가 끝난 뒤 닫는다.
             JDBC.close(con);
@@ -39,12 +37,10 @@ public class BookmarkService {
      * SELECT만 하므로 commit / rollback은 필요 없고, 조회가 끝나면 Connection을 닫는다.
      */
     public List<QuoteDTO> selectFavoriteQuotesByMemberId(int memberId) {
-
         Connection con = getOpenConnection();
 
         try {
             return bookmarkDAO.selectFavoriteQuotesByMemberId(con, memberId);
-
         } finally {
             JDBC.close(con);
         }
@@ -54,20 +50,11 @@ public class BookmarkService {
      * [Favorite-002] 목록에서 선택한 명언의 최신 상세 정보를 조회한다.
      * memberId도 함께 넘겨 현재 로그인 회원의 즐겨찾기 안에 있는 명언만 조회한다.
      */
-    public QuoteDTO selectFavoriteQuoteDetail(
-            int memberId,
-            int quoteId
-    ) {
-
+    public QuoteDTO selectFavoriteQuoteDetail(int memberId, int quoteId) {
         Connection con = getOpenConnection();
 
         try {
-            return bookmarkDAO.selectFavoriteQuoteDetail(
-                    con,
-                    memberId,
-                    quoteId
-            );
-
+            return bookmarkDAO.selectFavoriteQuoteDetail(con, memberId, quoteId);
         } finally {
             JDBC.close(con);
         }
@@ -84,7 +71,6 @@ public class BookmarkService {
      * 반환값 0 : 이미 즐겨찾기에 있거나 INSERT된 행이 없음
      */
     public int addBookmark(BookmarkDTO bookmark) {
-
         Connection con = getOpenConnection();
 
         try {
@@ -113,9 +99,7 @@ public class BookmarkService {
 
         } catch (RuntimeException e) {
             // SQL 오류가 발생했을 때 열린 트랜잭션을 되돌린다.
-            JDBC.rollback(con);
-            throw e;
-
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
@@ -132,7 +116,6 @@ public class BookmarkService {
      * 반환값 0 : 이미 취소됐거나 DELETE된 행이 없음
      */
     public int cancelBookmark(BookmarkDTO bookmark) {
-
         Connection con = getOpenConnection();
 
         try {
@@ -161,9 +144,7 @@ public class BookmarkService {
 
         } catch (RuntimeException e) {
             // SQL 오류가 발생했을 때 열린 트랜잭션을 되돌린다.
-            JDBC.rollback(con);
-            throw e;
-
+            throw rollbackFailure(con, e);
         } finally {
             JDBC.close(con);
         }
@@ -177,9 +158,20 @@ public class BookmarkService {
         Connection con = JDBC.getConnection();
 
         if (con == null) {
-            throw new IllegalStateException("DB 연결을 만들지 못했습니다.");
+            throw new IllegalStateException("데이터 연결을 만들지 못했습니다.");
         }
 
         return con;
+    }
+
+    // rollback 실패는 원래 예외에 함께 보존한다.
+    private RuntimeException rollbackFailure(Connection con, RuntimeException original) {
+        try {
+            JDBC.rollback(con);
+        } catch (RuntimeException rollbackFailure) {
+            original.addSuppressed(rollbackFailure);
+        }
+
+        return original;
     }
 }
