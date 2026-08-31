@@ -21,7 +21,13 @@ public class QuoteController {
 
     private void bookmarkQuote(Scanner scanner, MemberDTO member, List<QuoteDTO> quoteList) {
         QuoteDTO quote = bookmarkView.selectQuoteForFavorite(scanner, quoteList);
-        bookmarkView.showQuoteDetailForFavorite(scanner, member, quote);
+        if (quote != null) {
+            bookmarkView.showQuoteDetailForFavorite(scanner, member, quote);
+        }
+    }
+
+    private boolean canUseBookmark(MemberDTO member) {
+        return member != null && member.getUserAuth() == 1;
     }
 
     public void selectAllQuotes(Scanner scanner, MemberDTO member) {
@@ -31,19 +37,26 @@ public class QuoteController {
         if (quoteList.isEmpty()) {
             resultView.printMessage("등록된 명언이 없습니다.");
         } else {
-            resultView.printQuoteList(quoteList);
-            bookmarkQuote(scanner, member, quoteList);
+            if (canUseBookmark(member)) {
+                bookmarkQuote(scanner, member, quoteList);
+            } else {
+                resultView.printQuoteList(quoteList);
+            }
         }
     }
 
-    public void selectTodayQuote() {
+    public void selectTodayQuote(Scanner scanner, MemberDTO member) {
 
         QuoteDTO quote = quoteService.selectTodayQuote();
 
         if (quote == null) {
             resultView.printMessage("등록된 명언이 없습니다.");
         } else {
-            resultView.printTodayQuote(quote);
+            if (canUseBookmark(member)) {
+                bookmarkView.showQuoteDetailForFavorite(scanner, member, quote);
+            } else {
+                resultView.printTodayQuote(quote);
+            }
         }
     }
 
@@ -60,7 +73,9 @@ public class QuoteController {
                 );
             } else {
                 resultView.printSearchedQuoteList(quoteList);
-                bookmarkQuote(scanner, member, quoteList);
+                if (canUseBookmark(member)) {
+                    bookmarkQuote(scanner, member, quoteList);
+                }
             }
 
         } catch (RuntimeException e) {
@@ -87,7 +102,9 @@ public class QuoteController {
                 resultView.printMessage("등록된 명언이 없습니다.");
             } else {
                 resultView.printSearchedQuoteList(quoteList);
-                bookmarkQuote(scanner, member, quoteList);
+                if (canUseBookmark(member)) {
+                    bookmarkQuote(scanner, member, quoteList);
+                }
             }
 
         } catch (RuntimeException e) {
@@ -125,7 +142,23 @@ public class QuoteController {
                 resultView.inputQuoteContent(scanner)
         );
 
-        executeQuoteInsert(quote);
+        while (true) {
+            resultView.printQuoteRegistrationSummary(quote);
+            String decision = resultView.inputRegistrationDecision(scanner);
+
+            if ("N".equals(decision)) {
+                resultView.printMessage("명언 등록을 취소했습니다.");
+                return;
+            }
+
+            if ("수정".equals(decision)) {
+                modifyQuoteRegistration(scanner, quote);
+                continue;
+            }
+
+            executeQuoteInsert(quote);
+            return;
+        }
     }
 
     // 전체 주제에서 하나를 선택하고 해당 주제의 명언을 조회한다.
@@ -176,7 +209,9 @@ public class QuoteController {
                     selectedTheme,
                     quoteList
             );
-            bookmarkQuote(scanner, member, quoteList);
+            if (canUseBookmark(member)) {
+                bookmarkQuote(scanner, member, quoteList);
+            }
 
         } catch (RuntimeException e) {
             e.printStackTrace();

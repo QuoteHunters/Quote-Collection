@@ -9,9 +9,7 @@ import java.util.Scanner;
 public class PeriodView {
 
     private final PeriodController periodController = new PeriodController();
-    private final ScannerView scv = new ScannerView();
     private final ResultView rv = new ResultView();
-    private final Scanner sc = new Scanner(System.in);
 
     // [시대 목록 출력] (Period-002)
     public void allPeriods() {
@@ -57,14 +55,14 @@ public class PeriodView {
     }
 
     // [시대 등록] 시대명 입력 → 등록 Validation → [등록 / 수정 / 취소] (Period-001)
-    public void registPeriod() {
+    public void registPeriod(ScannerView scannerView, Scanner scanner) {
         while (true) {
 
-            String periodName = scv.scannString(sc, "등록할 시대명 입력 (0: 뒤로가기)");
+            String periodName = scannerView.scannString(scanner, "등록할 시대명 입력 (0: 뒤로가기)");
             if (periodName.equals("0")) return;
 
             while (true) {
-                String check = scv.scannString(sc, "[" + periodName + "] (으)로 등록하시겠습니까? 예 / 수정 / 취소");
+                String check = scannerView.scannString(scanner, "[" + periodName + "] (으)로 등록하시겠습니까? 예 / 수정 / 취소");
 
                 if (check.equals("예")) {
                     String message = periodController.registPeriod(periodName);
@@ -97,12 +95,12 @@ public class PeriodView {
             if (id == 0) return;
 
             while (true) {
-                String newName = scv.scannString(sc, "변경할 시대명 입력 (0: 뒤로가기)");
+                String newName = scannerView.scannString(scanner, "변경할 시대명 입력 (0: 뒤로가기)");
                 if (newName.equals("0")) continue selectLoop;   // 0이면 대상 선택으로 돌아감
 
                 // 수정 여부 확인 ([완료/재수정/취소])
                 while (true) {
-                    String check = scv.scannString(sc, "[" + newName + "] (으)로 수정하시겠습니까? 예 / 재수정 / 아니오");
+                    String check = scannerView.scannString(scanner, "[" + newName + "] (으)로 수정하시겠습니까? 예 / 재수정 / 아니오");
 
                     if (check.equals("예")) {
                         String message = periodController.modifyPeriod(id, newName);
@@ -136,7 +134,7 @@ public class PeriodView {
 
             // --- 1차 경고 (명세 S4~S5-1) ---
             while (true) {
-                String first = scv.scannString(sc, "선택한 시대를 삭제하시겠습니까? 예 / 아니오");
+                String first = scannerView.scannString(scanner, "선택한 시대를 삭제하시겠습니까? 예 / 아니오");
 
                 if (first.equals("아니오")) return;        // 이전 메뉴로
                 if (first.equals("예")) break;             // 다음 경고로 진행
@@ -148,7 +146,7 @@ public class PeriodView {
             System.out.println("해당 시대를 삭제할 경우 해당 시대에 속한 모든 인물의 정보(명언 포함)가 삭제됩니다.");
 
             while (true) {
-                String second = scv.scannString(sc, "그래도 삭제하시겠습니까? 예 / 재선택 / 아니오");
+                String second = scannerView.scannString(scanner, "그래도 삭제하시겠습니까? 예 / 재선택 / 아니오");
 
                 if (second.equals("예")) {                 // 삭제 실행
                     String message = periodController.removePeriod(id);
